@@ -244,6 +244,7 @@ h1 {
 .practice-draw-canvas {
     z-index: 2;
     cursor: crosshair;
+    touch-action: none; /* スクロール防止 */
 }
 
 /* ==========================================
@@ -329,6 +330,14 @@ h1 {
 .bracket {
     /* 縦書き時に文字が回転しないようにする指定 */
     text-orientation: upright;
+}
+
+/* テストモードの手書きCanvas */
+.test-canvas {
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    touch-action: none; /* スクロール防止 */
 }
 
 /* ==========================================

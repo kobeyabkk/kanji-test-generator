@@ -215,6 +215,16 @@ function generateTestScreen() {
         bracketTop.textContent = '︵';
         answerZone.appendChild(bracketTop);
         
+        // 手書きCanvas
+        const canvas = document.createElement('canvas');
+        canvas.className = 'test-canvas';
+        canvas.width = 120;
+        canvas.height = 200;
+        answerZone.appendChild(canvas);
+        
+        // Canvasイベントを設定
+        setupCanvasEvents(canvas);
+        
         // 下のカッコ
         const bracketBottom = document.createElement('span');
         bracketBottom.className = 'bracket';
@@ -237,10 +247,10 @@ function setupCanvasEvents(canvas) {
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mouseout', stopDrawing);
 
-    // タッチイベント
-    canvas.addEventListener('touchstart', handleTouchStart);
-    canvas.addEventListener('touchmove', handleTouchMove);
-    canvas.addEventListener('touchend', stopDrawing);
+    // タッチイベント（パッシブではなく、preventDefault可能にする）
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
 
     activeCanvases.push(canvas);
 }
@@ -336,6 +346,14 @@ function handleTouchMove(e) {
 
     lastX = currentX;
     lastY = currentY;
+}
+
+// ==========================================
+// タッチ終了
+// ==========================================
+function handleTouchEnd(e) {
+    e.preventDefault();
+    isDrawing = false;
 }
 
 // ==========================================
