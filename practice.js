@@ -354,8 +354,16 @@ function handleTouchMove(e) {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
-    ctx.strokeStyle = penColor;
-    ctx.lineWidth = penWidth;
+    // 🆕 消しゴムモードの場合
+    if (isEraserMode) {
+        ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
+        ctx.lineWidth = penWidth * 2; // 消しゴムは太めに
+    } else {
+        ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
+        ctx.strokeStyle = penColor;
+        ctx.lineWidth = penWidth;
+    }
+    
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
@@ -374,6 +382,11 @@ function handleTouchMove(e) {
 function handleTouchEnd(e) {
     e.preventDefault();
     isDrawing = false;
+    // 🆕 消しゴムモードの影響を残さないようにリセット
+    activeCanvases.forEach(canvas => {
+        const ctx = canvas.getContext('2d');
+        ctx.globalCompositeOperation = 'source-over';
+    });
 }
 
 // ==========================================
