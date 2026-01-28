@@ -11,6 +11,7 @@ let lastY = 0;
 // ペン設定
 let penWidth = 6;
 let penColor = '#000000';
+let isEraserMode = false; // 消しゴムモード
 
 // ==========================================
 // 初期化
@@ -67,7 +68,12 @@ function setupEventListeners() {
 
     document.getElementById('pen-color').addEventListener('input', (e) => {
         penColor = e.target.value;
+        isEraserMode = false; // ペン色変更時は消しゴムモード解除
+        updateEraserButton();
     });
+    
+    // 消しゴムボタン
+    document.getElementById('eraser-btn').addEventListener('click', toggleEraser);
 }
 
 // ==========================================
@@ -282,8 +288,16 @@ function draw(e) {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
-    ctx.strokeStyle = penColor;
-    ctx.lineWidth = penWidth;
+    // 消しゴムモードの場合
+    if (isEraserMode) {
+        ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
+        ctx.lineWidth = penWidth * 2; // 消しゴムは太めに
+    } else {
+        ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
+        ctx.strokeStyle = penColor;
+        ctx.lineWidth = penWidth;
+    }
+    
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
@@ -417,6 +431,25 @@ function restartPractice() {
         // 練習モードに戻る
         isPracticeMode = true;
         updateMode();
+    }
+}
+
+// ==========================================
+// 消しゴムモード切り替え
+// ==========================================
+function toggleEraser() {
+    isEraserMode = !isEraserMode;
+    updateEraserButton();
+}
+
+function updateEraserButton() {
+    const eraserBtn = document.getElementById('eraser-btn');
+    if (isEraserMode) {
+        eraserBtn.classList.add('active');
+        eraserBtn.textContent = '✏️ ペンに戻る';
+    } else {
+        eraserBtn.classList.remove('active');
+        eraserBtn.textContent = '🧹 消しゴム';
     }
 }
 

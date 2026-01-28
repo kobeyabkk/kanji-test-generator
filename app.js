@@ -42,6 +42,7 @@ let recentKanjiHistory = []; // [{kanji: '友', timestamp: 1234567890}, ...]
 const HISTORY_STORAGE_KEY = 'kanji_recent_history';
 const MAX_HISTORY_SIZE = 100; // 最大100個まで履歴を保持
 const EXCLUDE_SETTING_KEY = 'kanji_exclude_setting'; // 🆕 除外設定の保存キー
+const GRADE_COUNT_KEY = 'kanji_grade_count'; // 🆕 学年別問題数の保存キー
 
 // 出題禁止漢字リスト（一〜十の数字は簡単すぎるため除外）
 const EXCLUDED_KANJI = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
@@ -91,6 +92,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 🆕 除外設定を読み込み
     loadExcludeSetting();
+    
+    // 🆕 学年別問題数を読み込み
+    loadGradeCount();
     
     // 🆕 漢字選択UIの構築
     buildKanjiSelectionUI();
@@ -208,7 +212,10 @@ function setupEventListeners() {
     // 🆕 学年別問題数の変更検知
     GRADES.forEach(gradeInfo => {
         const grade = gradeInfo.grade;
-        document.getElementById(`grade${grade}-count`).addEventListener('change', updateQuestionCountStatus);
+        document.getElementById(`grade${grade}-count`).addEventListener('change', () => {
+            updateQuestionCountStatus();
+            saveGradeCount(); // 🆕 変更時に保存
+        });
     });
     
     // 🆕 除外設定の変更検知
@@ -1318,6 +1325,40 @@ function saveExcludeSetting() {
     const value = document.getElementById('exclude-recent').value;
     localStorage.setItem(EXCLUDE_SETTING_KEY, value);
     console.log(`💾 除外設定を保存しました: ${value}問`);
+}
+
+// 🆕 学年別問題数を保存
+function saveGradeCount() {
+    const gradeCounts = {};
+    GRADES.forEach(gradeInfo => {
+        const grade = gradeInfo.grade;
+        const count = parseInt(document.getElementById(`grade${grade}-count`).value) || 0;
+        gradeCounts[grade] = count;
+    });
+    localStorage.setItem(GRADE_COUNT_KEY, JSON.stringify(gradeCounts));
+    console.log(`💾 学年別問題数を保存しました:`, gradeCounts);
+}
+
+// 🆕 学年別問題数を読み込み
+function loadGradeCount() {
+    const saved = localStorage.getItem(GRADE_COUNT_KEY);
+    if (saved) {
+        try {
+            const gradeCounts = JSON.parse(saved);
+            GRADES.forEach(gradeInfo => {
+                const grade = gradeInfo.grade;
+                const count = gradeCounts[grade] || 0;
+                const selectElement = document.getElementById(`grade${grade}-count`);
+                if (selectElement) {
+                    selectElement.value = count;
+                }
+            });
+            console.log(`📖 学年別問題数を読み込みました:`, gradeCounts);
+            updateQuestionCountStatus(); // 読み込み後にステータスを更新
+        } catch (e) {
+            console.error('❌ 学年別問題数の読み込みエラー:', e);
+        }
+    }
 }
 
 // 履歴をクリア（デバッグ用）
