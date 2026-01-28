@@ -343,9 +343,10 @@ h1 {
 /* ■ 左側：解答欄エリア */
 .answer-zone {
     width: 80px; /* 🔧 幅を80pxに変更（Canvasサイズに合わせる） */
+    height: 200px; /* 高さも固定 */
     /* 枠線(border)は絶対に書きません！ */
     
-    /* カッコを絶対配置にして、Canvasのサイズに影響を与えないようにする */
+    /* カッコとCanvasを絶対配置にするための基準 */
     position: relative;
     
     color: #c0392b; /* 赤色 */
@@ -360,6 +361,8 @@ h1 {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2; /* Canvasより上に表示 */
+    pointer-events: none; /* クリックを透過 */
 }
 
 .bracket:first-child {
@@ -372,13 +375,15 @@ h1 {
 
 /* テストモードの手書きCanvas */
 .test-canvas {
+    position: absolute !important; /* 🔧 絶対配置に変更 */
+    top: 0 !important;
+    left: 0 !important;
     width: 80px !important;  /* 🔧 固定幅を80pxに変更（!importantで強制） */
     height: 200px !important; /* 固定高さ（!importantで強制） */
     cursor: crosshair;
     touch-action: none; /* スクロール防止 */
     display: block;    /* ブロック要素として表示 */
-    position: relative; /* カッコに隠されないように */
-    z-index: 1;
+    z-index: 1; /* カッコより下、でもクリック可能 */
 }
 
 /* ==========================================

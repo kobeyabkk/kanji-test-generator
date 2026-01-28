@@ -3,6 +3,7 @@
 // ==========================================
 let kanjiList = []; // 練習する漢字リスト
 let isPracticeMode = true; // true: 練習モード, false: テストモード
+let testMode = 'practice'; // 'practice', 'test10', 'test20'
 let activeCanvases = []; // アクティブなCanvas要素
 let isDrawing = false;
 let lastX = 0;
@@ -18,7 +19,7 @@ let eraserWidth = 20; // 消しゴムのデフォルト幅
 // 初期化
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
-    // URLパラメータから漢字リストを取得
+    // URLパラメータから漢字リストとテストモードを取得
     loadKanjiFromParams();
 
     // イベントリスナー設定
@@ -31,20 +32,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // テストモードに応じて初期状態を設定
+    if (testMode === 'test10' || testMode === 'test20') {
+        // テスト10問またはテスト20問の場合は、最初からテストモードを表示
+        isPracticeMode = false;
+    } else {
+        // 練習＋テストの場合は、最初は練習モードを表示
+        isPracticeMode = true;
+    }
+
     // 画面を生成
     generatePracticeScreen();
     generateTestScreen();
+    
+    // 初期表示を更新
+    updateMode();
 });
 
 // ==========================================
-// URLパラメータから漢字リストを読み込み
+// URLパラメータから漢字リストとテストモードを読み込み
 // ==========================================
 function loadKanjiFromParams() {
     const params = new URLSearchParams(window.location.search);
     const kanjiParam = params.get('kanji');
+    const modeParam = params.get('mode');
     
     if (kanjiParam) {
         kanjiList = JSON.parse(decodeURIComponent(kanjiParam));
+    }
+    
+    if (modeParam) {
+        testMode = modeParam; // 'practice', 'test10', 'test20'
+        console.log(`📋 テストモード: ${testMode}`);
     }
 }
 
@@ -77,6 +96,11 @@ function setupEventListeners() {
     document.getElementById('eraser-width').addEventListener('input', (e) => {
         eraserWidth = parseInt(e.target.value);
         document.getElementById('eraser-width-value').textContent = `${eraserWidth}px`;
+        
+        // 🆕 消しゴムモード中の場合はカーソルを更新
+        if (isEraserMode) {
+            updateEraserButton();
+        }
     });
     
     // 消しゴムボタン
@@ -188,7 +212,14 @@ function generateTestScreen() {
     const container = document.getElementById('test-grid');
     container.innerHTML = '';
 
-    kanjiList.forEach((kanji, index) => {
+    // 🆕 テスト20問の場合は、kanjiListを2倍にする
+    let testKanjiList = kanjiList;
+    if (testMode === 'test20') {
+        testKanjiList = [...kanjiList, ...kanjiList]; // 同じ漢字を2回出題
+        console.log(`📝 テスト20問: ${testKanjiList.length}問`);
+    }
+
+    testKanjiList.forEach((kanji, index) => {
         const card = document.createElement('div');
         card.className = 'test-item';
 
@@ -309,11 +340,11 @@ function draw(e) {
     // 消しゴムモードの場合
     if (isEraserMode) {
         ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
-        ctx.lineWidth = eraserWidth; // 🔧 スケール調整を削除
+        ctx.lineWidth = eraserWidth * scaleX; // 🔧 スケール調整を適用
     } else {
         ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
         ctx.strokeStyle = penColor;
-        ctx.lineWidth = penWidth; // 🔧 スケール調整を削除
+        ctx.lineWidth = penWidth * scaleX; // 🔧 スケール調整を適用
     }
     
     ctx.lineCap = 'round';
@@ -375,11 +406,11 @@ function handleTouchMove(e) {
     // 🆕 消しゴムモードの場合
     if (isEraserMode) {
         ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
-        ctx.lineWidth = eraserWidth; // 🔧 スケール調整を削除
+        ctx.lineWidth = eraserWidth * scaleX; // 🔧 スケール調整を適用
     } else {
         ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
         ctx.strokeStyle = penColor;
-        ctx.lineWidth = penWidth; // 🔧 スケール調整を削除
+        ctx.lineWidth = penWidth * scaleX; // 🔧 スケール調整を適用
     }
     
     ctx.lineCap = 'round';
@@ -425,6 +456,12 @@ function clearAllCanvases() {
 // モード切り替え
 // ==========================================
 function switchMode() {
+    // 🆕 テスト10問またはテスト20問の場合は、練習モードに戻れない
+    if (testMode === 'test10' || testMode === 'test20') {
+        // テストモードのみなので、何もしない
+        return;
+    }
+    
     isPracticeMode = !isPracticeMode;
     updateMode();
 }
@@ -438,6 +475,13 @@ function updateMode() {
     const modeTitle = document.getElementById('mode-title');
     const modeSubtitle = document.getElementById('mode-subtitle');
     const modeSwitchBtn = document.getElementById('mode-switch-btn');
+
+    // 🆕 テスト10問またはテスト20問の場合は、モード切り替えボタンを非表示
+    if (testMode === 'test10' || testMode === 'test20') {
+        modeSwitchBtn.style.display = 'none';
+    } else {
+        modeSwitchBtn.style.display = 'flex';
+    }
 
     if (isPracticeMode) {
         practiceScreen.classList.remove('hidden');
@@ -492,9 +536,21 @@ function updateEraserButton() {
     if (isEraserMode) {
         eraserBtn.classList.add('active');
         eraserBtn.textContent = '✏️ ペンに戻る';
+        
+        // 🆕 消しゴムモード時はカーソルを変更
+        activeCanvases.forEach(canvas => {
+            // 消しゴムの範囲を円形カーソルで表示
+            const cursorSize = eraserWidth;
+            canvas.style.cursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${cursorSize}" height="${cursorSize}" viewBox="0 0 ${cursorSize} ${cursorSize}"><circle cx="${cursorSize/2}" cy="${cursorSize/2}" r="${cursorSize/2-1}" fill="none" stroke="rgba(255,87,34,0.8)" stroke-width="2"/></svg>') ${cursorSize/2} ${cursorSize/2}, crosshair`;
+        });
     } else {
         eraserBtn.classList.remove('active');
         eraserBtn.textContent = '🧹 消しゴム';
+        
+        // 🆕 ペンモード時は通常のカーソルに戻す
+        activeCanvases.forEach(canvas => {
+            canvas.style.cursor = 'crosshair';
+        });
     }
 }
 

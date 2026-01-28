@@ -413,10 +413,12 @@ function goToPractice() {
     practiceKanjiList.sort(() => Math.random() - 0.5);
     
     console.log(`📚 練習する漢字: ${practiceKanjiList.length}個`);
+    console.log(`🎯 テストモード: ${currentTestMode.name}`);
     
-    // URLパラメータとして渡す
+    // URLパラメータとして渡す（テストモード情報も含める）
     const kanjiParam = encodeURIComponent(JSON.stringify(practiceKanjiList));
-    window.location.href = `practice.html?kanji=${kanjiParam}`;
+    const modeParam = currentTestMode.value; // 'practice', 'test10', 'test20'
+    window.location.href = `practice.html?kanji=${kanjiParam}&mode=${modeParam}`;
 }
 
 // ==================================
