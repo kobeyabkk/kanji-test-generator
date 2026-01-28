@@ -315,6 +315,12 @@ function draw(e) {
 // ==========================================
 function stopDrawing() {
     isDrawing = false;
+    // 🆕 消しゴムモードの影響を残さないようにリセット
+    // すべてのCanvasのコンテキストを通常描画モードに戻す
+    activeCanvases.forEach(canvas => {
+        const ctx = canvas.getContext('2d');
+        ctx.globalCompositeOperation = 'source-over';
+    });
 }
 
 // ==========================================
@@ -440,6 +446,14 @@ function restartPractice() {
 function toggleEraser() {
     isEraserMode = !isEraserMode;
     updateEraserButton();
+    
+    // 🆕 ペンモードに戻るときは、すべてのCanvasを通常描画モードにリセット
+    if (!isEraserMode) {
+        activeCanvases.forEach(canvas => {
+            const ctx = canvas.getContext('2d');
+            ctx.globalCompositeOperation = 'source-over';
+        });
+    }
 }
 
 function updateEraserButton() {
