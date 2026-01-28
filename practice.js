@@ -73,6 +73,12 @@ function setupEventListeners() {
         updateEraserButton();
     });
     
+    // 🆕 消しゴム太さスライダー
+    document.getElementById('eraser-width').addEventListener('input', (e) => {
+        eraserWidth = parseInt(e.target.value);
+        document.getElementById('eraser-width-value').textContent = `${eraserWidth}px`;
+    });
+    
     // 消しゴムボタン
     document.getElementById('eraser-btn').addEventListener('click', toggleEraser);
 }
@@ -268,6 +274,17 @@ function setupCanvasEvents(canvas) {
 function startDrawing(e) {
     const canvas = e.target;
     const rect = canvas.getBoundingClientRect();
+    
+    // 🔧 デバッグ：Canvas情報を出力
+    console.log('Canvas Debug:', {
+        canvasWidth: canvas.width,
+        canvasHeight: canvas.height,
+        displayWidth: rect.width,
+        displayHeight: rect.height,
+        scaleX: canvas.width / rect.width,
+        scaleY: canvas.height / rect.height
+    });
+    
     lastX = e.clientX - rect.left;
     lastY = e.clientY - rect.top;
     isDrawing = true;
@@ -285,18 +302,18 @@ function draw(e) {
     const currentX = e.clientX - rect.left;
     const currentY = e.clientY - rect.top;
 
-    // スケール調整
+    // 🔧 スケール調整（Canvas内部サイズとCSS表示サイズの比率）
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
     // 消しゴムモードの場合
     if (isEraserMode) {
         ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
-        ctx.lineWidth = eraserWidth; // 消しゴムは20px
+        ctx.lineWidth = eraserWidth; // 🔧 スケール調整を削除
     } else {
         ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
         ctx.strokeStyle = penColor;
-        ctx.lineWidth = penWidth;
+        ctx.lineWidth = penWidth; // 🔧 スケール調整を削除
     }
     
     ctx.lineCap = 'round';
@@ -351,18 +368,18 @@ function handleTouchMove(e) {
     const currentX = touch.clientX - rect.left;
     const currentY = touch.clientY - rect.top;
 
-    // スケール調整
+    // 🔧 スケール調整（Canvas内部サイズとCSS表示サイズの比率）
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
     // 🆕 消しゴムモードの場合
     if (isEraserMode) {
         ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
-        ctx.lineWidth = eraserWidth; // 消しゴムは20px
+        ctx.lineWidth = eraserWidth; // 🔧 スケール調整を削除
     } else {
         ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
         ctx.strokeStyle = penColor;
-        ctx.lineWidth = penWidth;
+        ctx.lineWidth = penWidth; // 🔧 スケール調整を削除
     }
     
     ctx.lineCap = 'round';
@@ -517,9 +534,33 @@ async function takeScreenshot() {
             const modeName = isPracticeMode ? '練習' : 'テスト';
             const filename = `漢字${modeName}_${timestamp}.png`;
 
-            // スマホ・タブレット対応
-            if (navigator.share && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                // Web Share API（モバイル）
+            // 🆕 File System Access API を優先的に使用（Chrome, Edge）
+            if ('showSaveFilePicker' in window) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'PNG画像',
+                            accept: {'image/png': ['.png']}
+                        }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    alert('✅ スクリーンショットを保存しました！');
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        // ユーザーがキャンセルした場合
+                        return;
+                    }
+                    console.warn('File System Access API失敗:', err);
+                    // フォールバック: 通常のダウンロードへ
+                }
+            }
+
+            // iPad/iPhoneの場合：共有メニューを表示
+            if (navigator.share && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 try {
                     const file = new File([blob], filename, { type: 'image/png' });
                     await navigator.share({
@@ -527,16 +568,21 @@ async function takeScreenshot() {
                         text: `漢字${modeName}のスクリーンショット`,
                         files: [file]
                     });
+                    // 共有メニューで保存先を選択できます：
+                    // - 写真に保存
+                    // - ファイルに保存
+                    // - その他のアプリに共有
+                    return;
                 } catch (err) {
-                    // シェアがキャンセルされた場合は通常のダウンロード
-                    if (err.name !== 'AbortError') {
-                        downloadBlob(blob, filename);
+                    if (err.name === 'AbortError') {
+                        return;
                     }
+                    console.warn('Web Share API失敗:', err);
                 }
-            } else {
-                // PC・その他
-                downloadBlob(blob, filename);
             }
+
+            // フォールバック: 通常のダウンロード
+            downloadBlob(blob, filename);
         }, 'image/png');
 
     } catch (error) {

@@ -35,14 +35,24 @@
 
         <div class="controls-top">
             <div class="pen-settings">
-                <label for="pen-width">太さ:</label>
-                <input type="range" id="pen-width" min="2" max="20" value="6" step="1">
-                <span id="pen-width-value">6px</span>
+                <div class="pen-control">
+                    <label for="pen-width">ペン太さ:</label>
+                    <input type="range" id="pen-width" min="2" max="20" value="6" step="1">
+                    <span id="pen-width-value">6px</span>
+                </div>
                 
-                <label for="pen-color" style="margin-left: 20px;">色:</label>
-                <input type="color" id="pen-color" value="#000000">
+                <div class="pen-control">
+                    <label for="pen-color">色:</label>
+                    <input type="color" id="pen-color" value="#000000">
+                </div>
                 
-                <button id="eraser-btn" class="btn btn-eraser" style="margin-left: 20px;">🧹 消しゴム</button>
+                <div class="pen-control">
+                    <label for="eraser-width">消しゴム太さ:</label>
+                    <input type="range" id="eraser-width" min="5" max="40" value="20" step="1">
+                    <span id="eraser-width-value">20px</span>
+                </div>
+                
+                <button id="eraser-btn" class="btn btn-eraser">🧹 消しゴム</button>
             </div>
             
             <div class="action-buttons">

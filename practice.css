@@ -71,16 +71,25 @@ h1 {
     border: 2px solid #ddd;
 }
 
+.pen-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .pen-settings label {
     font-weight: 500;
     color: #333;
+    min-width: 100px;
 }
 
-#pen-width {
+#pen-width,
+#eraser-width {
     width: 120px;
 }
 
-#pen-width-value {
+#pen-width-value,
+#eraser-width-value {
     min-width: 40px;
     font-weight: bold;
     color: #667eea;
@@ -336,11 +345,8 @@ h1 {
     width: 80px; /* 🔧 幅を80pxに変更（Canvasサイズに合わせる） */
     /* 枠線(border)は絶対に書きません！ */
     
-    /* カッコを上下に配置するためのFlexbox */
-    display: flex;
-    flex-direction: row; /* 縦書きモードではこれが「上→下」の並びになります */
-    justify-content: space-between; /* 上端と下端に飛ばす */
-    align-items: center; /* 中央揃え */
+    /* カッコを絶対配置にして、Canvasのサイズに影響を与えないようにする */
+    position: relative;
     
     color: #c0392b; /* 赤色 */
     font-size: 50px; /* カッコを特大サイズに */
@@ -351,15 +357,28 @@ h1 {
 .bracket {
     /* 縦書き時に文字が回転しないようにする指定 */
     text-orientation: upright;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bracket:first-child {
+    top: 0;
+}
+
+.bracket:last-child {
+    bottom: 0;
 }
 
 /* テストモードの手書きCanvas */
 .test-canvas {
-    width: 80px;  /* 🔧 固定幅を80pxに変更 */
-    height: 200px; /* 固定高さ */
+    width: 80px !important;  /* 🔧 固定幅を80pxに変更（!importantで強制） */
+    height: 200px !important; /* 固定高さ（!importantで強制） */
     cursor: crosshair;
     touch-action: none; /* スクロール防止 */
     display: block;    /* ブロック要素として表示 */
+    position: relative; /* カッコに隠されないように */
+    z-index: 1;
 }
 
 /* ==========================================
