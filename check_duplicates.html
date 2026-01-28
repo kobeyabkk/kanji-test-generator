@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漢字重複チェック</title>
+    
+    <!-- ファビコン -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="shortcut icon" href="/icons/favicon.ico">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+        }
+        .error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        .duplicate-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+        }
+        .kanji-large {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .grade-list {
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 漢字重複チェッカー</h1>
+        <p>全学年の漢字データをチェックして、重複がないか確認します。</p>
+        
+        <button onclick="checkDuplicates()">チェック開始</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // グローバル変数
+        let grade1Kanji = [];
+        let grade2Kanji = [];
+        let grade3Kanji = [];
+        let grade4Kanji = [];
+        let grade5Kanji = [];
+        let grade6Kanji = [];
+
+        // データ読み込み
+        async function loadKanjiData() {
+            try {
+                const [json1, json2, json3, json4, json5, json6] = await Promise.all([
+                    fetch('data/grade1_kanji.json').then(r => r.json()),
+                    fetch('data/grade2_kanji.json').then(r => r.json()),
+                    fetch('data/grade3_kanji.json').then(r => r.json()),
+                    fetch('data/grade4_kanji.json').then(r => r.json()),
+                    fetch('data/grade5_kanji.json').then(r => r.json()),
+                    fetch('data/grade6_kanji.json').then(r => r.json())
+                ]);
+
+                grade1Kanji = json1;
+                grade2Kanji = json2;
+                grade3Kanji = json3;
+                grade4Kanji = json4;
+                grade5Kanji = json5;
+                grade6Kanji = json6;
+
+                console.log('📊 JSONファイルからの読み込み:');
+                console.log(`小1: ${grade1Kanji.length}字`);
+                console.log(`小2: ${grade2Kanji.length}字`);
+                console.log(`小3: ${grade3Kanji.length}字`);
+                console.log(`小4: ${grade4Kanji.length}字`);
+                console.log(`小5: ${grade5Kanji.length}字`);
+                console.log(`小6: ${grade6Kanji.length}字`);
+                console.log(`合計: ${grade1Kanji.length + grade2Kanji.length + grade3Kanji.length + grade4Kanji.length + grade5Kanji.length + grade6Kanji.length}字`);
+
+                // LocalStorageの編集データを確認
+                const editedData = localStorage.getItem('kanji_edited_data');
+                if (editedData) {
+                    console.log('⚠️ LocalStorageに編集データが保存されています');
+                    console.log('注意: このチェッカーはJSONファイルの内容のみをチェックします');
+                }
+
+                return true;
+            } catch (error) {
+                console.error('データ読み込みエラー:', error);
+                return false;
+            }
+        }
+
+        async function checkDuplicates() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>チェック中...</p>';
+
+            // データ読み込み
+            const loaded = await loadKanjiData();
+            if (!loaded) {
+                resultDiv.innerHTML = '<div class="result error"><strong>エラー:</strong> データの読み込みに失敗しました。</div>';
+                return;
+            }
+
+            // 学年別の漢字リスト
+            const gradeData = [
+                { grade: 1, kanji: grade1Kanji },
+                { grade: 2, kanji: grade2Kanji },
+                { grade: 3, kanji: grade3Kanji },
+                { grade: 4, kanji: grade4Kanji },
+                { grade: 5, kanji: grade5Kanji },
+                { grade: 6, kanji: grade6Kanji }
+            ];
+
+            // 漢字の出現回数をカウント
+            const kanjiMap = new Map();
+
+            gradeData.forEach(data => {
+                data.kanji.forEach(kanjiObj => {
+                    const kanji = kanjiObj.kanji;
+                    if (!kanjiMap.has(kanji)) {
+                        kanjiMap.set(kanji, []);
+                    }
+                    kanjiMap.get(kanji).push(data.grade);
+                });
+            });
+
+            // 重複を検出
+            const duplicates = [];
+            kanjiMap.forEach((grades, kanji) => {
+                if (grades.length > 1) {
+                    duplicates.push({ kanji, grades });
+                }
+            });
+
+            // 統計情報
+            const totalKanji = kanjiMap.size;
+            const totalCharacters = gradeData.reduce((sum, data) => sum + data.kanji.length, 0);
+
+            // 学年別の詳細情報
+            const gradeDetails = gradeData.map(data => ({
+                grade: data.grade,
+                count: data.kanji.length
+            }));
+
+            // 結果表示
+            let html = '<div class="stats">';
+            html += `<div class="stat-card"><div class="stat-number">${totalKanji}</div><div class="stat-label">ユニーク漢字数</div></div>`;
+            html += `<div class="stat-card"><div class="stat-number">${totalCharacters}</div><div class="stat-label">総データ数</div></div>`;
+            html += `<div class="stat-card"><div class="stat-number">${duplicates.length}</div><div class="stat-label">重複数</div></div>`;
+            html += '</div>';
+
+            // 学年別の詳細表示
+            html += '<h2 style="margin-top: 20px;">📚 学年別詳細</h2>';
+            html += '<div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">';
+            gradeDetails.forEach(detail => {
+                html += `<div style="margin: 10px 0; padding: 10px; background: white; border-radius: 5px;">`;
+                html += `<strong>小${detail.grade}</strong>: ${detail.count}字`;
+                html += `</div>`;
+            });
+            html += `<div style="margin-top: 15px; padding: 15px; background: #667eea; color: white; border-radius: 5px; font-weight: bold;">`;
+            html += `合計: ${totalCharacters}字`;
+            html += `</div>`;
+            html += '</div>';
+
+            if (duplicates.length === 0) {
+                html += '<div class="result success">';
+                html += '<strong>✅ 重複なし！</strong><br>';
+                html += '全学年の漢字に重複はありませんでした。';
+                html += '</div>';
+            } else {
+                html += '<div class="result error">';
+                html += `<strong>⚠️ 重複発見！</strong><br>`;
+                html += `${duplicates.length}個の漢字が複数の学年に登録されています。`;
+                html += '</div>';
+
+                html += '<h2 style="margin-top: 30px; color: #dc3545;">重複リスト</h2>';
+                duplicates.sort((a, b) => a.kanji.localeCompare(b.kanji)); // 漢字順にソート
+                duplicates.forEach(dup => {
+                    const gradeList = dup.grades.map(g => `小${g}`).join(', ');
+                    html += '<div class="duplicate-item">';
+                    html += `<span class="kanji-large">${dup.kanji}</span>`;
+                    html += `<div class="grade-list">📍 出現学年: ${gradeList}</div>`;
+                    html += '</div>';
+                });
+
+                // 詳細情報
+                html += '<div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">';
+                html += '<strong>📊 詳細:</strong><br>';
+                html += `- 総データ数: ${totalCharacters}字<br>`;
+                html += `- ユニーク漢字数: ${totalKanji}字<br>`;
+                html += `- 差分: ${totalCharacters - totalKanji}字（重複による増加）`;
+                html += '</div>';
+            }
+
+            resultDiv.innerHTML = html;
+        }
+
+        // ページ読み込み時に自動チェック
+        window.addEventListener('load', checkDuplicates);
+    </script>
+</body>
+</html>

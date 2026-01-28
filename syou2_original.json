@@ -1,0 +1,1602 @@
+[
+  {
+    "no": 1,
+    "kanji": "引",
+    "yomi": "イン、ひ",
+    "meaning": "ひく",
+    "example1": "糸を引く",
+    "reading1": "糸をヒく",
+    "example2": "文を引用する",
+    "reading2": "文をイン用する"
+  },
+  {
+    "no": 2,
+    "kanji": "羽",
+    "yomi": "ウ、はね",
+    "meaning": "はね",
+    "example1": "羽をはばたかせる",
+    "reading1": "ハネをはばたかせる",
+    "example2": "羽毛ぶとんでねる",
+    "reading2": "ウ毛ぶとんでねる"
+  },
+  {
+    "no": 3,
+    "kanji": "雲",
+    "yomi": "ウン、くも",
+    "meaning": "くも",
+    "example1": "白い雲がひろがる",
+    "reading1": "白いクモがひろがる",
+    "example2": "山の上から雲海を見る",
+    "reading2": "山の上からウン海を見る"
+  },
+  {
+    "no": 4,
+    "kanji": "園",
+    "yomi": "エン、その",
+    "meaning": "その",
+    "example1": "花園に行く",
+    "reading1": "花ゾノに行く",
+    "example2": "動物園にいく",
+    "reading2": "動物エンにいく"
+  },
+  {
+    "no": 5,
+    "kanji": "遠",
+    "yomi": "エン、とお",
+    "meaning": "とおい",
+    "example1": "遠くの山",
+    "reading1": "遠くの山",
+    "example2": "あすは遠足の日だ",
+    "reading2": "あすはエン足の日だ"
+  },
+  {
+    "no": 6,
+    "kanji": "何",
+    "yomi": "カ、なに",
+    "meaning": "なに",
+    "example1": "何が出るかな",
+    "reading1": "ナニが出るかな",
+    "example2": "きょうは何日ですか",
+    "reading2": "きょうはナン日ですか"
+  },
+  {
+    "no": 7,
+    "kanji": "科",
+    "yomi": "カ",
+    "meaning": "か",
+    "example1": "理科の本",
+    "reading1": "理カの本",
+    "example2": "科学のじっけんをする",
+    "reading2": "カ学のじっけんをする"
+  },
+  {
+    "no": 8,
+    "kanji": "夏",
+    "yomi": "カ、ゲ、なつ",
+    "meaning": "なつ",
+    "example1": "あつい夏の一日",
+    "reading1": "あついナツの一日",
+    "example2": "初（しょ）夏の風がふく",
+    "reading2": "初（しょ）カの風がふく"
+  },
+  {
+    "no": 9,
+    "kanji": "家",
+    "yomi": "カ、ケ、いえ、や",
+    "meaning": "いえ",
+    "example1": "大きい家",
+    "reading1": "大きいイエ",
+    "example2": "家ぞくとごはんをたべる",
+    "reading2": "カぞくとごはんをたべる"
+  },
+  {
+    "no": 10,
+    "kanji": "歌",
+    "yomi": "カ、うた",
+    "meaning": "うた",
+    "example1": "歌を歌う",
+    "reading1": "ウタをウタう",
+    "example2": "歌手をめざす",
+    "reading2": "カ手をめざす"
+  },
+  {
+    "no": 11,
+    "kanji": "画",
+    "yomi": "ガ、カク",
+    "meaning": "かく",
+    "example1": "画を見る",
+    "reading1": "ガを見る",
+    "example2": "りょこうの計画を立てる",
+    "reading2": "りょこうの計カクを立てる"
+  },
+  {
+    "no": 12,
+    "kanji": "回",
+    "yomi": "カイ、まわ",
+    "meaning": "まわる",
+    "example1": "二回目です",
+    "reading1": "二カイ目です",
+    "example2": "ぐるぐる回る",
+    "reading2": "ぐるぐるマワる"
+  },
+  {
+    "no": 13,
+    "kanji": "会",
+    "yomi": "カイ、エ、あ",
+    "meaning": "あう",
+    "example1": "人に会う",
+    "reading1": "人にアう",
+    "example2": "会社に行く",
+    "reading2": "カイ社に行く"
+  },
+  {
+    "no": 14,
+    "kanji": "海",
+    "yomi": "カイ、うみ",
+    "meaning": "うみ",
+    "example1": "海でおよぐ",
+    "reading1": "ウミでおよぐ",
+    "example2": "海外りょこうにいきたい",
+    "reading2": "カイ外りょこうにいきたい"
+  },
+  {
+    "no": 15,
+    "kanji": "絵",
+    "yomi": "エ、カイ",
+    "meaning": "え",
+    "example1": "絵をかく",
+    "reading1": "エをかく",
+    "example2": "うつくしい絵画をかざる",
+    "reading2": "うつくしいカイ画をかざる"
+  },
+  {
+    "no": 16,
+    "kanji": "外",
+    "yomi": "ガイ、ゲ、そと、ほか",
+    "meaning": "そと",
+    "example1": "外に出る",
+    "reading1": "ソトに出る",
+    "example2": "外国のことば",
+    "reading2": "ガイ国のことば"
+  },
+  {
+    "no": 17,
+    "kanji": "角",
+    "yomi": "カク、かど、つの",
+    "meaning": "かど",
+    "example1": "三角の形にかく",
+    "reading1": "三カクの形にかく",
+    "example2": "つぎの角をまがる",
+    "reading2": "つぎのカドをまがる"
+  },
+  {
+    "no": 18,
+    "kanji": "楽",
+    "yomi": "ガク、ラク、たの",
+    "meaning": "たのしい",
+    "example1": "楽しい一日",
+    "reading1": "タノしい一日",
+    "example2": "音楽をきく",
+    "reading2": "音ガクをきく"
+  },
+  {
+    "no": 19,
+    "kanji": "活",
+    "yomi": "カツ",
+    "meaning": "いきる",
+    "example1": "生活する",
+    "reading1": "生カツする",
+    "example2": "クラブ活動をする",
+    "reading2": "クラブカツ動をする"
+  },
+  {
+    "no": 20,
+    "kanji": "間",
+    "yomi": "カン、ケン、あいだ、ま",
+    "meaning": "あいだ",
+    "example1": "木の間",
+    "reading1": "木のアイダ",
+    "example2": "時間をまもる",
+    "reading2": "時カンをまもる"
+  },
+  {
+    "no": 21,
+    "kanji": "丸",
+    "yomi": "ガン、まる",
+    "meaning": "まる",
+    "example1": "丸い玉",
+    "reading1": "マルい玉",
+    "example2": "チームが一丸となる",
+    "reading2": "チームが一ガンとなる"
+  },
+  {
+    "no": 22,
+    "kanji": "岩",
+    "yomi": "ガン、いわ",
+    "meaning": "いわ",
+    "example1": "大きい岩",
+    "reading1": "大きいイワ",
+    "example2": "山から溶（よう）岩がながれる",
+    "reading2": "山から溶（よう）ガンがながれる"
+  },
+  {
+    "no": 23,
+    "kanji": "顔",
+    "yomi": "ガン、かお",
+    "meaning": "かお",
+    "example1": "顔を見る",
+    "reading1": "カオを見る",
+    "example2": "洗（せん）顔をする",
+    "reading2": "洗（せん）ガンをする"
+  },
+  {
+    "no": 24,
+    "kanji": "汽",
+    "yomi": "キ",
+    "meaning": "き",
+    "example1": "汽車に乗る",
+    "reading1": "キ車に乗る",
+    "example2": "とおくで汽笛（てき）がなる",
+    "reading2": "とおくでキ笛（てき）がなる"
+  },
+  {
+    "no": 25,
+    "kanji": "記",
+    "yomi": "キ、しる",
+    "meaning": "しるす",
+    "example1": "日記を書く",
+    "reading1": "日キを書く",
+    "example2": "名前を記す",
+    "reading2": "名前をシルす"
+  },
+  {
+    "no": 26,
+    "kanji": "帰",
+    "yomi": "キ、かえ",
+    "meaning": "かえる",
+    "example1": "家に帰る",
+    "reading1": "家にカエる",
+    "example2": "帰宅する",
+    "reading2": "キ宅する"
+  },
+  {
+    "no": 27,
+    "kanji": "弓",
+    "yomi": "キュウ、ゆみ",
+    "meaning": "ゆみ",
+    "example1": "弓を引く",
+    "reading1": "ユミを引く",
+    "example2": "弓道をならう",
+    "reading2": "キュウ道をならう"
+  },
+  {
+    "no": 28,
+    "kanji": "牛",
+    "yomi": "ギュウ、うし",
+    "meaning": "うし",
+    "example1": "牛をかう",
+    "reading1": "ウシをかう",
+    "example2": "牛肉（にく）を食べる",
+    "reading2": "ギュウ肉（にく）を食べる"
+  },
+  {
+    "no": 29,
+    "kanji": "魚",
+    "yomi": "ギョ、うお、さかな",
+    "meaning": "さかな",
+    "example1": "魚がおよいでいる",
+    "reading1": "サカナがおよいでいる",
+    "example2": "金魚をかう",
+    "reading2": "キン魚をかう"
+  },
+  {
+    "no": 30,
+    "kanji": "京",
+    "yomi": "キョウ、ケイ",
+    "meaning": "みやこ",
+    "example1": "東京に行く",
+    "reading1": "東キョウに行く",
+    "example2": "はなやかな京の町",
+    "reading2": "はなやかなキョウの町"
+  },
+  {
+    "no": 31,
+    "kanji": "強",
+    "yomi": "キョウ、ゴウ、つよ",
+    "meaning": "つよい",
+    "example1": "力の強い人",
+    "reading1": "力のツヨい人",
+    "example2": "勉強をがんばる",
+    "reading2": "勉キョウをがんばる"
+  },
+  {
+    "no": 32,
+    "kanji": "教",
+    "yomi": "キョウ、おし",
+    "meaning": "おしえる",
+    "example1": "人に教える",
+    "reading1": "人にオシえる",
+    "example2": "教室に入る",
+    "reading2": "キョウ室に入る"
+  },
+  {
+    "no": 33,
+    "kanji": "近",
+    "yomi": "キン、ちか",
+    "meaning": "ちかい",
+    "example1": "近い山",
+    "reading1": "チカい山",
+    "example2": "近所（じょ）であそぶ",
+    "reading2": "キン所（じょ）であそぶ"
+  },
+  {
+    "no": 34,
+    "kanji": "兄",
+    "yomi": "ケイ、キョウ、あに",
+    "meaning": "あに",
+    "example1": "兄とあそぶ",
+    "reading1": "アニとあそぶ",
+    "example2": "兄弟でなかよくする",
+    "reading2": "キョウ弟でなかよくする"
+  },
+  {
+    "no": 35,
+    "kanji": "形",
+    "yomi": "ケイ、ギョウ、かた、かたち",
+    "meaning": "かたち",
+    "example1": "丸い形",
+    "reading1": "丸いカタチ",
+    "example2": "三角形のかみをきる",
+    "reading2": "三角ケイのかみをきる"
+  },
+  {
+    "no": 36,
+    "kanji": "計",
+    "yomi": "ケイ、はか",
+    "meaning": "はかる",
+    "example1": "時計を見る",
+    "reading1": "トケイを見る",
+    "example2": "長さを計る",
+    "reading2": "長さをハカる"
+  },
+  {
+    "no": 37,
+    "kanji": "元",
+    "yomi": "ゲン、ガン、もと",
+    "meaning": "もと",
+    "example1": "元気な子",
+    "reading1": "ゲン気な子",
+    "example2": "道具を元にもどす",
+    "reading2": "道具をモトにもどす"
+  },
+  {
+    "no": 38,
+    "kanji": "言",
+    "yomi": "ゲン、ゴン、い、こと",
+    "meaning": "いう",
+    "example1": "人に言う",
+    "reading1": "人にイう",
+    "example2": "いろいろな方言",
+    "reading2": "いろいろな方ゲン"
+  },
+  {
+    "no": 39,
+    "kanji": "原",
+    "yomi": "ゲン、はら",
+    "meaning": "はら",
+    "example1": "草原をはしる",
+    "reading1": "草ゲンをはしる",
+    "example2": "原っぱであそぶ",
+    "reading2": "ハラっぱであそぶ"
+  },
+  {
+    "no": 40,
+    "kanji": "戸",
+    "yomi": "コ、と",
+    "meaning": "と",
+    "example1": "戸をあける",
+    "reading1": "トをあける",
+    "example2": "戸外へ出かける",
+    "reading2": "コ外へ出かける"
+  },
+  {
+    "no": 41,
+    "kanji": "古",
+    "yomi": "コ、ふる",
+    "meaning": "ふるい",
+    "example1": "古い本をさがす",
+    "reading1": "フルい本をさがす",
+    "example2": "中古の車",
+    "reading2": "中コの車"
+  },
+  {
+    "no": 42,
+    "kanji": "午",
+    "yomi": "ゴ",
+    "meaning": "うま",
+    "example1": "午前中はいそがしい",
+    "reading1": "ゴ前中はいそがしい",
+    "example2": "午後に雨がふる",
+    "reading2": "ゴ後に雨がふる"
+  },
+  {
+    "no": 43,
+    "kanji": "後",
+    "yomi": "ゴ、コウ、のち、うし、あと",
+    "meaning": "あと",
+    "example1": "学校の後",
+    "reading1": "学校のアト",
+    "example2": "食後にはをみがく",
+    "reading2": "食ゴにはをみがく"
+  },
+  {
+    "no": 44,
+    "kanji": "語",
+    "yomi": "ゴ、かた",
+    "meaning": "かたる",
+    "example1": "国語の本",
+    "reading1": "国ゴの本",
+    "example2": "物語をよむ",
+    "reading2": "物ガタリをよむ"
+  },
+  {
+    "no": 45,
+    "kanji": "工",
+    "yomi": "コウ、ク",
+    "meaning": "たくみ",
+    "example1": "工作する",
+    "reading1": "コウ作する",
+    "example2": "工夫（ふう）して作る",
+    "reading2": "ク夫（ふう）して作る"
+  },
+  {
+    "no": 46,
+    "kanji": "公",
+    "yomi": "コウ、おおやけ",
+    "meaning": "おおやけ",
+    "example1": "公園に行く",
+    "reading1": "コウ園に行く",
+    "example2": "本の主人（しゅじん）公",
+    "reading2": "本の主人（しゅじん）コウ"
+  },
+  {
+    "no": 47,
+    "kanji": "広",
+    "yomi": "コウ、ひろ",
+    "meaning": "ひろい",
+    "example1": "広い家",
+    "reading1": "ヒロい家",
+    "example2": "しんぶんの広告（こく）",
+    "reading2": "しんぶんのコウ告（こく）"
+  },
+  {
+    "no": 48,
+    "kanji": "交",
+    "yomi": "コウ、まじ、か",
+    "meaning": "まじわる",
+    "example1": "道が交わる",
+    "reading1": "道がマジわる",
+    "example2": "近くの交番（ばん）",
+    "reading2": "近くのコウ番（ばん）"
+  },
+  {
+    "no": 49,
+    "kanji": "光",
+    "yomi": "コウ、ひか",
+    "meaning": "ひかる",
+    "example1": "よぞらに光る星",
+    "reading1": "よぞらにヒカる星",
+    "example2": "日光をあびる",
+    "reading2": "日コウをあびる"
+  },
+  {
+    "no": 50,
+    "kanji": "考",
+    "yomi": "コウ、かんが",
+    "meaning": "かんがえる",
+    "example1": "よく考える",
+    "reading1": "よくカンガえる",
+    "example2": "本を参（さん）考にする",
+    "reading2": "本を参（さん）コウにする"
+  },
+  {
+    "no": 51,
+    "kanji": "行",
+    "yomi": "コウ、ギョウ、い、ゆ、おこな",
+    "meaning": "いく",
+    "example1": "学校に行く",
+    "reading1": "学校にイく",
+    "example2": "学校の行事（じ）",
+    "reading2": "学校のギョウ事（じ）"
+  },
+  {
+    "no": 52,
+    "kanji": "高",
+    "yomi": "コウ、たか",
+    "meaning": "たかい",
+    "example1": "高い山",
+    "reading1": "タカい山",
+    "example2": "高学年のお兄さん",
+    "reading2": "コウ学年のお兄さん"
+  },
+  {
+    "no": 53,
+    "kanji": "黄",
+    "yomi": "コウ、オウ、き",
+    "meaning": "き",
+    "example1": "黄色い花",
+    "reading1": "キ色い花",
+    "example2": "黄金のメダル",
+    "reading2": "オウ金のメダル"
+  },
+  {
+    "no": 54,
+    "kanji": "合",
+    "yomi": "ゴウ、ガッ、カッ、あ",
+    "meaning": "あう",
+    "example1": "手を合わせる",
+    "reading1": "手をアわせる",
+    "example2": "学校に集合する",
+    "reading2": "がっこうにシュウゴウする"
+  },
+  {
+    "no": 55,
+    "kanji": "谷",
+    "yomi": "コク、たに",
+    "meaning": "たに",
+    "example1": "深い谷がある",
+    "reading1": "ふかいタニがある",
+    "example2": "谷川で遊ぶ",
+    "reading2": "タニがわであそぶ"
+  },
+  {
+    "no": 56,
+    "kanji": "国",
+    "yomi": "コク、くに",
+    "meaning": "くに",
+    "example1": "国に帰る",
+    "reading1": "クニにかえる",
+    "example2": "外国に行く",
+    "reading2": "ガイコクにいく"
+  },
+  {
+    "no": 57,
+    "kanji": "黒",
+    "yomi": "コク、くろ",
+    "meaning": "くろい",
+    "example1": "黒い犬が走る",
+    "reading1": "クロいいぬがはしる",
+    "example2": "黒板に書く",
+    "reading2": "コクバンにかく"
+  },
+  {
+    "no": 58,
+    "kanji": "今",
+    "yomi": "コン、キン、いま",
+    "meaning": "いま",
+    "example1": "今、起きる",
+    "reading1": "イマ、おきる",
+    "example2": "今週の予定",
+    "reading2": "コンシュウのよてい"
+  },
+  {
+    "no": 59,
+    "kanji": "才",
+    "yomi": "サイ",
+    "meaning": "さい",
+    "example1": "二才になる",
+    "reading1": "ニサイになる",
+    "example2": "かれは天才だ",
+    "reading2": "かれはテンサイだ"
+  },
+  {
+    "no": 60,
+    "kanji": "細",
+    "yomi": "サイ、ほそ",
+    "meaning": "ほそい",
+    "example1": "細い糸を使う",
+    "reading1": "ホソいいとをつかう",
+    "example2": "細かいお金",
+    "reading2": "コマかいおかね"
+  },
+  {
+    "no": 61,
+    "kanji": "作",
+    "yomi": "サク、サ、つく",
+    "meaning": "つくる",
+    "example1": "作文を書く",
+    "reading1": "サクブンをかく",
+    "example2": "野菜を作る",
+    "reading2": "やさいをツクる"
+  },
+  {
+    "no": 62,
+    "kanji": "算",
+    "yomi": "サン",
+    "meaning": "かぞえる",
+    "example1": "算数の本",
+    "reading1": "サンスウのほん",
+    "example2": "計算をする",
+    "reading2": "ケイサンをする"
+  },
+  {
+    "no": 63,
+    "kanji": "止",
+    "yomi": "シ、と",
+    "meaning": "とまる",
+    "example1": "車が止まる",
+    "reading1": "くるまがトまる",
+    "example2": "中止にする",
+    "reading2": "チュウシにする"
+  },
+  {
+    "no": 64,
+    "kanji": "市",
+    "yomi": "シ、いち",
+    "meaning": "いち",
+    "example1": "朝市に行く",
+    "reading1": "あさイチにいく",
+    "example2": "市長さん",
+    "reading2": "シチョウさん"
+  },
+  {
+    "no": 65,
+    "kanji": "矢",
+    "yomi": "シ、や",
+    "meaning": "や",
+    "example1": "矢を放つ",
+    "reading1": "ヤをはなつ",
+    "example2": "弓矢を持つ",
+    "reading2": "ゆみヤをもつ"
+  },
+  {
+    "no": 66,
+    "kanji": "姉",
+    "yomi": "シ、あね",
+    "meaning": "あね",
+    "example1": "お姉さん",
+    "reading1": "おネエさん",
+    "example2": "仲良し姉妹",
+    "reading2": "なかよしシマイ"
+  },
+  {
+    "no": 67,
+    "kanji": "思",
+    "yomi": "シ、おも",
+    "meaning": "おもう",
+    "example1": "家を思う",
+    "reading1": "いえをオモう",
+    "example2": "思い出す",
+    "reading2": "オモいだす"
+  },
+  {
+    "no": 68,
+    "kanji": "紙",
+    "yomi": "シ、かみ",
+    "meaning": "かみ",
+    "example1": "手紙を書く",
+    "reading1": "てガミをかく",
+    "example2": "折り紙をする",
+    "reading2": "おりガミをする"
+  },
+  {
+    "no": 69,
+    "kanji": "寺",
+    "yomi": "ジ、てら",
+    "meaning": "てら",
+    "example1": "お寺に行く",
+    "reading1": "おテラにいく",
+    "example2": "山寺を見る",
+    "reading2": "やまデラをみる"
+  },
+  {
+    "no": 70,
+    "kanji": "自",
+    "yomi": "ジ、シ、みずか",
+    "meaning": "みずから",
+    "example1": "自分でやる",
+    "reading1": "ジブンでやる",
+    "example2": "自動車",
+    "reading2": "ジドウシャ"
+  },
+  {
+    "no": 71,
+    "kanji": "時",
+    "yomi": "ジ、とき",
+    "meaning": "とき",
+    "example1": "時計を見る",
+    "reading1": "トケイをみる",
+    "example2": "時間を守る",
+    "reading2": "ジカンをまもる"
+  },
+  {
+    "no": 72,
+    "kanji": "室",
+    "yomi": "シツ、むろ",
+    "meaning": "むろ",
+    "example1": "教室に入る",
+    "reading1": "キョウシツにはいる",
+    "example2": "図書室に行く",
+    "reading2": "トショシツにいく"
+  },
+  {
+    "no": 73,
+    "kanji": "社",
+    "yomi": "シャ、やしろ",
+    "meaning": "やしろ",
+    "example1": "会社に行く",
+    "reading1": "カイシャにいく",
+    "example2": "神社に行く",
+    "reading2": "ジンジャにいく"
+  },
+  {
+    "no": 74,
+    "kanji": "弱",
+    "yomi": "ジャク、よわ",
+    "meaning": "よわい",
+    "example1": "体が弱い",
+    "reading1": "からだがヨワい",
+    "example2": "弱点を知る",
+    "reading2": "ジャクテンをシる"
+  },
+  {
+    "no": 75,
+    "kanji": "首",
+    "yomi": "シュ、くび",
+    "meaning": "くび",
+    "example1": "手首を回す",
+    "reading1": "てクビをまわす",
+    "example2": "首を長くする",
+    "reading2": "クビをながくする"
+  },
+  {
+    "no": 76,
+    "kanji": "秋",
+    "yomi": "シュウ、あき",
+    "meaning": "あき",
+    "example1": "秋風が吹く",
+    "reading1": "アキかぜがふく",
+    "example2": "秋分の日",
+    "reading2": "シュウブンのひ"
+  },
+  {
+    "no": 77,
+    "kanji": "週",
+    "yomi": "シュウ",
+    "meaning": "しゅう",
+    "example1": "今週の予定",
+    "reading1": "コンシュウのよてい",
+    "example2": "来週、遊ぶ",
+    "reading2": "ライシュウ、あそぶ"
+  },
+  {
+    "no": 78,
+    "kanji": "春",
+    "yomi": "シュン、はる",
+    "meaning": "はる",
+    "example1": "春の花が咲く",
+    "reading1": "ハルのはながさく",
+    "example2": "青春の思い出",
+    "reading2": "セイシュンのおもいで"
+  },
+  {
+    "no": 79,
+    "kanji": "書",
+    "yomi": "ショ、か",
+    "meaning": "かく",
+    "example1": "字を書く",
+    "reading1": "じをカく",
+    "example2": "読書をする",
+    "reading2": "ドクショをする"
+  },
+  {
+    "no": 80,
+    "kanji": "少",
+    "yomi": "ショウ、すく、すこ",
+    "meaning": "すくない",
+    "example1": "少し食べる",
+    "reading1": "スコしたべる",
+    "example2": "少年野球",
+    "reading2": "ショウネンヤキュウ"
+  },
+  {
+    "no": 81,
+    "kanji": "場",
+    "yomi": "ジョウ、ば",
+    "meaning": "ば",
+    "example1": "広い場所",
+    "reading1": "ひろいバショ",
+    "example2": "広場で遊ぶ",
+    "reading2": "ヒロバであそぶ"
+  },
+  {
+    "no": 82,
+    "kanji": "色",
+    "yomi": "ショク、シキ、いろ",
+    "meaning": "いろ",
+    "example1": "色紙に書く",
+    "reading1": "シキシにかく",
+    "example2": "景色が良い",
+    "reading2": "ケシキがよい"
+  },
+  {
+    "no": 83,
+    "kanji": "食",
+    "yomi": "ショク、ジキ、た、く",
+    "meaning": "たべる",
+    "example1": "ご飯を食べる",
+    "reading1": "ごはんをタべる",
+    "example2": "食事をする",
+    "reading2": "ショクジをする"
+  },
+  {
+    "no": 84,
+    "kanji": "心",
+    "yomi": "シン、こころ",
+    "meaning": "こころ",
+    "example1": "心が温かい",
+    "reading1": "ココロがあたたかい",
+    "example2": "安心する",
+    "reading2": "アンシンする"
+  },
+  {
+    "no": 85,
+    "kanji": "新",
+    "yomi": "シン、あたら、にい",
+    "meaning": "あたらしい",
+    "example1": "新しい本",
+    "reading1": "アタラしいほん",
+    "example2": "新聞を読む",
+    "reading2": "シンブンをよむ"
+  },
+  {
+    "no": 86,
+    "kanji": "親",
+    "yomi": "シン、おや、した",
+    "meaning": "おや",
+    "example1": "親切な人",
+    "reading1": "シンセツなひと",
+    "example2": "親友と遊ぶ",
+    "reading2": "シンユウとあそぶ"
+  },
+  {
+    "no": 87,
+    "kanji": "図",
+    "yomi": "ズ、ト",
+    "meaning": "ず",
+    "example1": "地図を見る",
+    "reading1": "チズをみる",
+    "example2": "図書室",
+    "reading2": "トショシツ"
+  },
+  {
+    "no": 88,
+    "kanji": "数",
+    "yomi": "スウ、ス、かず、かぞ",
+    "meaning": "かず",
+    "example1": "数を数える",
+    "reading1": "カズをカゾえる",
+    "example2": "算数をする",
+    "reading2": "サンスウをする"
+  },
+  {
+    "no": 89,
+    "kanji": "西",
+    "yomi": "セイ、サイ、にし",
+    "meaning": "にし",
+    "example1": "西日が当たる",
+    "reading1": "ニシビがあたる",
+    "example2": "関西に行く",
+    "reading2": "カンサイにいく"
+  },
+  {
+    "no": 90,
+    "kanji": "声",
+    "yomi": "セイ、ショウ、こえ、こわ",
+    "meaning": "こえ",
+    "example1": "大きい声",
+    "reading1": "おおきいコエ",
+    "example2": "きれいな歌声",
+    "reading2": "きれいなうたゴエ"
+  },
+  {
+    "no": 91,
+    "kanji": "星",
+    "yomi": "セイ、ショウ、ほし",
+    "meaning": "ほし",
+    "example1": "流れ星を見る",
+    "reading1": "ながれボシをみる",
+    "example2": "火星に行く",
+    "reading2": "カセイにいく"
+  },
+  {
+    "no": 92,
+    "kanji": "晴",
+    "yomi": "セイ、は",
+    "meaning": "はれる",
+    "example1": "空が晴れる",
+    "reading1": "そらがハれる",
+    "example2": "今日は晴天だ",
+    "reading2": "きょうはセイテンだ"
+  },
+  {
+    "no": 93,
+    "kanji": "切",
+    "yomi": "セツ、サイ、き",
+    "meaning": "きる",
+    "example1": "紙を切る",
+    "reading1": "かみをキる",
+    "example2": "親切にする",
+    "reading2": "シンセツにする"
+  },
+  {
+    "no": 94,
+    "kanji": "雪",
+    "yomi": "セツ、ゆき",
+    "meaning": "ゆき",
+    "example1": "雪が降る",
+    "reading1": "ユキがふる",
+    "example2": "大雪が降る",
+    "reading2": "オオユキがふる"
+  },
+  {
+    "no": 95,
+    "kanji": "船",
+    "yomi": "セン、ふね、ふな",
+    "meaning": "ふね",
+    "example1": "船に乗る",
+    "reading1": "フネにのる",
+    "example2": "船長さん",
+    "reading2": "センチョウさん"
+  },
+  {
+    "no": 96,
+    "kanji": "線",
+    "yomi": "セン",
+    "meaning": "せん",
+    "example1": "直線を引く",
+    "reading1": "チョクセンをひく",
+    "example2": "山手線に乗る",
+    "reading2": "やまのてセンにのる"
+  },
+  {
+    "no": 97,
+    "kanji": "前",
+    "yomi": "ゼン、まえ",
+    "meaning": "まえ",
+    "example1": "名前を書く",
+    "reading1": "なマエをかく",
+    "example2": "午前中遊ぶ",
+    "reading2": "ゴゼンチュウあそぶ"
+  },
+  {
+    "no": 98,
+    "kanji": "組",
+    "yomi": "ソ、くみ、く",
+    "meaning": "くみ",
+    "example1": "赤組が勝つ",
+    "reading1": "あかグミがかつ",
+    "example2": "番組を見る",
+    "reading2": "バングミをみる"
+  },
+  {
+    "no": 99,
+    "kanji": "走",
+    "yomi": "ソウ、はし",
+    "meaning": "はしる",
+    "example1": "外を走る",
+    "reading1": "そとをハシる",
+    "example2": "競走する",
+    "reading2": "キョウソウする"
+  },
+  {
+    "no": 100,
+    "kanji": "多",
+    "yomi": "タ、おお",
+    "meaning": "おおい",
+    "example1": "とても人が多い",
+    "reading1": "とてもひとがオオい",
+    "example2": "多数決をとる",
+    "reading2": "タスウケツをとる"
+  },
+  {
+    "no": 101,
+    "kanji": "太",
+    "yomi": "タイ、タ、ふと",
+    "meaning": "ふとい",
+    "example1": "太い木がある",
+    "reading1": "フトいきがある",
+    "example2": "太陽が光る",
+    "reading2": "タイヨウがひかる"
+  },
+  {
+    "no": 102,
+    "kanji": "体",
+    "yomi": "タイ、テイ、からだ",
+    "meaning": "からだ",
+    "example1": "体を動かす",
+    "reading1": "カラダをうごかす",
+    "example2": "体育の時間",
+    "reading2": "タイイクのジカン"
+  },
+  {
+    "no": 103,
+    "kanji": "台",
+    "yomi": "ダイ、タイ",
+    "meaning": "だい",
+    "example1": "台所に立つ",
+    "reading1": "ダイどころにたつ",
+    "example2": "台風が来る",
+    "reading2": "タイフウがくる"
+  },
+  {
+    "no": 104,
+    "kanji": "地",
+    "yomi": "チ、ジ",
+    "meaning": "ち",
+    "example1": "地面を掘る",
+    "reading1": "ジメンをほる",
+    "example2": "地図を見る",
+    "reading2": "チズをみる"
+  },
+  {
+    "no": 105,
+    "kanji": "池",
+    "yomi": "チ、いけ",
+    "meaning": "いけ",
+    "example1": "広い池で泳ぐ",
+    "reading1": "ひろいイケでおよぐ",
+    "example2": "電池を買う",
+    "reading2": "デンチをかう"
+  },
+  {
+    "no": 106,
+    "kanji": "知",
+    "yomi": "チ、シ、し",
+    "meaning": "しる",
+    "example1": "名前を知る",
+    "reading1": "なまえをシる",
+    "example2": "知事を見る",
+    "reading2": "チジをみる"
+  },
+  {
+    "no": 107,
+    "kanji": "茶",
+    "yomi": "チャ、サ",
+    "meaning": "ちゃ",
+    "example1": "お茶を飲む",
+    "reading1": "おチャをのむ",
+    "example2": "茶色の毛の犬",
+    "reading2": "チャイロのけのいぬ"
+  },
+  {
+    "no": 108,
+    "kanji": "昼",
+    "yomi": "チュウ、ひる",
+    "meaning": "ひる",
+    "example1": "昼寝をする",
+    "reading1": "ヒルネをする",
+    "example2": "昼食を食べる",
+    "reading2": "チュウショクをたべる"
+  },
+  {
+    "no": 109,
+    "kanji": "長",
+    "yomi": "チョウ、なが",
+    "meaning": "ながい",
+    "example1": "髪の毛が長い",
+    "reading1": "かみのけがナガい",
+    "example2": "校長先生の話",
+    "reading2": "コウチョウセンセイのはなし"
+  },
+  {
+    "no": 110,
+    "kanji": "鳥",
+    "yomi": "チョウ、とり",
+    "meaning": "とり",
+    "example1": "小鳥が鳴く",
+    "reading1": "コトリがナく",
+    "example2": "白鳥を見る",
+    "reading2": "ハクチョウをみる"
+  },
+  {
+    "no": 111,
+    "kanji": "朝",
+    "yomi": "チョウ、あさ",
+    "meaning": "あさ",
+    "example1": "朝日を見る",
+    "reading1": "アサヒをみる",
+    "example2": "朝食を食べる",
+    "reading2": "チョウショクをたべる"
+  },
+  {
+    "no": 112,
+    "kanji": "直",
+    "yomi": "チョク、ジキ、ただ、なお",
+    "meaning": "ただちに",
+    "example1": "屋根を直す",
+    "reading1": "やねをナオす",
+    "example2": "正直に話す",
+    "reading2": "ショウジキにはなす"
+  },
+  {
+    "no": 113,
+    "kanji": "通",
+    "yomi": "ツウ、とお、かよ",
+    "meaning": "とおる",
+    "example1": "学校に通う",
+    "reading1": "がっこうにカヨう",
+    "example2": "交通ルール",
+    "reading2": "コウツウルール"
+  },
+  {
+    "no": 114,
+    "kanji": "弟",
+    "yomi": "テイ、ダイ、おとうと",
+    "meaning": "おとうと",
+    "example1": "兄弟仲良く",
+    "reading1": "キョウダイなかよく",
+    "example2": "弟と一緒に遊ぶ",
+    "reading2": "オトウトといっしょにあそぶ"
+  },
+  {
+    "no": 115,
+    "kanji": "店",
+    "yomi": "テン、みせ",
+    "meaning": "みせ",
+    "example1": "あの店に行く",
+    "reading1": "あのミセにいく",
+    "example2": "書店で買う",
+    "reading2": "ショテンでかう"
+  },
+  {
+    "no": 116,
+    "kanji": "点",
+    "yomi": "テン",
+    "meaning": "てん",
+    "example1": "点数が良い",
+    "reading1": "テンスウがよい",
+    "example2": "百点をとる",
+    "reading2": "ヒャクテンをとる"
+  },
+  {
+    "no": 117,
+    "kanji": "電",
+    "yomi": "デン",
+    "meaning": "いなずま",
+    "example1": "電車に乗る",
+    "reading1": "デンシャにのる",
+    "example2": "電話をする",
+    "reading2": "デンワをする"
+  },
+  {
+    "no": 118,
+    "kanji": "刀",
+    "yomi": "トウ、かたな",
+    "meaning": "かたな",
+    "example1": "竹刀を持つ",
+    "reading1": "シナイをもつ",
+    "example2": "日本刀を見る",
+    "reading2": "ニホントウをみる"
+  },
+  {
+    "no": 119,
+    "kanji": "冬",
+    "yomi": "トウ、ふゆ",
+    "meaning": "ふゆ",
+    "example1": "楽しい冬休み",
+    "reading1": "たのしいフユやすみ",
+    "example2": "クマの冬眠",
+    "reading2": "クマのトウミン"
+  },
+  {
+    "no": 120,
+    "kanji": "当",
+    "yomi": "トウ、あ",
+    "meaning": "あたる",
+    "example1": "ボールが当たる",
+    "reading1": "ボールがアたる",
+    "example2": "それは本当の話",
+    "reading2": "それはホントウのはなし"
+  },
+  {
+    "no": 121,
+    "kanji": "東",
+    "yomi": "トウ、ひがし",
+    "meaning": "ひがし",
+    "example1": "東の方へ行く",
+    "reading1": "ヒガシのほうへいく",
+    "example2": "東京に行く",
+    "reading2": "トウキョウにいく"
+  },
+  {
+    "no": 122,
+    "kanji": "答",
+    "yomi": "トウ、こた",
+    "meaning": "こたえ",
+    "example1": "質問に答える",
+    "reading1": "しつもんにコタえる",
+    "example2": "クイズの回答",
+    "reading2": "クイズのカイトウ"
+  },
+  {
+    "no": 123,
+    "kanji": "頭",
+    "yomi": "トウ、ズ、あたま、かしら",
+    "meaning": "あたま",
+    "example1": "とても頭が良い",
+    "reading1": "とてもアタマがよい",
+    "example2": "頭痛がする",
+    "reading2": "ズツウがする"
+  },
+  {
+    "no": 124,
+    "kanji": "同",
+    "yomi": "ドウ、おな",
+    "meaning": "おなじ",
+    "example1": "みんな同じ色",
+    "reading1": "みんなオナじいろ",
+    "example2": "同時に着く",
+    "reading2": "ドウジにつく"
+  },
+  {
+    "no": 125,
+    "kanji": "道",
+    "yomi": "ドウ、トウ、みち",
+    "meaning": "みち",
+    "example1": "広い道を歩く",
+    "reading1": "ひろいミチをあるく",
+    "example2": "歩道を歩く",
+    "reading2": "ホドウをあるく"
+  },
+  {
+    "no": 126,
+    "kanji": "読",
+    "yomi": "ドク、トク、トウ、よ",
+    "meaning": "よむ",
+    "example1": "好きな本を読む",
+    "reading1": "すきなほんをヨむ",
+    "example2": "読書を楽しむ",
+    "reading2": "ドクショをたのしむ"
+  },
+  {
+    "no": 127,
+    "kanji": "内",
+    "yomi": "ナイ、ダイ、うち",
+    "meaning": "うち",
+    "example1": "白線の内側",
+    "reading1": "はくセンのウチガワ",
+    "example2": "道を案内する",
+    "reading2": "みちをアンナイする"
+  },
+  {
+    "no": 128,
+    "kanji": "南",
+    "yomi": "ナン、ナ、みなみ",
+    "meaning": "みなみ",
+    "example1": "南の島へ行く",
+    "reading1": "ミナミのしまへいく",
+    "example2": "南極に行く",
+    "reading2": "ナンキョクにいく"
+  },
+  {
+    "no": 129,
+    "kanji": "肉",
+    "yomi": "ニク",
+    "meaning": "にく",
+    "example1": "肉を食べる",
+    "reading1": "ニクをたべる",
+    "example2": "牛肉を買う",
+    "reading2": "ギュウニクをかう"
+  },
+  {
+    "no": 130,
+    "kanji": "馬",
+    "yomi": "バ、うま、マ",
+    "meaning": "うま",
+    "example1": "白い馬に乗る",
+    "reading1": "しろいウマにのる",
+    "example2": "競馬を見る",
+    "reading2": "ケイバをみる"
+  },
+  {
+    "no": 131,
+    "kanji": "売",
+    "yomi": "バイ、う",
+    "meaning": "うる",
+    "example1": "野菜を売る",
+    "reading1": "やさいをウる",
+    "example2": "売店に行く",
+    "reading2": "バイテンにいく"
+  },
+  {
+    "no": 132,
+    "kanji": "買",
+    "yomi": "バイ、か",
+    "meaning": "かう",
+    "example1": "お菓子を買う",
+    "reading1": "おかしをカう",
+    "example2": "買い物に行く",
+    "reading2": "カいものにいく"
+  },
+  {
+    "no": 133,
+    "kanji": "麦",
+    "yomi": "バク、むぎ",
+    "meaning": "むぎ",
+    "example1": "冷たい麦茶",
+    "reading1": "つめたいムギチャ",
+    "example2": "小麦粉を使う",
+    "reading2": "コムギコをつかう"
+  },
+  {
+    "no": 134,
+    "kanji": "半",
+    "yomi": "ハン",
+    "meaning": "なかば",
+    "example1": "半分こする",
+    "reading1": "ハンブンこする",
+    "example2": "半月が見える",
+    "reading2": "ハンツキがみえる"
+  },
+  {
+    "no": 135,
+    "kanji": "番",
+    "yomi": "バン",
+    "meaning": "つがい",
+    "example1": "一番になる",
+    "reading1": "イチバンになる",
+    "example2": "番号を書く",
+    "reading2": "バンゴウをかく"
+  },
+  {
+    "no": 136,
+    "kanji": "父",
+    "yomi": "フ、ちち",
+    "meaning": "ちち",
+    "example1": "お父さんと遊ぶ",
+    "reading1": "おトウさんとあそぶ",
+    "example2": "父母に会う",
+    "reading2": "フボにあう"
+  },
+  {
+    "no": 137,
+    "kanji": "風",
+    "yomi": "フウ、フ、かぜ、かざ",
+    "meaning": "かぜ",
+    "example1": "強い風が吹く",
+    "reading1": "つよいカゼがふく",
+    "example2": "お風呂に入る",
+    "reading2": "おフロにはいる"
+  },
+  {
+    "no": 138,
+    "kanji": "分",
+    "yomi": "ブン、フン、ブ、わ",
+    "meaning": "わける",
+    "example1": "意味が分かる",
+    "reading1": "いみがワカル",
+    "example2": "自分でやる",
+    "reading2": "ジブンでやる"
+  },
+  {
+    "no": 139,
+    "kanji": "聞",
+    "yomi": "ブン、モン、き、きこ",
+    "meaning": "きく",
+    "example1": "先生の話を聞く",
+    "reading1": "せんせいのはなしをキく",
+    "example2": "新聞を読む",
+    "reading2": "シンブンをよむ"
+  },
+  {
+    "no": 140,
+    "kanji": "米",
+    "yomi": "ベイ、マイ、こめ",
+    "meaning": "こめ",
+    "example1": "美味しい米",
+    "reading1": "おいしいコメ",
+    "example2": "新米を食べる",
+    "reading2": "シンマイをたべる"
+  },
+  {
+    "no": 141,
+    "kanji": "歩",
+    "yomi": "ホ、ブ、フ、ある、あゆ",
+    "meaning": "あるく",
+    "example1": "外を歩いていく",
+    "reading1": "そとをアルいていく",
+    "example2": "散歩をする",
+    "reading2": "サンポをする"
+  },
+  {
+    "no": 142,
+    "kanji": "母",
+    "yomi": "ボ、はは",
+    "meaning": "はは",
+    "example1": "お母さんと話す",
+    "reading1": "おカアさんとはなす",
+    "example2": "父母と話す",
+    "reading2": "フボとはなす"
+  },
+  {
+    "no": 143,
+    "kanji": "方",
+    "yomi": "ホウ、かた、がた",
+    "meaning": "かた",
+    "example1": "夕方に帰る",
+    "reading1": "ユウガタにかえる",
+    "example2": "方法を考える",
+    "reading2": "ホウホウをかんがえる"
+  },
+  {
+    "no": 144,
+    "kanji": "北",
+    "yomi": "ホク、きた",
+    "meaning": "きた",
+    "example1": "北へ向かう",
+    "reading1": "キタヘむかう",
+    "example2": "北海道に行く",
+    "reading2": "ホッカイドウにいく"
+  },
+  {
+    "no": 145,
+    "kanji": "毎",
+    "yomi": "マイ",
+    "meaning": "ごと",
+    "example1": "毎日走っている",
+    "reading1": "マイニチはしっている",
+    "example2": "毎週見ている",
+    "reading2": "マイシュウみている"
+  },
+  {
+    "no": 146,
+    "kanji": "妹",
+    "yomi": "マイ、いもうと",
+    "meaning": "いもうと",
+    "example1": "妹と仲良くする",
+    "reading1": "イモウトとなかよくする",
+    "example2": "姉妹で遊ぶ",
+    "reading2": "シマイであそぶ"
+  },
+  {
+    "no": 147,
+    "kanji": "万",
+    "yomi": "マン、バン",
+    "meaning": "よろず",
+    "example1": "一万円を使う",
+    "reading1": "イチマンエンをつかう",
+    "example2": "万国旗を見る",
+    "reading2": "バンコクキをみる"
+  },
+  {
+    "no": 148,
+    "kanji": "明",
+    "yomi": "メイ、ミョウ、あか、あ",
+    "meaning": "あかるい",
+    "example1": "明るい部屋",
+    "reading1": "アカるいへや",
+    "example2": "すごい発明",
+    "reading2": "すごいハツメイ"
+  },
+  {
+    "no": 149,
+    "kanji": "鳴",
+    "yomi": "メイ、な",
+    "meaning": "なく",
+    "example1": "虫が鳴いている",
+    "reading1": "むしがナいている",
+    "example2": "悲鳴をあげる",
+    "reading2": "ヒメイをあげる"
+  },
+  {
+    "no": 150,
+    "kanji": "毛",
+    "yomi": "モウ、け",
+    "meaning": "け",
+    "example1": "毛糸で編む",
+    "reading1": "ケイトであむ",
+    "example2": "毛布で寝る",
+    "reading2": "モウフでねる"
+  },
+  {
+    "no": 151,
+    "kanji": "門",
+    "yomi": "モン、かど",
+    "meaning": "かど",
+    "example1": "門をくぐる",
+    "reading1": "モンをくぐる",
+    "example2": "校門を出る",
+    "reading2": "コウモンをでる"
+  },
+  {
+    "no": 152,
+    "kanji": "夜",
+    "yomi": "ヤ、よる",
+    "meaning": "よる",
+    "example1": "静かな夜になる",
+    "reading1": "しずかなヨルになる",
+    "example2": "夜中に起きる",
+    "reading2": "ヨナカにおきる"
+  },
+  {
+    "no": 153,
+    "kanji": "野",
+    "yomi": "ヤ、の",
+    "meaning": "の",
+    "example1": "野原を走る",
+    "reading1": "ノハラをはしる",
+    "example2": "野球をする",
+    "reading2": "ヤキュウをする"
+  },
+  {
+    "no": 154,
+    "kanji": "友",
+    "yomi": "ユウ、とも",
+    "meaning": "とも",
+    "example1": "友達と遊ぶ",
+    "reading1": "トモダチとあそぶ",
+    "example2": "友情を育む",
+    "reading2": "ユウジョウをはぐくむ"
+  },
+  {
+    "no": 155,
+    "kanji": "用",
+    "yomi": "ヨウ、もち",
+    "meaning": "もちいる",
+    "example1": "用事がある",
+    "reading1": "ヨウジがある",
+    "example2": "用意をする",
+    "reading2": "ヨウイをする"
+  },
+  {
+    "no": 156,
+    "kanji": "曜",
+    "yomi": "ヨウ",
+    "meaning": "ひ",
+    "example1": "日曜日に遊ぶ",
+    "reading1": "ニチヨウビにあそぶ",
+    "example2": "次は木曜日",
+    "reading2": "つぎはモクヨウビ"
+  },
+  {
+    "no": 157,
+    "kanji": "来",
+    "yomi": "ライ、く、きた",
+    "meaning": "くる",
+    "example1": "もうすぐ春が来る",
+    "reading1": "もうすぐハルがクる",
+    "example2": "来年になる",
+    "reading2": "ライネンになる"
+  },
+  {
+    "no": 158,
+    "kanji": "里",
+    "yomi": "リ、さと",
+    "meaning": "さと",
+    "example1": "里に下りる",
+    "reading1": "サトにおりる",
+    "example2": "里帰りする",
+    "reading2": "サトガえりする"
+  },
+  {
+    "no": 159,
+    "kanji": "理",
+    "yomi": "リ",
+    "meaning": "ことわり",
+    "example1": "理科の実験",
+    "reading1": "リカのジッケン",
+    "example2": "理由を話す",
+    "reading2": "リユウをはなす"
+  },
+  {
+    "no": 160,
+    "kanji": "話",
+    "yomi": "ワ、はな、はなし",
+    "meaning": "はなす",
+    "example1": "楽しく話す",
+    "reading1": "たのしくハナす",
+    "example2": "電話に出る",
+    "reading2": "デンワにでる"
+  }
+]

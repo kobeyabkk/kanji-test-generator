@@ -1,0 +1,433 @@
+/* ==========================================
+   グローバル設定
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ==========================================
+   ヘッダー
+   ========================================== */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* ==========================================
+   コントロール（上部）
+   ========================================== */
+.controls-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch; /* 高さを揃える */
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.pen-settings {
+    display: flex;
+    flex-direction: column; /* 縦並びにする */
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+.pen-settings label {
+    font-weight: 500;
+    color: #333;
+}
+
+#pen-width {
+    width: 120px;
+}
+
+#pen-width-value {
+    min-width: 40px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+#pen-color {
+    width: 50px;
+    height: 35px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    flex: 1; /* 残りのスペースを使う */
+}
+
+.action-buttons .btn {
+    flex: 1; /* 3つのボタンが等幅になる */
+    padding: 20px 10px; /* 縦長にする */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80px; /* 最小高さを設定 */
+    white-space: normal; /* テキストの折り返しを許可 */
+    line-height: 1.4;
+}
+
+/* ==========================================
+   ボタンスタイル
+   ========================================== */
+.btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+.btn-outline {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-outline:hover {
+    background: #667eea;
+    color: white;
+}
+
+/* ==========================================
+   練習画面（右側の練習欄のみ）
+   ========================================== */
+.practice-screen {
+    background: white;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    min-height: 600px;
+}
+
+.practice-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    direction: rtl; /* 右から左へ */
+}
+
+.practice-item {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    background: white;
+    direction: ltr; /* アイテム内部は左から右へ */
+}
+
+.practice-kanji-header {
+    text-align: center;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.practice-kanji-large {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.practice-yomi {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.practice-boxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.practice-canvas-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: white;
+}
+
+.practice-bg-canvas,
+.practice-guide-canvas,
+.practice-draw-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+}
+
+.practice-bg-canvas {
+    z-index: 0;
+    pointer-events: none;
+}
+
+.practice-guide-canvas {
+    z-index: 1;
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+.practice-draw-canvas {
+    z-index: 2;
+    cursor: crosshair;
+}
+
+/* ==========================================
+   テスト画面（左側のテスト欄のみ）
+   ========================================== */
+.test-screen {
+    background: white;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    min-height: 600px;
+}
+
+.test-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center; /* 中央揃え */
+    direction: rtl; /* 右から左へ */
+}
+
+/* ==========================================
+   テストカード（シンプル版・縦書き2分割）
+   ========================================== */
+.test-item {
+    /* 縦書きモードにする */
+    writing-mode: vertical-rl;
+    direction: ltr; /* カード内部は通常の方向（rtlの影響を受けないように） */
+    
+    background: white;
+    width: 200px;  /* カードの幅 */
+    height: 300px; /* カードの高さ */
+    border: 3px solid #c0392b; /* 赤い太枠 */
+    border-radius: 8px; /* 少し角丸に */
+    padding: 15px;
+    margin-bottom: 30px;
+    
+    /* 中身の配置（右の文章と、左の解答欄を並べる） */
+    display: flex;
+    flex-direction: column; /* 縦書きモードではこれが「右→左」の並びになります */
+    gap: 10px; /* 文章と解答欄のすきま */
+}
+
+/* ■ 右側：問題文エリア */
+.question-zone {
+    /* ここはFlexboxを使わず、ただのブロックにします */
+    /* そうすることで、文字がいっぱいになったら勝手に左へ改行されます */
+    flex-grow: 1; /* 余ったスペースを全部使う */
+    font-size: 26px;
+    line-height: 1.6; /* 行間 */
+    color: #333;
+    font-weight: bold;
+}
+
+/* 数字のデザイン */
+.number {
+    color: #0056b3; /* 青色 */
+    font-size: 0.9em;
+    display: inline; /* インライン要素にして改行を防ぐ */
+    text-combine-upright: all; /* 数字を縦中横にする（縦書き時に横向きにする） */
+    -webkit-text-combine: horizontal; /* Safari対応 */
+    -ms-text-combine-horizontal: all; /* IE対応 */
+}
+
+/* ■ 左側：解答欄エリア */
+.answer-zone {
+    width: 60px; /* 幅を固定 */
+    /* 枠線(border)は絶対に書きません！ */
+    
+    /* カッコを上下に配置するためのFlexbox */
+    display: flex;
+    flex-direction: row; /* 縦書きモードではこれが「上→下」の並びになります */
+    justify-content: space-between; /* 上端と下端に飛ばす */
+    align-items: center; /* 中央揃え */
+    
+    color: #c0392b; /* 赤色 */
+    font-size: 50px; /* カッコを特大サイズに */
+    line-height: 1; /* 行間のズレ防止 */
+}
+
+/* カッコの文字調整 */
+.bracket {
+    /* 縦書き時に文字が回転しないようにする指定 */
+    text-orientation: upright;
+}
+
+/* ==========================================
+   ナビゲーション
+   ========================================== */
+.navigation {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* ==========================================
+   レスポンシブ対応
+   ========================================== */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .practice-grid,
+    .test-grid {
+        gap: 15px;
+    }
+    
+    .test-item {
+        width: 180px;
+        height: 280px;
+        font-size: 22px;
+    }
+}
+    }
+
+    .controls-top {
+        flex-direction: column;
+    }
+
+    .action-buttons {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .practice-grid,
+    .test-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================
+   アニメーション
+   ========================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    animation: fadeIn 0.5s ease;
+}
+
+/* ==========================================
+   印刷用設定
+   ========================================== */
+@media print {
+    body { 
+        background: white; 
+        padding: 0; 
+    }
+    
+    .container { 
+        width: 100%; 
+        padding: 0; 
+        box-shadow: none; 
+    }
+    
+    .test-item { 
+        break-inside: avoid; /* ページまたぎ防止 */
+    }
+    
+    /* ボタンなどのコントロールを非表示 */
+    .controls-top,
+    .navigation,
+    .action-buttons {
+        display: none !important;
+    }
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>デプロイ確認ページ</title>
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 デプロイ確認ページ</h1>
+        <p>このページは、プロジェクトが正しくデプロイされたか確認するためのページです。</p>
+        
+        <div class="status info">
+            <strong>✅ このページが表示されている場合：</strong><br>
+            基本的なデプロイは成功しています。
+        </div>
+        
+        <h2>📋 確認項目</h2>
+        
+        <h3>1. style.css の確認</h3>
+        <p>以下のリンクを開いて、「480px」を検索してください：</p>
+        <pre><a href="/style.css" target="_blank">style.css を開く</a></pre>
+        
+        <h3>2. version.txt の確認</h3>
+        <p>バージョン情報を確認：</p>
+        <pre><a href="/version.txt" target="_blank">version.txt を開く</a></pre>
+        
+        <h3>3. 細長い画面のテスト</h3>
+        <p>開発者ツール（F12）を開いて、画面幅を320pxに設定して以下をテスト：</p>
+        <ul>
+            <li>✅ すべての要素が画面内に収まる</li>
+            <li>✅ 横スクロールが発生しない</li>
+            <li>✅ テキストが折り返される</li>
+        </ul>
+        
+        <h3>4. メインページに戻る</h3>
+        <p><a href="/index.html">index.html を開く</a></p>
+        
+        <div class="status success">
+            <strong>🎉 すべて確認できたら：</strong><br>
+            デプロイは成功です！
+        </div>
+        
+        <h2>📊 プロジェクト情報</h2>
+        <pre>
+プロジェクト名: 漢字テストジェネレーター
+バージョン: 1.1.0
+最終更新: 2026-01-28
+機能: 細長い画面対応（max-width: 480px）
+        </pre>
+    </div>
+</body>
+</html>

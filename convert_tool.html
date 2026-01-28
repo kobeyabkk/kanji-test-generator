@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>小2データ変換ツール</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .button {
+            background: #667eea;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .button:hover {
+            background: #5568d3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>📝 小2データ変換ツール</h1>
+    <p>syou2.txt ファイルを選択して、grade2_kanji.json に変換します。</p>
+    
+    <input type="file" id="fileInput" accept=".txt,.json">
+    <br>
+    <button class="button" onclick="convertData()">変換実行</button>
+    <button class="button" onclick="downloadResult()" id="downloadBtn" style="display:none;">JSONをダウンロード</button>
+    
+    <div id="result" class="result" style="display:none;"></div>
+    
+    <script>
+        let convertedData = null;
+        
+        function convertData() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('ファイルを選択してください！');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const sourceData = JSON.parse(e.target.result);
+                    
+                    // 変換
+                    convertedData = sourceData.map(item => {
+                        const result = {
+                            kanji: item.kanji,
+                            yomi: item.yomi,
+                            meaning: item.meaning,
+                            examples: [item.example1, item.example2],
+                            readings: {}
+                        };
+                        
+                        // readingsオブジェクトを構築
+                        result.readings[item.example1] = item.reading1;
+                        result.readings[item.example2] = item.reading2;
+                        
+                        return result;
+                    });
+                    
+                    // 結果を表示
+                    document.getElementById('result').textContent = 
+                        `✅ 変換完了！\n\n漢字数: ${convertedData.length}字\n\n最初の3つ:\n` +
+                        JSON.stringify(convertedData.slice(0, 3), null, 2);
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                    
+                } catch (error) {
+                    alert('エラー: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function downloadResult() {
+            if (!convertedData) {
+                alert('まず変換を実行してください！');
+                return;
+            }
+            
+            const json = JSON.stringify(convertedData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'grade2_kanji.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ grade2_kanji.json をダウンロードしました！\n\nこのファイルを私にアップロードしてください。');
+        }
+    </script>
+</body>
+</html>

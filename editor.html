@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漢字データ編集画面 | プログラミングのKOBEYA</title>
+    
+    <!-- ファビコン -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="shortcut icon" href="/icons/favicon.ico">
+    
+    <!-- PWA設定 -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="漢字データ編集画面">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS対応 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="漢字編集">
+    <link rel="apple-touch-icon" href="/icons/icon-512x512.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        }
+
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #667eea;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .kanji-cell {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            font-family: 'BIZ UDPMincho', 'Yu Kyokasho', serif;
+        }
+
+        .editable {
+            border: 1px solid transparent;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            min-width: 150px;
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .editable:hover {
+            background: #f8f9fa;
+            cursor: text;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .btn-edit {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .stats {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 2px solid #dee2e6;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .modified {
+            background: #fff3cd !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 18px;
+            color: #6c757d;
+        }
+
+        .example-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .example-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .example-text {
+            flex: 1;
+        }
+
+        .reading-badge {
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 漢字データ編集画面</h1>
+            <p>全1,026字の漢字データを確認・編集できます</p>
+            <p style="font-size: 14px; margin-top: 10px; opacity: 0.9;">
+                💡 変更はブラウザに保存され、プリント生成時に反映されます
+            </p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-grade="1">小1 (80字)</button>
+            <button class="tab" data-grade="2">小2 (160字)</button>
+            <button class="tab" data-grade="3">小3 (200字)</button>
+            <button class="tab" data-grade="4">小4 (202字)</button>
+            <button class="tab" data-grade="5">小5 (193字)</button>
+            <button class="tab" data-grade="6">小6 (191字)</button>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="🔍 漢字、読み、例文で検索...">
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-info" id="reset-btn">🔄 デフォルトに戻す</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="loading" id="loading">データを読み込んでいます...</div>
+            <table id="kanji-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">No.</th>
+                        <th style="width: 80px;">漢字</th>
+                        <th style="width: 150px;">読み</th>
+                        <th style="width: 120px;">意味</th>
+                        <th>例文1</th>
+                        <th>読み1</th>
+                        <th>例文2</th>
+                        <th>読み2</th>
+                        <th style="width: 100px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">総漢字数</span>
+                <span class="stat-value" id="total-count">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">表示中</span>
+                <span class="stat-value" id="display-count">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">変更済み</span>
+                <span class="stat-value" id="modified-count">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="editor.js"></script>
+    
+    <!-- PWA Service Worker登録 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('✅ Service Worker登録成功'))
+                .catch(err => console.error('❌ Service Worker登録失敗:', err));
+        }
+    </script>
+</body>
+</html>

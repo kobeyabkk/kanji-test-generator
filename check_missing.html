@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>不足漢字チェック</title>
+    
+    <!-- ファビコン -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="shortcut icon" href="/icons/favicon.ico">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        .missing-item {
+            margin: 10px 0;
+            padding: 15px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .kanji-large {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #dc3545;
+            display: inline-block;
+            margin-right: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .kanji-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 5px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .kanji-cell {
+            padding: 10px;
+            text-align: center;
+            font-size: 1.5rem;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .missing {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 小1漢字 不足チェック</h1>
+        <p>小学1年生で習うべき80字の漢字をチェックします。</p>
+        
+        <button onclick="checkMissing()">チェック開始</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 小1で習うべき80字（2020年学習指導要領）
+        const grade1Standard = [
+            '一', '右', '雨', '円', '王', '音', '下', '火', '花', '貝',
+            '学', '気', '九', '休', '玉', '金', '空', '月', '犬', '見',
+            '五', '口', '校', '左', '三', '山', '子', '四', '糸', '字',
+            '耳', '七', '車', '手', '十', '出', '女', '小', '上', '森',
+            '人', '水', '正', '生', '青', '夕', '石', '赤', '千', '川',
+            '先', '早', '草', '足', '村', '大', '男', '竹', '中', '虫',
+            '町', '天', '田', '土', '二', '日', '入', '年', '白', '八',
+            '百', '文', '木', '本', '名', '目', '立', '力', '林', '六'
+        ];
+
+        let grade1Kanji = [];
+
+        async function loadKanjiData() {
+            try {
+                const json1 = await fetch('data/grade1_kanji.json').then(r => r.json());
+                grade1Kanji = json1;
+                return true;
+            } catch (error) {
+                console.error('データ読み込みエラー:', error);
+                return false;
+            }
+        }
+
+        async function checkMissing() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>チェック中...</p>';
+
+            const loaded = await loadKanjiData();
+            if (!loaded) {
+                resultDiv.innerHTML = '<div class="result error"><strong>エラー:</strong> データの読み込みに失敗しました。</div>';
+                return;
+            }
+
+            // 現在のJSONにある漢字を取得
+            const currentKanji = grade1Kanji.map(k => k.kanji);
+
+            // 不足している漢字を検出
+            const missingKanji = grade1Standard.filter(k => !currentKanji.includes(k));
+
+            // 余分な漢字を検出
+            const extraKanji = currentKanji.filter(k => !grade1Standard.includes(k));
+
+            let html = '';
+
+            // 結果表示
+            html += `<div style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 8px;">`;
+            html += `<strong>📊 統計:</strong><br>`;
+            html += `正しい漢字数: 80字<br>`;
+            html += `現在の漢字数: ${currentKanji.length}字<br>`;
+            html += `不足: ${missingKanji.length}字<br>`;
+            html += `余分: ${extraKanji.length}字`;
+            html += `</div>`;
+
+            if (missingKanji.length > 0) {
+                html += '<div class="result error">';
+                html += `<strong>⚠️ 不足している漢字: ${missingKanji.length}字</strong>`;
+                html += '</div>';
+
+                html += '<h2>不足している漢字</h2>';
+                missingKanji.forEach(kanji => {
+                    html += '<div class="missing-item">';
+                    html += `<span class="kanji-large">${kanji}</span>`;
+                    html += `<span>この漢字がJSONファイルにありません</span>`;
+                    html += '</div>';
+                });
+            }
+
+            if (extraKanji.length > 0) {
+                html += '<div class="result error" style="margin-top: 20px;">';
+                html += `<strong>⚠️ 余分な漢字: ${extraKanji.length}字</strong>`;
+                html += '</div>';
+
+                html += '<h2>余分な漢字（小1ではない）</h2>';
+                extraKanji.forEach(kanji => {
+                    html += '<div class="missing-item">';
+                    html += `<span class="kanji-large">${kanji}</span>`;
+                    html += `<span>この漢字は小1で習いません</span>`;
+                    html += '</div>';
+                });
+            }
+
+            if (missingKanji.length === 0 && extraKanji.length === 0) {
+                html += '<div class="result" style="background: #d4edda; border: 2px solid #28a745; color: #155724;">';
+                html += '<strong>✅ 完璧です！</strong><br>';
+                html += '小1の漢字80字がすべて揃っています。';
+                html += '</div>';
+            }
+
+            // 全80字を表示（不足分をハイライト）
+            html += '<h2>小1漢字 全80字</h2>';
+            html += '<div class="kanji-grid">';
+            grade1Standard.forEach(kanji => {
+                const isMissing = missingKanji.includes(kanji);
+                const className = isMissing ? 'kanji-cell missing' : 'kanji-cell';
+                html += `<div class="${className}" title="${kanji}">${kanji}</div>`;
+            });
+            html += '</div>';
+
+            resultDiv.innerHTML = html;
+        }
+
+        // ページ読み込み時に自動チェック
+        window.addEventListener('load', checkMissing);
+    </script>
+</body>
+</html>

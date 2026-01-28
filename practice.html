@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漢字手書き練習 | プログラミングのKOBEYA</title>
+    
+    <!-- ファビコン -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="shortcut icon" href="/icons/favicon.ico">
+    
+    <!-- PWA設定 -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="小学生向け漢字手書き練習アプリ">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS対応 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="漢字練習">
+    <link rel="apple-touch-icon" href="/icons/icon-512x512.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="practice.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="mode-title">✏️ 漢字練習モード</h1>
+            <p class="subtitle" id="mode-subtitle">漢字をなぞって練習しましょう</p>
+        </header>
+
+        <div class="controls-top">
+            <div class="pen-settings">
+                <label for="pen-width">太さ:</label>
+                <input type="range" id="pen-width" min="2" max="20" value="6" step="1">
+                <span id="pen-width-value">6px</span>
+                
+                <label for="pen-color" style="margin-left: 20px;">色:</label>
+                <input type="color" id="pen-color" value="#000000">
+            </div>
+            
+            <div class="action-buttons">
+                <button id="clear-btn" class="btn btn-secondary">🗑️ 全て消す</button>
+                <button id="screenshot-btn" class="btn btn-secondary">📸 スクショ保存</button>
+                <button id="mode-switch-btn" class="btn btn-primary">練習完了 → テスト開始</button>
+            </div>
+        </div>
+
+        <!-- 練習モード画面 -->
+        <div id="practice-screen" class="practice-screen">
+            <div class="practice-grid" id="practice-grid"></div>
+        </div>
+
+        <!-- テストモード画面 -->
+        <div id="test-screen" class="test-screen hidden">
+            <div class="test-grid" id="test-grid"></div>
+        </div>
+
+        <div class="navigation">
+            <button id="back-btn" class="btn btn-outline">← 設定に戻る</button>
+            <button id="restart-btn" class="btn btn-outline">🔄 最初から</button>
+        </div>
+    </div>
+
+    <script src="practice.js"></script>
+    
+    <!-- PWA Service Worker登録 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('✅ Service Worker登録成功'))
+                .catch(err => console.error('❌ Service Worker登録失敗:', err));
+        }
+    </script>
+</body>
+</html>
