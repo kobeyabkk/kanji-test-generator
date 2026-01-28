@@ -333,7 +333,7 @@ h1 {
 
 /* ■ 左側：解答欄エリア */
 .answer-zone {
-    width: 60px; /* 幅を固定 */
+    width: 80px; /* 🔧 幅を80pxに変更（Canvasサイズに合わせる） */
     /* 枠線(border)は絶対に書きません！ */
     
     /* カッコを上下に配置するためのFlexbox */
@@ -355,7 +355,7 @@ h1 {
 
 /* テストモードの手書きCanvas */
 .test-canvas {
-    width: 120px;  /* 固定幅 */
+    width: 80px;  /* 🔧 固定幅を80pxに変更 */
     height: 200px; /* 固定高さ */
     cursor: crosshair;
     touch-action: none; /* スクロール防止 */

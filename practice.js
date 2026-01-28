@@ -12,6 +12,7 @@ let lastY = 0;
 let penWidth = 6;
 let penColor = '#000000';
 let isEraserMode = false; // 消しゴムモード
+let eraserWidth = 20; // 消しゴムのデフォルト幅
 
 // ==========================================
 // 初期化
@@ -224,8 +225,8 @@ function generateTestScreen() {
         // 手書きCanvas
         const canvas = document.createElement('canvas');
         canvas.className = 'test-canvas';
-        canvas.width = 120;
-        canvas.height = 200;
+        canvas.width = 80;  // 🔧 幅を80pxに変更（answer-zoneとのバランス）
+        canvas.height = 200; // 高さは200pxのまま
         answerZone.appendChild(canvas);
         
         // Canvasイベントを設定
@@ -291,7 +292,7 @@ function draw(e) {
     // 消しゴムモードの場合
     if (isEraserMode) {
         ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
-        ctx.lineWidth = penWidth * 2; // 消しゴムは太めに
+        ctx.lineWidth = eraserWidth; // 消しゴムは20px
     } else {
         ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
         ctx.strokeStyle = penColor;
@@ -357,7 +358,7 @@ function handleTouchMove(e) {
     // 🆕 消しゴムモードの場合
     if (isEraserMode) {
         ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
-        ctx.lineWidth = penWidth * 2; // 消しゴムは太めに
+        ctx.lineWidth = eraserWidth; // 消しゴムは20px
     } else {
         ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
         ctx.strokeStyle = penColor;
