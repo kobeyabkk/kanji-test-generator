@@ -380,10 +380,18 @@ h1 {
     left: 0 !important;
     width: 80px !important;  /* 🔧 固定幅を80pxに変更（!importantで強制） */
     height: 200px !important; /* 固定高さ（!importantで強制） */
+    min-width: 80px !important; /* 🆕 最小幅を指定 */
+    max-width: 80px !important; /* 🆕 最大幅を指定 */
+    min-height: 200px !important; /* 🆕 最小高さを指定 */
+    max-height: 200px !important; /* 🆕 最大高さを指定 */
     cursor: crosshair;
     touch-action: none; /* スクロール防止 */
     display: block;    /* ブロック要素として表示 */
     z-index: 1; /* カッコより下、でもクリック可能 */
+    box-sizing: border-box !important; /* ボックスサイズを固定 */
+    border: none !important; /* ボーダーをなしに */
+    padding: 0 !important; /* パディングをゼロに */
+    margin: 0 !important; /* マージンをゼロに */
 }
 
 /* ==========================================

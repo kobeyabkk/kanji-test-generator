@@ -380,6 +380,18 @@ function handleTouchStart(e) {
     const canvas = e.target;
     const touch = e.touches[0];
     const rect = canvas.getBoundingClientRect();
+    
+    // 🔧 デバッグ：Canvas情報を出力（iPadでの問題確認用）
+    console.log('Canvas Debug (Touch):', {
+        canvasWidth: canvas.width,
+        canvasHeight: canvas.height,
+        displayWidth: rect.width,
+        displayHeight: rect.height,
+        scaleX: canvas.width / rect.width,
+        scaleY: canvas.height / rect.height,
+        className: canvas.className
+    });
+    
     lastX = touch.clientX - rect.left;
     lastY = touch.clientY - rect.top;
     isDrawing = true;
@@ -402,6 +414,24 @@ function handleTouchMove(e) {
     // 🔧 スケール調整（Canvas内部サイズとCSS表示サイズの比率）
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
+    
+    // 🔧 デバッグ：描画情報を出力（最初の数回のみ）
+    if (!canvas.debugCount) canvas.debugCount = 0;
+    if (canvas.debugCount < 3) {
+        console.log('Touch Draw:', {
+            touchX: touch.clientX,
+            touchY: touch.clientY,
+            rectLeft: rect.left,
+            rectTop: rect.top,
+            currentX: currentX,
+            currentY: currentY,
+            scaleX: scaleX,
+            scaleY: scaleY,
+            scaledX: currentX * scaleX,
+            scaledY: currentY * scaleY
+        });
+        canvas.debugCount++;
+    }
 
     // 🆕 消しゴムモードの場合
     if (isEraserMode) {
