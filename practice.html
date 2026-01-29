@@ -83,12 +83,9 @@
     <!-- 🔧 デバッグ用：Eruda（iPad単体でコンソールを確認） -->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>
-        // URLに ?debug=true がある場合のみErudaを起動
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('debug') === 'true') {
-            eruda.init();
-            console.log('🔧 デバッグモード: Erudaを起動しました');
-        }
+        // 常にErudaを起動（iPadデバッグ用）
+        eruda.init();
+        console.log('🔧 デバッグモード: Erudaを起動しました');
     </script>
     
     <!-- PWA Service Worker登録 -->
