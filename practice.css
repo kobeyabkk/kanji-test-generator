@@ -275,6 +275,13 @@ h1 {
     z-index: 2;
     cursor: crosshair;
     touch-action: none; /* スクロール防止 */
+    
+    /* 🆕 GPUレイヤーを強制（iPadのWebKit対応） */
+    will-change: contents;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 /* ==========================================
@@ -392,6 +399,13 @@ h1 {
     border: none !important; /* ボーダーをなしに */
     padding: 0 !important; /* パディングをゼロに */
     margin: 0 !important; /* マージンをゼロに */
+    
+    /* 🆕 GPUレイヤーを強制（iPadのWebKit対応） */
+    will-change: contents;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 /* ==========================================

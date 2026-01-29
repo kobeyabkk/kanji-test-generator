@@ -303,6 +303,22 @@
 
 ## 🔄 更新履歴
 
+### 2026-01-29 v2.4.0 🎉 iPad描画問題の根本解決（Gemini提案）！
+- ✅ **GPUレイヤーを強制（will-change, translateZ, backface-visibility）**
+- ✅ **Canvas内部解像度をDPR（デバイスピクセル比）に合わせる**
+  - iPadのRetina対応で描画品質が大幅向上
+  - 内部サイズ: 80×2=160px（DPR=2の場合）、表示サイズ: 80px
+- ✅ **描画後に強制的にペイントを促す（transform: translateZ(0)）**
+- ✅ **練習モードCanvasもDPR対応（200×2=400px）**
+- ✅ **座標計算をシンプル化（ctx.scaleで自動調整）**
+- 🎯 **WebKitのレイヤー合成遅延問題に対応**
+
+### 2026-01-29 v2.3.8 🎉 緊急修正 - Canvas再生成を無効化！
+- ✅ **ページスクロール時にCanvas再生成を行わないように修正**
+- ✅ resize/orientationchangeイベントで描画内容が消える問題を修正
+- ✅ Touch Draw デバッグログを強化（penColor, penWidth, scaleX/Y を追加）
+- ✅ 描画が見えない原因を調査中
+
 ### 2026-01-29 v2.3.7 🎉 iPadタッチ座標デバッグ - 範囲チェック一時無効化！
 - ✅ **Canvas外タッチでも描画を試みる（デバッグ用）**
 - ✅ タッチ開始時のログを整理（見やすく改善）

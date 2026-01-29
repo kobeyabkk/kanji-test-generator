@@ -57,19 +57,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 // 画面回転・リサイズ時の処理
 // ==========================================
 function handleResize() {
-    console.log('🔄 画面の向きが変わりました - Canvasを完全に再生成');
+    console.log('🔄 画面の向きが変わりました');
     
     // 🔧 描画中の場合は停止
     isDrawing = false;
     
-    // 🔧 テストモードのCanvasを再生成
-    if (!isPracticeMode) {
-        console.log('📝 テストモードのCanvasを再生成します');
-        generateTestScreen();
-        console.log('✅ テストモードのCanvasを再生成しました');
-    }
-    
-    console.log('✅ Canvasの再調整が完了しました');
+    // ⚠️ Canvasの再生成は行わない（描画内容が消えるため）
+    console.log('✅ 描画を一時停止しました');
 }
 
 // ==========================================
@@ -181,11 +175,17 @@ function generatePracticeScreen() {
             // 背景Canvas（十字ガイド線）
             const bgCanvas = document.createElement('canvas');
             bgCanvas.className = 'practice-bg-canvas';
-            bgCanvas.width = 200;
-            bgCanvas.height = 200;
+            
+            // 🆕 DPR対応
+            const dpr = window.devicePixelRatio || 1;
+            bgCanvas.width = 200 * dpr;
+            bgCanvas.height = 200 * dpr;
+            bgCanvas.style.width = '200px';
+            bgCanvas.style.height = '200px';
             
             // 十字ガイド線を描画
             const bgCtx = bgCanvas.getContext('2d');
+            bgCtx.scale(dpr, dpr);
             bgCtx.strokeStyle = '#cccccc';
             bgCtx.lineWidth = 1;
             bgCtx.setLineDash([5, 5]); // 点線
@@ -205,12 +205,15 @@ function generatePracticeScreen() {
             // ガイドCanvas（右上のマスのみ表示）
             const guideCanvas = document.createElement('canvas');
             guideCanvas.className = 'practice-guide-canvas';
-            guideCanvas.width = 200;
-            guideCanvas.height = 200;
+            guideCanvas.width = 200 * dpr;
+            guideCanvas.height = 200 * dpr;
+            guideCanvas.style.width = '200px';
+            guideCanvas.style.height = '200px';
 
             // 右上のマス（i === 1）のみガイドに漢字を描画
             if (i === 1) {
                 const guideCtx = guideCanvas.getContext('2d');
+                guideCtx.scale(dpr, dpr);
                 guideCtx.font = 'bold 150px "Noto Sans JP"';
                 guideCtx.fillStyle = '#000000';
                 guideCtx.textAlign = 'center';
@@ -221,11 +224,17 @@ function generatePracticeScreen() {
             // 描画Canvas
             const drawCanvas = document.createElement('canvas');
             drawCanvas.className = 'practice-draw-canvas';
-            drawCanvas.width = 200;
-            drawCanvas.height = 200;
+            drawCanvas.width = 200 * dpr;
+            drawCanvas.height = 200 * dpr;
+            drawCanvas.style.width = '200px';
+            drawCanvas.style.height = '200px';
             drawCanvas.dataset.index = index;
             drawCanvas.dataset.box = i;
             drawCanvas.dataset.type = 'practice';
+            
+            // 🆕 描画コンテキストをDPRに合わせてスケール
+            const drawCtx = drawCanvas.getContext('2d');
+            drawCtx.scale(dpr, dpr);
 
             wrapper.appendChild(bgCanvas);
             wrapper.appendChild(guideCanvas);
@@ -298,8 +307,28 @@ function generateTestScreen() {
         // 手書きCanvas
         const canvas = document.createElement('canvas');
         canvas.className = 'test-canvas';
-        canvas.width = 80;  // 🔧 幅を80pxに変更（answer-zoneとのバランス）
-        canvas.height = 200; // 高さは200pxのまま
+        
+        // 🆕 デバイスピクセル比（DPR）を取得
+        const dpr = window.devicePixelRatio || 1;
+        
+        // 🆕 CSS表示サイズ
+        const displayWidth = 80;
+        const displayHeight = 200;
+        
+        // 🆕 Canvas内部解像度をDPRに合わせる
+        canvas.width = displayWidth * dpr;
+        canvas.height = displayHeight * dpr;
+        
+        // 🆕 CSS表示サイズを設定
+        canvas.style.width = displayWidth + 'px';
+        canvas.style.height = displayHeight + 'px';
+        
+        // 🆕 描画コンテキストをDPRに合わせてスケール
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        
+        console.log(`📐 Canvas生成: DPR=${dpr}, 内部=${canvas.width}x${canvas.height}, 表示=${displayWidth}x${displayHeight}`);
+        
         answerZone.appendChild(canvas);
         
         // Canvasイベントを設定
@@ -372,27 +401,31 @@ function draw(e) {
     const currentX = e.clientX - rect.left;
     const currentY = e.clientY - rect.top;
 
-    // 🔧 スケール調整（Canvas内部サイズとCSS表示サイズの比率）
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+    // 🆕 DPR対応済みのため、スケール調整は不要（ctx.scaleで自動調整される）
+    // 座標はCSS表示サイズ（80x200）のまま使用
 
     // 消しゴムモードの場合
     if (isEraserMode) {
         ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
-        ctx.lineWidth = eraserWidth * scaleX; // 🔧 スケール調整を適用
+        ctx.lineWidth = eraserWidth;
     } else {
         ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
         ctx.strokeStyle = penColor;
-        ctx.lineWidth = penWidth * scaleX; // 🔧 スケール調整を適用
+        ctx.lineWidth = penWidth;
     }
     
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
     ctx.beginPath();
-    ctx.moveTo(lastX * scaleX, lastY * scaleY);
-    ctx.lineTo(currentX * scaleX, currentY * scaleY);
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(currentX, currentY);
     ctx.stroke();
+    
+    // 🆕 iPadのWebKit向け：強制的に描画を反映
+    if (canvas.style) {
+        canvas.style.transform = 'translateZ(0)';
+    }
 
     lastX = currentX;
     lastY = currentY;
@@ -459,15 +492,8 @@ function handleTouchMove(e) {
     const currentX = touch.clientX - rect.left;
     const currentY = touch.clientY - rect.top;
 
-    // 🔧 スケール調整（Canvas内部サイズとCSS表示サイズの比率）
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    
-    // 🔧 範囲チェック（Canvas外をタッチした場合は描画しない）
-    if (currentX < 0 || currentX > rect.width || currentY < 0 || currentY > rect.height) {
-        console.warn('⚠️ タッチ位置がCanvas外（移動中）:', { currentX, currentY, rect });
-        return;
-    }
+    // 🆕 DPR対応済みのため、スケール調整は不要（ctx.scaleで自動調整される）
+    // 座標はCSS表示サイズ（80x200）のまま使用
     
     // 🔧 デバッグ：描画情報を出力（最初の数回のみ）
     if (!canvas.debugCount) canvas.debugCount = 0;
@@ -479,10 +505,11 @@ function handleTouchMove(e) {
             rectTop: rect.top,
             currentX: currentX,
             currentY: currentY,
-            scaleX: scaleX,
-            scaleY: scaleY,
-            scaledX: currentX * scaleX,
-            scaledY: currentY * scaleY
+            penColor: penColor,
+            penWidth: penWidth,
+            isEraserMode: isEraserMode,
+            canvasInternalSize: `${canvas.width}x${canvas.height}`,
+            canvasDisplaySize: `${rect.width}x${rect.height}`
         });
         canvas.debugCount++;
     }
@@ -490,20 +517,25 @@ function handleTouchMove(e) {
     // 🆕 消しゴムモードの場合
     if (isEraserMode) {
         ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
-        ctx.lineWidth = eraserWidth * scaleX; // 🔧 スケール調整を適用
+        ctx.lineWidth = eraserWidth;
     } else {
         ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
         ctx.strokeStyle = penColor;
-        ctx.lineWidth = penWidth * scaleX; // 🔧 スケール調整を適用
+        ctx.lineWidth = penWidth;
     }
     
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
     ctx.beginPath();
-    ctx.moveTo(lastX * scaleX, lastY * scaleY);
-    ctx.lineTo(currentX * scaleX, currentY * scaleY);
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(currentX, currentY);
     ctx.stroke();
+    
+    // 🆕 iPadのWebKit向け：強制的に描画を反映
+    if (canvas.style) {
+        canvas.style.transform = 'translateZ(0)';
+    }
 
     lastX = currentX;
     lastY = currentY;
