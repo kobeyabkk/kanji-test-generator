@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 画面を生成
     generatePracticeScreen();
     generateTestScreen();
-    
+
     // 初期表示を更新
     updateMode();
-    
+
     // 🆕 画面回転・リサイズを検知してCanvasを再調整
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
@@ -119,10 +119,10 @@ function refreshTestCanvases() {
 // ==========================================
 function handleResize() {
     console.log('🔄 画面の向きが変わりました');
-    
+
     // 🔧 描画中の場合は停止
     isDrawing = false;
-    
+
     // ✅ 表示サイズに合わせてCanvasを再調整（描画内容は保持）
     refreshTestCanvases();
     console.log('✅ 描画を一時停止し、Canvasを再調整しました');
@@ -135,22 +135,22 @@ function loadKanjiFromParams() {
     const params = new URLSearchParams(window.location.search);
     const kanjiParam = params.get('kanji');
     const modeParam = params.get('mode');
-    
+
     if (kanjiParam) {
         kanjiList = JSON.parse(decodeURIComponent(kanjiParam));
         console.log(`📚 URLから読み込んだ漢字数: ${kanjiList.length}問`);
     }
-    
+
     if (modeParam) {
         testMode = modeParam; // 'practice', 'test10', 'test20'
         console.log(`📋 テストモード: ${testMode}`);
-        
+
         // 🆕 テスト10問モードの場合、kanjiListを10問に制限
         if (testMode === 'test10' && kanjiList.length > 10) {
             kanjiList = kanjiList.slice(0, 10);
             console.log(`✂️ テスト10問モード: 漢字を10問に制限しました`);
         }
-        
+
         // 🆕 練習＋テストモードの場合も10問に制限
         if (testMode === 'practice' && kanjiList.length > 10) {
             kanjiList = kanjiList.slice(0, 10);
@@ -183,18 +183,18 @@ function setupEventListeners() {
         isEraserMode = false; // ペン色変更時は消しゴムモード解除
         updateEraserButton();
     });
-    
+
     // 🆕 消しゴム太さスライダー
     document.getElementById('eraser-width').addEventListener('input', (e) => {
         eraserWidth = parseInt(e.target.value);
         document.getElementById('eraser-width-value').textContent = `${eraserWidth}px`;
-        
+
         // 🆕 消しゴムモード中の場合はカーソルを更新
         if (isEraserMode) {
             updateEraserButton();
         }
     });
-    
+
     // 消しゴムボタン
     document.getElementById('eraser-btn').addEventListener('click', toggleEraser);
 }
@@ -239,19 +239,19 @@ function generatePracticeScreen() {
             bgCanvas.className = 'practice-bg-canvas';
             bgCanvas.width = 200;
             bgCanvas.height = 200;
-            
+
             // 十字ガイド線を描画
             const bgCtx = bgCanvas.getContext('2d');
             bgCtx.strokeStyle = '#cccccc';
             bgCtx.lineWidth = 1;
             bgCtx.setLineDash([5, 5]); // 点線
-            
+
             // 縦線
             bgCtx.beginPath();
             bgCtx.moveTo(100, 0);
             bgCtx.lineTo(100, 200);
             bgCtx.stroke();
-            
+
             // 横線
             bgCtx.beginPath();
             bgCtx.moveTo(0, 100);
@@ -316,10 +316,10 @@ function generateTestScreen() {
         card.className = 'test-item';
 
         // 問題文を取得
-        const sentence = kanji.examples && kanji.examples[0] 
-            ? kanji.examples[0] 
+        const sentence = kanji.examples && kanji.examples[0]
+            ? kanji.examples[0]
             : `${kanji.kanji}を書く`;
-        
+
         let processedSentence = sentence;
         if (kanji.readings && kanji.readings[sentence]) {
             processedSentence = kanji.readings[sentence];
@@ -328,48 +328,48 @@ function generateTestScreen() {
         // 右側：問題文エリア
         const questionZone = document.createElement('div');
         questionZone.className = 'question-zone';
-        
+
         // 番号
         const numberSpan = document.createElement('span');
         numberSpan.className = 'number';
         numberSpan.textContent = `${index + 1}.`;
         questionZone.appendChild(numberSpan);
-        
+
         // 問題文（テキストノードとして追加、改行なし）
         const textNode = document.createTextNode(processedSentence);
         questionZone.appendChild(textNode);
-        
+
         card.appendChild(questionZone);
 
         // 左側：解答欄エリア
         const answerZone = document.createElement('div');
         answerZone.className = 'answer-zone';
-        
+
         // 上のカッコ
         const bracketTop = document.createElement('span');
         bracketTop.className = 'bracket';
         bracketTop.textContent = '︵';
         answerZone.appendChild(bracketTop);
-        
+
         // 手書きCanvas
         const canvas = document.createElement('canvas');
         canvas.className = 'test-canvas';
-        
+
         answerZone.appendChild(canvas);
-        
+
         // Canvasイベントを設定
         setupCanvasEvents(canvas);
-        
+
         // 下のカッコ
         const bracketBottom = document.createElement('span');
         bracketBottom.className = 'bracket';
         bracketBottom.textContent = '︶';
         answerZone.appendChild(bracketBottom);
-        
+
         card.appendChild(answerZone);
 
         container.appendChild(card);
-        
+
         // 🔧 DOM確定後にDPR調整（iPadの描画遅延対策）
         scheduleCanvasResize(canvas);
     });
@@ -398,15 +398,15 @@ function setupCanvasEvents(canvas) {
 // ==========================================
 function startDrawing(e) {
     const canvas = e.target;
-    
+
     // 🔧 初回のみCanvasサイズを調整（高速化）
     if (!canvas._initialized) {
         resizeCanvasToDisplaySize(canvas, { preserve: true });
         canvas._initialized = true;
     }
-    
+
     const rect = canvas.getBoundingClientRect();
-    
+
     lastX = e.clientX - rect.left;
     lastY = e.clientY - rect.top;
     isDrawing = true;
@@ -433,22 +433,14 @@ function draw(e) {
         ctx.strokeStyle = penColor;
         ctx.lineWidth = penWidth;
     }
-    
+
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    
+
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(currentX, currentY);
     ctx.stroke();
-    
-    // 🆕 強制的に再描画を促す
-    requestAnimationFrame(() => {
-        canvas.style.opacity = '0.9999';
-        requestAnimationFrame(() => {
-            canvas.style.opacity = '1';
-        });
-    });
 
     lastX = currentX;
     lastY = currentY;
@@ -474,21 +466,21 @@ function handleTouchStart(e) {
     e.preventDefault();
     const canvas = e.target;
     const touch = e.touches[0];
-    
+
     // 🔧 初回のみCanvasサイズを調整（高速化）
     if (!canvas._initialized) {
         resizeCanvasToDisplaySize(canvas, { preserve: true });
         canvas._initialized = true;
     }
-    
+
     const rect = canvas.getBoundingClientRect();
-    
+
     const touchX = touch.clientX;
     const touchY = touch.clientY;
-    
+
     lastX = touchX - rect.left;
     lastY = touchY - rect.top;
-    
+
     isDrawing = true;
 }
 
@@ -505,44 +497,11 @@ function handleTouchMove(e) {
     const rect = canvas.getBoundingClientRect();
     const currentX = touch.clientX - rect.left;
     const currentY = touch.clientY - rect.top;
-    
-    // 🔧 デバッグ：描画情報を出力（最初の数回のみ）
-    if (!canvas.debugCount) canvas.debugCount = 0;
-    if (canvas.debugCount < 3) {
-        console.log('🖌️ 描画実行:', {
-            from: `(${lastX.toFixed(1)}, ${lastY.toFixed(1)})`,
-            to: `(${currentX.toFixed(1)}, ${currentY.toFixed(1)})`,
-            penColor: penColor,
-            penWidth: penWidth
-        });
-        canvas.debugCount++;
-    }
 
-    // 消しゴムモードの場合
-    if (isEraserMode) {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.lineWidth = eraserWidth;
-    } else {
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.strokeStyle = penColor;
-        ctx.lineWidth = penWidth;
-    }
-    
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(currentX, currentY);
     ctx.stroke();
-    
-    // 🆕 強制的に再描画を促す
-    requestAnimationFrame(() => {
-        canvas.style.opacity = '0.9999';
-        requestAnimationFrame(() => {
-            canvas.style.opacity = '1';
-        });
-    });
 
     lastX = currentX;
     lastY = currentY;
@@ -568,7 +527,7 @@ function clearAllCanvases() {
     // 現在表示されている画面のCanvasのみクリア
     const currentScreen = isPracticeMode ? 'practice-screen' : 'test-screen';
     const screenElement = document.getElementById(currentScreen);
-    
+
     screenElement.querySelectorAll('canvas.practice-draw-canvas, canvas.test-canvas').forEach(canvas => {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -584,7 +543,7 @@ function switchMode() {
         // テストモードのみなので、何もしない
         return;
     }
-    
+
     isPracticeMode = !isPracticeMode;
     updateMode();
 }
@@ -633,7 +592,7 @@ function restartPractice() {
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
-        
+
         // 練習モードに戻る
         isPracticeMode = true;
         updateMode();
@@ -646,7 +605,7 @@ function restartPractice() {
 function toggleEraser() {
     isEraserMode = !isEraserMode;
     updateEraserButton();
-    
+
     // 🆕 ペンモードに戻るときは、すべてのCanvasを通常描画モードにリセット
     if (!isEraserMode) {
         activeCanvases.forEach(canvas => {
@@ -661,17 +620,17 @@ function updateEraserButton() {
     if (isEraserMode) {
         eraserBtn.classList.add('active');
         eraserBtn.textContent = '✏️ ペンに戻る';
-        
+
         // 🆕 消しゴムモード時はカーソルを変更
         activeCanvases.forEach(canvas => {
             // 消しゴムの範囲を円形カーソルで表示
             const cursorSize = eraserWidth;
-            canvas.style.cursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${cursorSize}" height="${cursorSize}" viewBox="0 0 ${cursorSize} ${cursorSize}"><circle cx="${cursorSize/2}" cy="${cursorSize/2}" r="${cursorSize/2-1}" fill="none" stroke="rgba(255,87,34,0.8)" stroke-width="2"/></svg>') ${cursorSize/2} ${cursorSize/2}, crosshair`;
+            canvas.style.cursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${cursorSize}" height="${cursorSize}" viewBox="0 0 ${cursorSize} ${cursorSize}"><circle cx="${cursorSize / 2}" cy="${cursorSize / 2}" r="${cursorSize / 2 - 1}" fill="none" stroke="rgba(255,87,34,0.8)" stroke-width="2"/></svg>') ${cursorSize / 2} ${cursorSize / 2}, crosshair`;
         });
     } else {
         eraserBtn.classList.remove('active');
         eraserBtn.textContent = '🧹 消しゴム';
-        
+
         // 🆕 ペンモード時は通常のカーソルに戻す
         activeCanvases.forEach(canvas => {
             canvas.style.cursor = 'crosshair';
@@ -689,7 +648,7 @@ async function takeScreenshot() {
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
             document.head.appendChild(script);
-            
+
             await new Promise((resolve, reject) => {
                 script.onload = resolve;
                 script.onerror = reject;
@@ -697,8 +656,8 @@ async function takeScreenshot() {
         }
 
         // 現在表示されている画面をキャプチャ
-        const targetElement = isPracticeMode 
-            ? document.getElementById('practice-screen') 
+        const targetElement = isPracticeMode
+            ? document.getElementById('practice-screen')
             : document.getElementById('test-screen');
 
         // html2canvasでスクリーンショットを作成
@@ -722,7 +681,7 @@ async function takeScreenshot() {
                         suggestedName: filename,
                         types: [{
                             description: 'PNG画像',
-                            accept: {'image/png': ['.png']}
+                            accept: { 'image/png': ['.png'] }
                         }]
                     });
                     const writable = await handle.createWritable();
@@ -784,7 +743,7 @@ function downloadBlob(blob, filename) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
+
     // 成功メッセージ
     alert('✅ スクリーンショットを保存しました！');
 }
