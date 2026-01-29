@@ -57,32 +57,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 // 画面回転・リサイズ時の処理
 // ==========================================
 function handleResize() {
-    console.log('🔄 画面の向きが変わりました - Canvasを再調整');
+    console.log('🔄 画面の向きが変わりました - Canvasを完全に再生成');
     
     // 🔧 描画中の場合は停止
     isDrawing = false;
     
-    // 🔧 すべてのCanvasのBounding Rectをリフレッシュするため、
-    // 少し待ってから強制的に再レイアウト
-    setTimeout(() => {
-        activeCanvases.forEach(canvas => {
-            const rect = canvas.getBoundingClientRect();
-            console.log('📐 Canvas位置を更新:', {
-                className: canvas.className,
-                left: rect.left,
-                top: rect.top,
-                width: rect.width,
-                height: rect.height
-            });
-            
-            // 🔧 強制的に再レイアウトを促す
-            canvas.style.display = 'none';
-            void canvas.offsetHeight; // リフロー強制
-            canvas.style.display = 'block';
-        });
-        
-        console.log('✅ Canvasの再調整が完了しました');
-    }, 100); // 100ms待ってから実行
+    // 🔧 テストモードのCanvasを再生成
+    if (!isPracticeMode) {
+        console.log('📝 テストモードのCanvasを再生成します');
+        generateTestScreen();
+        console.log('✅ テストモードのCanvasを再生成しました');
+    }
+    
+    console.log('✅ Canvasの再調整が完了しました');
 }
 
 // ==========================================
@@ -432,50 +419,30 @@ function handleTouchStart(e) {
     const canvas = e.target;
     const touch = e.touches[0];
     
-    // 🔧 強制的にレイアウトを更新してから rect を取得
-    void canvas.offsetHeight; // リフロー強制
+    // 🔧 Canvas の位置を取得（ビューポート座標）
     const rect = canvas.getBoundingClientRect();
     
-    // 🔧 親要素の位置も確認
-    const parent = canvas.parentElement;
-    const parentRect = parent ? parent.getBoundingClientRect() : null;
-    
-    // 🔧 デバッグ：Canvas情報を出力（iPadでの問題確認用）
-    console.log('✏️ タッチ開始 - Canvas情報:', {
-        canvasWidth: canvas.width,
-        canvasHeight: canvas.height,
-        displayWidth: rect.width,
-        displayHeight: rect.height,
-        rectLeft: rect.left,
-        rectTop: rect.top,
-        parentLeft: parentRect ? parentRect.left : 'N/A',
-        parentTop: parentRect ? parentRect.top : 'N/A',
-        touchClientX: touch.clientX,
-        touchClientY: touch.clientY,
-        scaleX: canvas.width / rect.width,
-        scaleY: canvas.height / rect.height,
-        className: canvas.className
-    });
+    // 🔧 タッチ位置（ビューポート座標）
+    const touchX = touch.clientX;
+    const touchY = touch.clientY;
     
     // 🔧 Canvas内の相対座標を計算
-    lastX = touch.clientX - rect.left;
-    lastY = touch.clientY - rect.top;
+    lastX = touchX - rect.left;
+    lastY = touchY - rect.top;
     
-    console.log(`  → 計算結果: lastX=${lastX.toFixed(1)}, lastY=${lastY.toFixed(1)}`);
+    // 🔧 デバッグ：詳細情報を出力
+    console.log('✏️ タッチ開始:', {
+        'Touch位置': `(${touchX.toFixed(1)}, ${touchY.toFixed(1)})`,
+        'Canvas位置': `left=${rect.left.toFixed(1)}, top=${rect.top.toFixed(1)}`,
+        'Canvasサイズ': `${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`,
+        'Canvas内座標': `(${lastX.toFixed(1)}, ${lastY.toFixed(1)})`,
+        '判定': (lastX >= 0 && lastX <= rect.width && lastY >= 0 && lastY <= rect.height) ? '✅ Canvas内' : '⚠️ Canvas外'
+    });
     
-    // 🔧 範囲チェック（Canvasの外側をタッチした場合は無視）
-    if (lastX < 0 || lastX > rect.width || lastY < 0 || lastY > rect.height) {
-        console.warn('⚠️ タッチ位置がCanvas外:', { 
-            lastX: lastX.toFixed(1), 
-            lastY: lastY.toFixed(1), 
-            rectWidth: rect.width,
-            rectHeight: rect.height
-        });
-        return;
-    }
-    
-    console.log('✅ タッチ位置がCanvas内 - 描画開始');
+    // 🔧 Canvas外をタッチした場合でも描画を試みる（デバッグ用）
+    // 範囲チェックを一時的に無効化
     isDrawing = true;
+    console.log('🔧 デバッグモード: 範囲チェックを無効化して描画を試みます');
 }
 
 // ==========================================
