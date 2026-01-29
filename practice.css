@@ -437,12 +437,6 @@ h1 {
         gap: 15px;
     }
     
-    /* 🆕 練習モードの枠サイズを拡大（iPhone対応） */
-    .practice-canvas-wrapper {
-        min-width: 180px;
-        min-height: 180px;
-    }
-    
     .test-item {
         width: 180px;
         height: 280px;
