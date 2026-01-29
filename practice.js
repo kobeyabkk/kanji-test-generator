@@ -47,7 +47,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 初期表示を更新
     updateMode();
+    
+    // 🆕 画面回転・リサイズを検知してCanvasを再調整
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
 });
+
+// ==========================================
+// 画面回転・リサイズ時の処理
+// ==========================================
+function handleResize() {
+    console.log('🔄 画面の向きが変わりました - Canvasを再調整');
+    
+    // 🔧 すべてのCanvasのBounding Rectをリフレッシュするため、
+    // 少し待ってから強制的に再レイアウト
+    setTimeout(() => {
+        activeCanvases.forEach(canvas => {
+            const rect = canvas.getBoundingClientRect();
+            console.log('📐 Canvas位置を更新:', {
+                className: canvas.className,
+                left: rect.left,
+                top: rect.top,
+                width: rect.width,
+                height: rect.height
+            });
+            
+            // 🔧 強制的に再レイアウトを促す
+            canvas.style.display = 'none';
+            void canvas.offsetHeight; // リフロー強制
+            canvas.style.display = 'block';
+        });
+    }, 100); // 100ms待ってから実行
+}
 
 // ==========================================
 // URLパラメータから漢字リストとテストモードを読み込み
@@ -304,6 +335,9 @@ function setupCanvasEvents(canvas) {
 // ==========================================
 function startDrawing(e) {
     const canvas = e.target;
+    
+    // 🔧 強制的にレイアウトを更新してから rect を取得
+    void canvas.offsetHeight; // リフロー強制
     const rect = canvas.getBoundingClientRect();
     
     // 🔧 デバッグ：Canvas情報を出力
@@ -379,6 +413,9 @@ function handleTouchStart(e) {
     e.preventDefault();
     const canvas = e.target;
     const touch = e.touches[0];
+    
+    // 🔧 強制的にレイアウトを更新してから rect を取得
+    void canvas.offsetHeight; // リフロー強制
     const rect = canvas.getBoundingClientRect();
     
     // 🔧 デバッグ：Canvas情報を出力（iPadでの問題確認用）
@@ -387,13 +424,25 @@ function handleTouchStart(e) {
         canvasHeight: canvas.height,
         displayWidth: rect.width,
         displayHeight: rect.height,
+        rectLeft: rect.left,
+        rectTop: rect.top,
+        touchClientX: touch.clientX,
+        touchClientY: touch.clientY,
         scaleX: canvas.width / rect.width,
         scaleY: canvas.height / rect.height,
         className: canvas.className
     });
     
+    // 🔧 Canvas内の相対座標を計算
     lastX = touch.clientX - rect.left;
     lastY = touch.clientY - rect.top;
+    
+    // 🔧 範囲チェック（Canvasの外側をタッチした場合は無視）
+    if (lastX < 0 || lastX > rect.width || lastY < 0 || lastY > rect.height) {
+        console.warn('⚠️ タッチ位置がCanvas外:', { lastX, lastY, rect });
+        return;
+    }
+    
     isDrawing = true;
 }
 
@@ -415,10 +464,16 @@ function handleTouchMove(e) {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     
+    // 🔧 範囲チェック（Canvas外をタッチした場合は描画しない）
+    if (currentX < 0 || currentX > rect.width || currentY < 0 || currentY > rect.height) {
+        console.warn('⚠️ タッチ位置がCanvas外（移動中）:', { currentX, currentY, rect });
+        return;
+    }
+    
     // 🔧 デバッグ：描画情報を出力（最初の数回のみ）
     if (!canvas.debugCount) canvas.debugCount = 0;
     if (canvas.debugCount < 3) {
-        console.log('Touch Draw:', {
+        console.log('✅ Touch Draw OK:', {
             touchX: touch.clientX,
             touchY: touch.clientY,
             rectLeft: rect.left,
