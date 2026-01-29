@@ -54,6 +54,62 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ==========================================
+// Canvas解像度の再調整（DPR対応・描画内容保持）
+// ==========================================
+function resizeCanvasToDisplaySize(canvas, { preserve = true } = {}) {
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) {
+        return;
+    }
+
+    const dpr = window.devicePixelRatio || 1;
+    const targetWidth = Math.round(rect.width * dpr);
+    const targetHeight = Math.round(rect.height * dpr);
+
+    const needsResize = canvas.width !== targetWidth || canvas.height !== targetHeight || canvas._dpr !== dpr;
+    if (!needsResize) {
+        const ctx = canvas._ctx || canvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        canvas._ctx = ctx;
+        canvas._dpr = dpr;
+        return;
+    }
+
+    let snapshot = null;
+    if (preserve && canvas.width && canvas.height) {
+        snapshot = document.createElement('canvas');
+        snapshot.width = canvas.width;
+        snapshot.height = canvas.height;
+        const snapshotCtx = snapshot.getContext('2d');
+        snapshotCtx.drawImage(canvas, 0, 0);
+    }
+
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    canvas._ctx = ctx;
+    canvas._dpr = dpr;
+
+    if (snapshot) {
+        ctx.drawImage(snapshot, 0, 0, rect.width, rect.height);
+    }
+}
+
+function scheduleCanvasResize(canvas) {
+    requestAnimationFrame(() => {
+        resizeCanvasToDisplaySize(canvas, { preserve: true });
+    });
+}
+
+function refreshTestCanvases() {
+    document.querySelectorAll('canvas.test-canvas').forEach(canvas => {
+        resizeCanvasToDisplaySize(canvas, { preserve: true });
+    });
+}
+
+// ==========================================
 // 画面回転・リサイズ時の処理
 // ==========================================
 function handleResize() {
@@ -62,8 +118,9 @@ function handleResize() {
     // 🔧 描画中の場合は停止
     isDrawing = false;
     
-    // ⚠️ Canvasの再生成は行わない（描画内容が消えるため）
-    console.log('✅ 描画を一時停止しました');
+    // ✅ 表示サイズに合わせてCanvasを再調整（描画内容は保持）
+    refreshTestCanvases();
+    console.log('✅ 描画を一時停止し、Canvasを再調整しました');
 }
 
 // ==========================================
@@ -289,15 +346,9 @@ function generateTestScreen() {
         bracketTop.textContent = '︵';
         answerZone.appendChild(bracketTop);
         
-        // 手書きCanvas（シンプル版：DPRなし）
+        // 手書きCanvas
         const canvas = document.createElement('canvas');
         canvas.className = 'test-canvas';
-        
-        // シンプルなサイズ設定
-        canvas.width = 80;
-        canvas.height = 200;
-        
-        console.log(`📐 Canvas生成（シンプル版）: 80x200`);
         
         answerZone.appendChild(canvas);
         
@@ -313,6 +364,9 @@ function generateTestScreen() {
         card.appendChild(answerZone);
 
         container.appendChild(card);
+        
+        // 🔧 DOM確定後にDPR調整（iPadの描画遅延対策）
+        scheduleCanvasResize(canvas);
     });
 }
 
@@ -339,6 +393,9 @@ function setupCanvasEvents(canvas) {
 // ==========================================
 function startDrawing(e) {
     const canvas = e.target;
+    
+    //🔧 タッチ開始時にCanvasサイズを再調整
+    resizeCanvasToDisplaySize(canvas, { preserve: true });
     
     // 🔧 強制的にレイアウトを更新してから rect を取得
     void canvas.offsetHeight; // リフロー強制
@@ -421,6 +478,9 @@ function handleTouchStart(e) {
     e.preventDefault();
     const canvas = e.target;
     const touch = e.touches[0];
+    
+    // 🔧 タッチ開始時にCanvasサイズを再調整
+    resizeCanvasToDisplaySize(canvas, { preserve: true });
     
     // 🔧 Canvas の位置を取得（ビューポート座標）
     const rect = canvas.getBoundingClientRect();
@@ -574,6 +634,8 @@ function updateMode() {
         modeTitle.textContent = '📝 テストモード';
         modeSubtitle.textContent = '問題文を見て、漢字を書きましょう';
         modeSwitchBtn.textContent = 'テスト完了 → 練習に戻る';
+        // 🔧 テストモード表示時にCanvasを再調整
+        requestAnimationFrame(refreshTestCanvases);
     }
 }
 

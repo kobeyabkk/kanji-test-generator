@@ -1,0 +1,65 @@
+diff --git a/practice.js b/practice.js
+index 6c400ff..3506dcc 100644
+--- a/practice.js
++++ b/practice.js
+@@ -31,6 +31,63 @@ document.addEventListener('DOMContentLoaded', async () => {
+     window.addEventListener('orientationchange', handleResize);
+ });
+ 
++// ==========================================
++// Canvas解像度の再調整（DPR対応・描画内容保持）
++// ==========================================
++function resizeCanvasToDisplaySize(canvas, { preserve = true } = {}) {
++    const rect = canvas.getBoundingClientRect();
++    if (!rect.width || !rect.height) {
++        return;
++    }
++
++    const dpr = window.devicePixelRatio || 1;
++    const targetWidth = Math.round(rect.width * dpr);
++    const targetHeight = Math.round(rect.height * dpr);
++
++    const needsResize = canvas.width !== targetWidth || canvas.height !== targetHeight || canvas._dpr !== dpr;
++    if (!needsResize) {
++        const ctx = canvas._ctx || canvas.getContext('2d');
++        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
++        canvas._ctx = ctx;
++        canvas._dpr = dpr;
++        return;
++    }
++
++    let snapshot = null;
++    if (preserve && canvas.width && canvas.height) {
++        snapshot = document.createElement('canvas');
++        snapshot.width = canvas.width;
++        snapshot.height = canvas.height;
++        const snapshotCtx = snapshot.getContext('2d');
++        snapshotCtx.drawImage(canvas, 0, 0);
++    }
++
++    canvas.width = targetWidth;
++    canvas.height = targetHeight;
++
++    const ctx = canvas.getContext('2d');
++    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
++    canvas._ctx = ctx;
++    canvas._dpr = dpr;
++
++    if (snapshot) {
++        ctx.drawImage(snapshot, 0, 0, rect.width, rect.height);
++    }
++}
++
++function scheduleCanvasResize(canvas) {
++    requestAnimationFrame(() => {
++        resizeCanvasToDisplaySize(canvas, { preserve: true });
++    });
++}
++
++function refreshTestCanvases() {
++    document.querySelectorAll('canvas.test-canvas').forEach(canvas => {
++        resizeCanvasToDisplaySize(canvas, { preserve: true });
++    });
++}
++
+ // (以下、その他の変更...)
