@@ -244,6 +244,8 @@ h1 {
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
+    min-width: 150px; /* 🆕 最小サイズを設定（iPhone対応） */
+    min-height: 150px;
     border: 2px solid #ddd;
     border-radius: 8px;
     background: white;
@@ -435,14 +437,18 @@ h1 {
         gap: 15px;
     }
     
+    /* 🆕 練習モードの枠サイズを拡大（iPhone対応） */
+    .practice-canvas-wrapper {
+        min-width: 180px;
+        min-height: 180px;
+    }
+    
     .test-item {
         width: 180px;
         height: 280px;
         font-size: 22px;
     }
-}
-    }
-
+    
     .controls-top {
         flex-direction: column;
     }
@@ -488,23 +494,69 @@ h1 {
 @media print {
     body { 
         background: white; 
-        padding: 0; 
+        padding: 0;
+        margin: 0;
     }
     
     .container { 
         width: 100%; 
-        padding: 0; 
+        max-width: 100%;
+        padding: 10mm;
+        margin: 0;
         box-shadow: none; 
+    }
+    
+    /* 練習モード */
+    .practice-screen {
+        display: block !important;
+        visibility: visible !important;
+    }
+    
+    .practice-item {
+        break-inside: avoid; /* ページまたぎ防止 */
+        page-break-inside: avoid;
+        margin-bottom: 10mm;
+    }
+    
+    .practice-grid {
+        display: block;
+    }
+    
+    .practice-canvas-wrapper {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+    }
+    
+    /* テストモード */
+    .test-screen {
+        display: block !important;
+        visibility: visible !important;
     }
     
     .test-item { 
         break-inside: avoid; /* ページまたぎ防止 */
+        page-break-inside: avoid;
+        margin-bottom: 10mm;
+    }
+    
+    .test-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10mm;
     }
     
     /* ボタンなどのコントロールを非表示 */
     .controls-top,
     .navigation,
-    .action-buttons {
+    .action-buttons,
+    button {
         display: none !important;
+    }
+    
+    /* ヘッダーを表示 */
+    header {
+        display: block !important;
+        margin-bottom: 10mm;
     }
 }

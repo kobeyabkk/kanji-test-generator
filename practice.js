@@ -68,11 +68,15 @@ function resizeCanvasToDisplaySize(canvas, { preserve = true } = {}) {
 
     const needsResize = canvas.width !== targetWidth || canvas.height !== targetHeight || canvas._dpr !== dpr;
     if (!needsResize) {
+        // サイズ変更不要の場合、transformだけ確認
         const ctx = canvas._ctx || canvas.getContext('2d');
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        canvas._ctx = ctx;
-        canvas._dpr = dpr;
-        return;
+        if (!canvas._transformSet) {
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            canvas._ctx = ctx;
+            canvas._dpr = dpr;
+            canvas._transformSet = true;
+        }
+        return; // 早期リターン（高速化）
     }
 
     let snapshot = null;
@@ -91,6 +95,7 @@ function resizeCanvasToDisplaySize(canvas, { preserve = true } = {}) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     canvas._ctx = ctx;
     canvas._dpr = dpr;
+    canvas._transformSet = true;
 
     if (snapshot) {
         ctx.drawImage(snapshot, 0, 0, rect.width, rect.height);
@@ -394,22 +399,13 @@ function setupCanvasEvents(canvas) {
 function startDrawing(e) {
     const canvas = e.target;
     
-    //🔧 タッチ開始時にCanvasサイズを再調整
-    resizeCanvasToDisplaySize(canvas, { preserve: true });
+    // 🔧 初回のみCanvasサイズを調整（高速化）
+    if (!canvas._initialized) {
+        resizeCanvasToDisplaySize(canvas, { preserve: true });
+        canvas._initialized = true;
+    }
     
-    // 🔧 強制的にレイアウトを更新してから rect を取得
-    void canvas.offsetHeight; // リフロー強制
     const rect = canvas.getBoundingClientRect();
-    
-    // 🔧 デバッグ：Canvas情報を出力
-    console.log('Canvas Debug:', {
-        canvasWidth: canvas.width,
-        canvasHeight: canvas.height,
-        displayWidth: rect.width,
-        displayHeight: rect.height,
-        scaleX: canvas.width / rect.width,
-        scaleY: canvas.height / rect.height
-    });
     
     lastX = e.clientX - rect.left;
     lastY = e.clientY - rect.top;
@@ -479,33 +475,21 @@ function handleTouchStart(e) {
     const canvas = e.target;
     const touch = e.touches[0];
     
-    // 🔧 タッチ開始時にCanvasサイズを再調整
-    resizeCanvasToDisplaySize(canvas, { preserve: true });
+    // 🔧 初回のみCanvasサイズを調整（高速化）
+    if (!canvas._initialized) {
+        resizeCanvasToDisplaySize(canvas, { preserve: true });
+        canvas._initialized = true;
+    }
     
-    // 🔧 Canvas の位置を取得（ビューポート座標）
     const rect = canvas.getBoundingClientRect();
     
-    // 🔧 タッチ位置（ビューポート座標）
     const touchX = touch.clientX;
     const touchY = touch.clientY;
     
-    // 🔧 Canvas内の相対座標を計算
     lastX = touchX - rect.left;
     lastY = touchY - rect.top;
     
-    // 🔧 デバッグ：詳細情報を出力
-    console.log('✏️ タッチ開始:', {
-        'Touch位置': `(${touchX.toFixed(1)}, ${touchY.toFixed(1)})`,
-        'Canvas位置': `left=${rect.left.toFixed(1)}, top=${rect.top.toFixed(1)}`,
-        'Canvasサイズ': `${rect.width.toFixed(1)}x${rect.height.toFixed(1)}`,
-        'Canvas内座標': `(${lastX.toFixed(1)}, ${lastY.toFixed(1)})`,
-        '判定': (lastX >= 0 && lastX <= rect.width && lastY >= 0 && lastY <= rect.height) ? '✅ Canvas内' : '⚠️ Canvas外'
-    });
-    
-    // 🔧 Canvas外をタッチした場合でも描画を試みる（デバッグ用）
-    // 範囲チェックを一時的に無効化
     isDrawing = true;
-    console.log('🔧 デバッグモード: 範囲チェックを無効化して描画を試みます');
 }
 
 // ==========================================
