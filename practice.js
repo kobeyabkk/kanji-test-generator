@@ -235,6 +235,10 @@ function generatePracticeScreen() {
             // 🆕 描画コンテキストをDPRに合わせてスケール
             const drawCtx = drawCanvas.getContext('2d');
             drawCtx.scale(dpr, dpr);
+            
+            // 🔧 コンテキストをCanvas要素に保存（キャッシュ）
+            drawCanvas._ctx = drawCtx;
+            drawCanvas._dpr = dpr;
 
             wrapper.appendChild(bgCanvas);
             wrapper.appendChild(guideCanvas);
@@ -327,6 +331,10 @@ function generateTestScreen() {
         const ctx = canvas.getContext('2d');
         ctx.scale(dpr, dpr);
         
+        // 🔧 コンテキストをCanvas要素に保存（キャッシュ）
+        canvas._ctx = ctx;
+        canvas._dpr = dpr;
+        
         console.log(`📐 Canvas生成: DPR=${dpr}, 内部=${canvas.width}x${canvas.height}, 表示=${displayWidth}x${displayHeight}`);
         
         answerZone.appendChild(canvas);
@@ -396,7 +404,8 @@ function draw(e) {
     if (!isDrawing) return;
 
     const canvas = e.target;
-    const ctx = canvas.getContext('2d');
+    // 🔧 キャッシュされたコンテキストを使用（scale設定を保持）
+    const ctx = canvas._ctx || canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect();
     const currentX = e.clientX - rect.left;
     const currentY = e.clientY - rect.top;
@@ -422,10 +431,8 @@ function draw(e) {
     ctx.lineTo(currentX, currentY);
     ctx.stroke();
     
-    // 🆕 iPadのWebKit向け：強制的に描画を反映
-    if (canvas.style) {
-        canvas.style.transform = 'translateZ(0)';
-    }
+    // 🆕 iPadのWebKit向け：強制的に描画を反映（削除を試す）
+    // canvas.style.transform = 'translateZ(0)';
 
     lastX = currentX;
     lastY = currentY;
@@ -486,7 +493,8 @@ function handleTouchMove(e) {
     if (!isDrawing) return;
 
     const canvas = e.target;
-    const ctx = canvas.getContext('2d');
+    // 🔧 キャッシュされたコンテキストを使用（scale設定を保持）
+    const ctx = canvas._ctx || canvas.getContext('2d');
     const touch = e.touches[0];
     const rect = canvas.getBoundingClientRect();
     const currentX = touch.clientX - rect.left;
@@ -498,18 +506,17 @@ function handleTouchMove(e) {
     // 🔧 デバッグ：描画情報を出力（最初の数回のみ）
     if (!canvas.debugCount) canvas.debugCount = 0;
     if (canvas.debugCount < 3) {
-        console.log('✅ Touch Draw OK:', {
+        console.log('✅ Touch Draw:', {
             touchX: touch.clientX,
             touchY: touch.clientY,
-            rectLeft: rect.left,
-            rectTop: rect.top,
-            currentX: currentX,
-            currentY: currentY,
+            currentX: currentX.toFixed(1),
+            currentY: currentY.toFixed(1),
+            lastX: lastX.toFixed(1),
+            lastY: lastY.toFixed(1),
             penColor: penColor,
             penWidth: penWidth,
-            isEraserMode: isEraserMode,
-            canvasInternalSize: `${canvas.width}x${canvas.height}`,
-            canvasDisplaySize: `${rect.width}x${rect.height}`
+            hasCachedCtx: !!canvas._ctx,
+            ctxScaleApplied: canvas._dpr || 'N/A'
         });
         canvas.debugCount++;
     }
@@ -532,10 +539,8 @@ function handleTouchMove(e) {
     ctx.lineTo(currentX, currentY);
     ctx.stroke();
     
-    // 🆕 iPadのWebKit向け：強制的に描画を反映
-    if (canvas.style) {
-        canvas.style.transform = 'translateZ(0)';
-    }
+    // 🆕 iPadのWebKit向け：強制的に描画を反映（削除を試す）
+    // canvas.style.transform = 'translateZ(0)';
 
     lastX = currentX;
     lastY = currentY;

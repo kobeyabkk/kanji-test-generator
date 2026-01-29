@@ -303,6 +303,12 @@
 
 ## 🔄 更新履歴
 
+### 2026-01-29 v2.4.1 🎉 Canvasコンテキストキャッシュ対応！
+- ✅ **Canvasコンテキストをキャッシュ（scale設定を保持）**
+- ✅ `canvas._ctx` にコンテキストを保存
+- ✅ 描画時に毎回 `getContext()` を呼ばない（scale がリセットされるのを防ぐ）
+- ✅ デバッグログに `hasCachedCtx`, `ctxScaleApplied` を追加
+
 ### 2026-01-29 v2.4.0 🎉 iPad描画問題の根本解決（Gemini提案）！
 - ✅ **GPUレイヤーを強制（will-change, translateZ, backface-visibility）**
 - ✅ **Canvas内部解像度をDPR（デバイスピクセル比）に合わせる**
