@@ -175,17 +175,11 @@ function generatePracticeScreen() {
             // 背景Canvas（十字ガイド線）
             const bgCanvas = document.createElement('canvas');
             bgCanvas.className = 'practice-bg-canvas';
-            
-            // 🆕 DPR対応
-            const dpr = window.devicePixelRatio || 1;
-            bgCanvas.width = 200 * dpr;
-            bgCanvas.height = 200 * dpr;
-            bgCanvas.style.width = '200px';
-            bgCanvas.style.height = '200px';
+            bgCanvas.width = 200;
+            bgCanvas.height = 200;
             
             // 十字ガイド線を描画
             const bgCtx = bgCanvas.getContext('2d');
-            bgCtx.scale(dpr, dpr);
             bgCtx.strokeStyle = '#cccccc';
             bgCtx.lineWidth = 1;
             bgCtx.setLineDash([5, 5]); // 点線
@@ -205,15 +199,12 @@ function generatePracticeScreen() {
             // ガイドCanvas（右上のマスのみ表示）
             const guideCanvas = document.createElement('canvas');
             guideCanvas.className = 'practice-guide-canvas';
-            guideCanvas.width = 200 * dpr;
-            guideCanvas.height = 200 * dpr;
-            guideCanvas.style.width = '200px';
-            guideCanvas.style.height = '200px';
+            guideCanvas.width = 200;
+            guideCanvas.height = 200;
 
             // 右上のマス（i === 1）のみガイドに漢字を描画
             if (i === 1) {
                 const guideCtx = guideCanvas.getContext('2d');
-                guideCtx.scale(dpr, dpr);
                 guideCtx.font = 'bold 150px "Noto Sans JP"';
                 guideCtx.fillStyle = '#000000';
                 guideCtx.textAlign = 'center';
@@ -224,21 +215,11 @@ function generatePracticeScreen() {
             // 描画Canvas
             const drawCanvas = document.createElement('canvas');
             drawCanvas.className = 'practice-draw-canvas';
-            drawCanvas.width = 200 * dpr;
-            drawCanvas.height = 200 * dpr;
-            drawCanvas.style.width = '200px';
-            drawCanvas.style.height = '200px';
+            drawCanvas.width = 200;
+            drawCanvas.height = 200;
             drawCanvas.dataset.index = index;
             drawCanvas.dataset.box = i;
             drawCanvas.dataset.type = 'practice';
-            
-            // 🆕 描画コンテキストをDPRに合わせてスケール
-            const drawCtx = drawCanvas.getContext('2d');
-            drawCtx.scale(dpr, dpr);
-            
-            // 🔧 コンテキストをCanvas要素に保存（キャッシュ）
-            drawCanvas._ctx = drawCtx;
-            drawCanvas._dpr = dpr;
 
             wrapper.appendChild(bgCanvas);
             wrapper.appendChild(guideCanvas);
@@ -308,34 +289,15 @@ function generateTestScreen() {
         bracketTop.textContent = '︵';
         answerZone.appendChild(bracketTop);
         
-        // 手書きCanvas
+        // 手書きCanvas（シンプル版：DPRなし）
         const canvas = document.createElement('canvas');
         canvas.className = 'test-canvas';
         
-        // 🆕 デバイスピクセル比（DPR）を取得
-        const dpr = window.devicePixelRatio || 1;
+        // シンプルなサイズ設定
+        canvas.width = 80;
+        canvas.height = 200;
         
-        // 🆕 CSS表示サイズ
-        const displayWidth = 80;
-        const displayHeight = 200;
-        
-        // 🆕 Canvas内部解像度をDPRに合わせる
-        canvas.width = displayWidth * dpr;
-        canvas.height = displayHeight * dpr;
-        
-        // 🆕 CSS表示サイズを設定
-        canvas.style.width = displayWidth + 'px';
-        canvas.style.height = displayHeight + 'px';
-        
-        // 🆕 描画コンテキストをDPRに合わせてスケール
-        const ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
-        
-        // 🔧 コンテキストをCanvas要素に保存（キャッシュ）
-        canvas._ctx = ctx;
-        canvas._dpr = dpr;
-        
-        console.log(`📐 Canvas生成: DPR=${dpr}, 内部=${canvas.width}x${canvas.height}, 表示=${displayWidth}x${displayHeight}`);
+        console.log(`📐 Canvas生成（シンプル版）: 80x200`);
         
         answerZone.appendChild(canvas);
         
@@ -404,21 +366,17 @@ function draw(e) {
     if (!isDrawing) return;
 
     const canvas = e.target;
-    // 🔧 キャッシュされたコンテキストを使用（scale設定を保持）
-    const ctx = canvas._ctx || canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect();
     const currentX = e.clientX - rect.left;
     const currentY = e.clientY - rect.top;
 
-    // 🆕 DPR対応済みのため、スケール調整は不要（ctx.scaleで自動調整される）
-    // 座標はCSS表示サイズ（80x200）のまま使用
-
     // 消しゴムモードの場合
     if (isEraserMode) {
-        ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
+        ctx.globalCompositeOperation = 'destination-out';
         ctx.lineWidth = eraserWidth;
     } else {
-        ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
+        ctx.globalCompositeOperation = 'source-over';
         ctx.strokeStyle = penColor;
         ctx.lineWidth = penWidth;
     }
@@ -431,8 +389,13 @@ function draw(e) {
     ctx.lineTo(currentX, currentY);
     ctx.stroke();
     
-    // 🆕 iPadのWebKit向け：強制的に描画を反映（削除を試す）
-    // canvas.style.transform = 'translateZ(0)';
+    // 🆕 強制的に再描画を促す
+    requestAnimationFrame(() => {
+        canvas.style.opacity = '0.9999';
+        requestAnimationFrame(() => {
+            canvas.style.opacity = '1';
+        });
+    });
 
     lastX = currentX;
     lastY = currentY;
@@ -493,40 +456,30 @@ function handleTouchMove(e) {
     if (!isDrawing) return;
 
     const canvas = e.target;
-    // 🔧 キャッシュされたコンテキストを使用（scale設定を保持）
-    const ctx = canvas._ctx || canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     const touch = e.touches[0];
     const rect = canvas.getBoundingClientRect();
     const currentX = touch.clientX - rect.left;
     const currentY = touch.clientY - rect.top;
-
-    // 🆕 DPR対応済みのため、スケール調整は不要（ctx.scaleで自動調整される）
-    // 座標はCSS表示サイズ（80x200）のまま使用
     
     // 🔧 デバッグ：描画情報を出力（最初の数回のみ）
     if (!canvas.debugCount) canvas.debugCount = 0;
     if (canvas.debugCount < 3) {
-        console.log('✅ Touch Draw:', {
-            touchX: touch.clientX,
-            touchY: touch.clientY,
-            currentX: currentX.toFixed(1),
-            currentY: currentY.toFixed(1),
-            lastX: lastX.toFixed(1),
-            lastY: lastY.toFixed(1),
+        console.log('🖌️ 描画実行:', {
+            from: `(${lastX.toFixed(1)}, ${lastY.toFixed(1)})`,
+            to: `(${currentX.toFixed(1)}, ${currentY.toFixed(1)})`,
             penColor: penColor,
-            penWidth: penWidth,
-            hasCachedCtx: !!canvas._ctx,
-            ctxScaleApplied: canvas._dpr || 'N/A'
+            penWidth: penWidth
         });
         canvas.debugCount++;
     }
 
-    // 🆕 消しゴムモードの場合
+    // 消しゴムモードの場合
     if (isEraserMode) {
-        ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
+        ctx.globalCompositeOperation = 'destination-out';
         ctx.lineWidth = eraserWidth;
     } else {
-        ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
+        ctx.globalCompositeOperation = 'source-over';
         ctx.strokeStyle = penColor;
         ctx.lineWidth = penWidth;
     }
@@ -539,8 +492,13 @@ function handleTouchMove(e) {
     ctx.lineTo(currentX, currentY);
     ctx.stroke();
     
-    // 🆕 iPadのWebKit向け：強制的に描画を反映（削除を試す）
-    // canvas.style.transform = 'translateZ(0)';
+    // 🆕 強制的に再描画を促す
+    requestAnimationFrame(() => {
+        canvas.style.opacity = '0.9999';
+        requestAnimationFrame(() => {
+            canvas.style.opacity = '1';
+        });
+    });
 
     lastX = currentX;
     lastY = currentY;
