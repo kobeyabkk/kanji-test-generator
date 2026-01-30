@@ -1471,18 +1471,21 @@ input[type="date"]:focus {
     }
 
     .print-container {
-        width: 297mm; /* A4横向きの幅 */
-        height: 210mm; /* A4横向きの高さ */
+        /* 🆕 実際のサイズを87%に変更（iPhone印刷対応） */
+        width: calc(297mm * 0.87); /* = 258.39mm */
+        height: calc(210mm * 0.87); /* = 182.7mm */
         margin: 0;
-        padding: 4mm 6mm;
+        padding: calc(4mm * 0.87) calc(6mm * 0.87); /* 3.48mm 5.22mm */
         box-shadow: none;
         box-sizing: border-box;
         page-break-after: always; /* 各ページで改ページ */
         page-break-inside: avoid; /* 要素内での改ページを防ぐ */
         
-        /* 🆕 iPhone印刷時に87%に縮小 */
-        transform: scale(0.87);
-        transform-origin: top left;
+        /* transformは使わない（実サイズで縮小） */
+        transform: none;
+        
+        /* フォントサイズも87%に */
+        font-size: 87%;
     }
     
     /* 最後のprint-containerでは改ページなし */
