@@ -4,7 +4,8 @@
 let kanjiList = []; // 練習する漢字リスト
 let isPracticeMode = true; // true: 練習モード, false: テストモード
 let testMode = 'practice'; // 'practice', 'test10', 'test20'
-let activeCanvases = []; // アクティブなCanvas要素
+let activeCanvases = []; // アクティブなCanvas要素（練習モード用）
+let activeSVGs = []; // アクティブなSVG要素（テストモード用）
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
@@ -14,6 +15,10 @@ let penWidth = 6;
 let penColor = '#000000';
 let isEraserMode = false; // 消しゴムモード
 let eraserWidth = 20; // 消しゴムのデフォルト幅
+
+// SVG描画用の状態
+let currentPath = null;
+let pathData = '';
 
 // ==========================================
 // 初期化
@@ -135,10 +140,21 @@ function loadKanjiFromParams() {
     const params = new URLSearchParams(window.location.search);
     const kanjiParam = params.get('kanji');
     const modeParam = params.get('mode');
+    
+    console.log('🔍 URLパラメータ解析:');
+    console.log('  - 現在のURL:', window.location.href);
+    console.log('  - kanjiParam存在:', !!kanjiParam);
+    console.log('  - modeParam:', modeParam);
 
     if (kanjiParam) {
-        kanjiList = JSON.parse(decodeURIComponent(kanjiParam));
-        console.log(`📚 URLから読み込んだ漢字数: ${kanjiList.length}問`);
+        try {
+            kanjiList = JSON.parse(decodeURIComponent(kanjiParam));
+            console.log(`📚 URLから読み込んだ漢字数: ${kanjiList.length}問`);
+        } catch (e) {
+            console.error('❌ kanjiパラメータのパースエラー:', e);
+        }
+    } else {
+        console.log('⚠️ kanjiパラメータがありません');
     }
 
     if (modeParam) {
@@ -298,11 +314,12 @@ function generatePracticeScreen() {
 }
 
 // ==========================================
-// テスト画面を生成
+// テスト画面を生成（SVG版 - iPad Safari対応）
 // ==========================================
 function generateTestScreen() {
     const container = document.getElementById('test-grid');
     container.innerHTML = '';
+    activeSVGs = []; // SVGリストをリセット
 
     // 🆕 テスト20問の場合は、kanjiListを2倍にする
     let testKanjiList = kanjiList;
@@ -351,14 +368,15 @@ function generateTestScreen() {
         bracketTop.textContent = '︵';
         answerZone.appendChild(bracketTop);
 
-        // 手書きCanvas
-        const canvas = document.createElement('canvas');
-        canvas.className = 'test-canvas';
+        // 🆕 SVGを使用（iPad Safari対応）
+        const svg = createSVGCanvas(80, 200);
+        svg.className = 'test-svg';
+        svg.dataset.index = index;
+        answerZone.appendChild(svg);
 
-        answerZone.appendChild(canvas);
-
-        // Canvasイベントを設定
-        setupCanvasEvents(canvas);
+        // SVGイベントを設定
+        setupSVGEvents(svg);
+        activeSVGs.push(svg);
 
         // 下のカッコ
         const bracketBottom = document.createElement('span');
@@ -369,10 +387,203 @@ function generateTestScreen() {
         card.appendChild(answerZone);
 
         container.appendChild(card);
-
-        // 🔧 DOM確定後にDPR調整（iPadの描画遅延対策）
-        scheduleCanvasResize(canvas);
     });
+
+    console.log(`✅ テスト画面生成完了: ${testKanjiList.length}問（SVG使用）`);
+}
+
+// ==========================================
+// SVG Canvasを作成
+// ==========================================
+function createSVGCanvas(width, height) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', width);
+    svg.setAttribute('height', height);
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    svg.style.touchAction = 'none';
+    svg.style.cursor = 'crosshair';
+    return svg;
+}
+
+// ==========================================
+// SVGの描画イベントを設定
+// ==========================================
+function setupSVGEvents(svg) {
+    // マウスイベント
+    svg.addEventListener('mousedown', handleSVGMouseDown);
+    svg.addEventListener('mousemove', handleSVGMouseMove);
+    svg.addEventListener('mouseup', handleSVGMouseUp);
+    svg.addEventListener('mouseout', handleSVGMouseUp);
+
+    // タッチイベント（iPad Safari対応）
+    svg.addEventListener('touchstart', handleSVGTouchStart, { passive: false });
+    svg.addEventListener('touchmove', handleSVGTouchMove, { passive: false });
+    svg.addEventListener('touchend', handleSVGTouchEnd, { passive: false });
+}
+
+// ==========================================
+// SVG描画：マウスイベント
+// ==========================================
+function handleSVGMouseDown(e) {
+    const svg = e.currentTarget;
+    const rect = svg.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (isEraserMode) {
+        eraseAtPoint(svg, x, y);
+    } else {
+        startSVGPath(svg, x, y);
+    }
+    isDrawing = true;
+}
+
+function handleSVGMouseMove(e) {
+    if (!isDrawing) return;
+
+    const svg = e.currentTarget;
+    const rect = svg.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (isEraserMode) {
+        eraseAtPoint(svg, x, y);
+    } else {
+        continueSVGPath(x, y);
+    }
+}
+
+function handleSVGMouseUp() {
+    isDrawing = false;
+    currentPath = null;
+    pathData = '';
+}
+
+// ==========================================
+// SVG描画：タッチイベント（iPad Safari対応）
+// ==========================================
+function handleSVGTouchStart(e) {
+    e.preventDefault();
+    const svg = e.currentTarget;
+    const touch = e.touches[0];
+    const rect = svg.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    console.log(`✏️ SVGタッチ開始: (${x.toFixed(1)}, ${y.toFixed(1)})`);
+
+    if (isEraserMode) {
+        eraseAtPoint(svg, x, y);
+    } else {
+        startSVGPath(svg, x, y);
+    }
+    isDrawing = true;
+}
+
+function handleSVGTouchMove(e) {
+    e.preventDefault();
+    if (!isDrawing) return;
+
+    const svg = e.currentTarget;
+    const touch = e.touches[0];
+    const rect = svg.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    if (isEraserMode) {
+        eraseAtPoint(svg, x, y);
+    } else {
+        continueSVGPath(x, y);
+    }
+}
+
+function handleSVGTouchEnd(e) {
+    e.preventDefault();
+    isDrawing = false;
+    currentPath = null;
+    pathData = '';
+}
+
+// ==========================================
+// SVGパスの描画
+// ==========================================
+function startSVGPath(svg, x, y) {
+    // 新しいパス要素を作成
+    currentPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    currentPath.setAttribute('fill', 'none');
+    currentPath.setAttribute('stroke', penColor);
+    currentPath.setAttribute('stroke-width', penWidth);
+    currentPath.setAttribute('stroke-linecap', 'round');
+    currentPath.setAttribute('stroke-linejoin', 'round');
+
+    pathData = `M ${x} ${y}`;
+    currentPath.setAttribute('d', pathData);
+    svg.appendChild(currentPath);
+
+    lastX = x;
+    lastY = y;
+}
+
+function continueSVGPath(x, y) {
+    if (!currentPath) return;
+
+    pathData += ` L ${x} ${y}`;
+    currentPath.setAttribute('d', pathData);
+
+    lastX = x;
+    lastY = y;
+}
+
+// ==========================================
+// SVG消しゴム機能
+// ==========================================
+function eraseAtPoint(svg, x, y) {
+    const eraserRadius = eraserWidth / 2;
+    const paths = svg.querySelectorAll('path');
+
+    paths.forEach(path => {
+        // パスのバウンディングボックスを取得
+        try {
+            const bbox = path.getBBox();
+            // 消しゴムの範囲内にパスがあるかチェック
+            if (isPointNearRect(x, y, eraserRadius, bbox)) {
+                // より詳細なチェック：パスの各セグメントをチェック
+                if (isPathNearPoint(path, x, y, eraserRadius)) {
+                    path.remove();
+                }
+            }
+        } catch (e) {
+            // getBBoxが失敗した場合（空のパスなど）
+        }
+    });
+}
+
+function isPointNearRect(x, y, radius, rect) {
+    // ポイントが矩形の拡張範囲内にあるかチェック
+    return x >= rect.x - radius &&
+           x <= rect.x + rect.width + radius &&
+           y >= rect.y - radius &&
+           y <= rect.y + rect.height + radius;
+}
+
+function isPathNearPoint(path, x, y, radius) {
+    const pathD = path.getAttribute('d');
+    if (!pathD) return false;
+
+    // パスの座標を抽出
+    const coords = pathD.match(/[\d.]+/g);
+    if (!coords) return false;
+
+    // 各座標ペアをチェック
+    for (let i = 0; i < coords.length - 1; i += 2) {
+        const px = parseFloat(coords[i]);
+        const py = parseFloat(coords[i + 1]);
+        const distance = Math.sqrt(Math.pow(px - x, 2) + Math.pow(py - y, 2));
+        if (distance <= radius * 2) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // ==========================================
@@ -521,16 +732,23 @@ function handleTouchEnd(e) {
 }
 
 // ==========================================
-// 全てのCanvasをクリア
+// 全てのCanvasとSVGをクリア
 // ==========================================
 function clearAllCanvases() {
-    // 現在表示されている画面のCanvasのみクリア
+    // 現在表示されている画面のCanvas/SVGのみクリア
     const currentScreen = isPracticeMode ? 'practice-screen' : 'test-screen';
     const screenElement = document.getElementById(currentScreen);
 
+    // Canvas（練習モード）をクリア
     screenElement.querySelectorAll('canvas.practice-draw-canvas, canvas.test-canvas').forEach(canvas => {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    // 🆕 SVG（テストモード）をクリア
+    screenElement.querySelectorAll('svg.test-svg').forEach(svg => {
+        // SVG内のすべてのpath要素を削除
+        svg.querySelectorAll('path').forEach(path => path.remove());
     });
 }
 
@@ -577,8 +795,8 @@ function updateMode() {
         modeTitle.textContent = '📝 テストモード';
         modeSubtitle.textContent = '問題文を見て、漢字を書きましょう';
         modeSwitchBtn.textContent = 'テスト完了 → 練習に戻る';
-        // 🔧 テストモード表示時にCanvasを再調整
-        requestAnimationFrame(refreshTestCanvases);
+        // 🆕 SVGに移行したため、Canvasの再調整は不要
+        // SVGはDOMベースなので、表示時の初期化処理不要
     }
 }
 
@@ -587,10 +805,15 @@ function updateMode() {
 // ==========================================
 function restartPractice() {
     if (confirm('全ての描画内容がクリアされます。\n最初からやり直しますか？')) {
-        // 全てのCanvasをクリア
+        // 全てのCanvasをクリア（練習モード）
         activeCanvases.forEach(canvas => {
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // 🆕 全てのSVGをクリア（テストモード）
+        activeSVGs.forEach(svg => {
+            svg.querySelectorAll('path').forEach(path => path.remove());
         });
 
         // 練習モードに戻る
@@ -617,23 +840,34 @@ function toggleEraser() {
 
 function updateEraserButton() {
     const eraserBtn = document.getElementById('eraser-btn');
+    const cursorSize = eraserWidth;
+    const eraserCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${cursorSize}" height="${cursorSize}" viewBox="0 0 ${cursorSize} ${cursorSize}"><circle cx="${cursorSize / 2}" cy="${cursorSize / 2}" r="${cursorSize / 2 - 1}" fill="none" stroke="rgba(255,87,34,0.8)" stroke-width="2"/></svg>') ${cursorSize / 2} ${cursorSize / 2}, crosshair`;
+
     if (isEraserMode) {
         eraserBtn.classList.add('active');
         eraserBtn.textContent = '✏️ ペンに戻る';
 
-        // 🆕 消しゴムモード時はカーソルを変更
+        // 消しゴムモード時はカーソルを変更（Canvas）
         activeCanvases.forEach(canvas => {
-            // 消しゴムの範囲を円形カーソルで表示
-            const cursorSize = eraserWidth;
-            canvas.style.cursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${cursorSize}" height="${cursorSize}" viewBox="0 0 ${cursorSize} ${cursorSize}"><circle cx="${cursorSize / 2}" cy="${cursorSize / 2}" r="${cursorSize / 2 - 1}" fill="none" stroke="rgba(255,87,34,0.8)" stroke-width="2"/></svg>') ${cursorSize / 2} ${cursorSize / 2}, crosshair`;
+            canvas.style.cursor = eraserCursor;
+        });
+        
+        // 🆕 SVGも消しゴムカーソルに変更
+        activeSVGs.forEach(svg => {
+            svg.style.cursor = eraserCursor;
         });
     } else {
         eraserBtn.classList.remove('active');
         eraserBtn.textContent = '🧹 消しゴム';
 
-        // 🆕 ペンモード時は通常のカーソルに戻す
+        // ペンモード時は通常のカーソルに戻す（Canvas）
         activeCanvases.forEach(canvas => {
             canvas.style.cursor = 'crosshair';
+        });
+        
+        // 🆕 SVGも通常カーソルに戻す
+        activeSVGs.forEach(svg => {
+            svg.style.cursor = 'crosshair';
         });
     }
 }
