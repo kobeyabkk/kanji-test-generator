@@ -1511,7 +1511,7 @@ input[type="date"]:focus {
     }
 }
 
-/* スマホ対応（480px以下） - 完全に独立 */
+/* スマホ対応（480px以下） - px単位に変換 */
 @media screen and (max-width: 480px) {
     /* 画面全体 */
     body {
@@ -1519,35 +1519,54 @@ input[type="date"]:focus {
     }
     
     #print-screen {
-        padding: 10px 5px !important;
+        padding: 15px 10px !important;
         min-height: 100vh !important;
         background: #e0e0e0 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        justify-content: flex-start !important;
     }
     
-    /* プリントコンテナ */
+    /* プリントコンテナ - px単位に変換 */
     .print-container {
-        /* 固定サイズを維持しつつ、縮小して表示 */
-        width: 297mm !important;
-        height: 210mm !important;
+        /* スマホでは画面幅に合わせる */
+        width: calc(100vw - 20px) !important;  /* 左右余白10pxずつ */
+        max-width: 355px !important;  /* iPhoneに収まる最大幅 */
+        height: auto !important;  /* 高さは自動 */
         
-        /* 縮小率を少し大きく */
-        transform: scale(0.34) !important;
-        transform-origin: top center !important;
+        /* A4横の比率を維持 (297:210 = 1.414:1) */
+        aspect-ratio: 297 / 210 !important;
+        
+        /* transformを使わない */
+        transform: none !important;
         
         /* 中央配置 */
-        margin: 0 auto 10px auto !important;
-        padding: 4mm 6mm !important;
+        margin: 0 auto 15px auto !important;
+        padding: 8px 10px !important;  /* mm単位からpx単位へ */
         
         overflow: visible !important;
         box-sizing: border-box !important;
-        
         position: relative !important;
+        
+        /* フォントサイズを調整 */
+        font-size: 10px !important;
     }
     
-    /* ボタンエリア - margin-topを削除 */
+    /* プリント内の要素も縮小 */
+    .print-container * {
+        font-size: inherit !important;
+    }
+    
+    .print-header {
+        font-size: 7px !important;
+    }
+    
+    .print-title {
+        font-size: 11px !important;
+    }
+    
+    /* ボタンエリア */
     .print-controls {
         margin-top: 0 !important;
         padding: 10px !important;
@@ -1559,7 +1578,8 @@ input[type="date"]:focus {
     
     .print-controls button {
         font-size: 12px !important;
-        padding: 8px 10px !important;
+        padding: 8px 12px !important;
+        min-width: 80px !important;
     }
 }
 
