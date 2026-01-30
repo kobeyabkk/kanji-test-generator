@@ -2,6 +2,8 @@
 // グローバル変数
 // ==========================================
 let kanjiList = []; // 練習する漢字リスト
+let allKanjiList = []; // 🆕 全ての漢字リスト（ランダム生成用）
+let originalKanjiParam = ''; // 🆕 元のURLパラメータ（再生成用）
 let isPracticeMode = true; // true: 練習モード, false: テストモード
 let testMode = 'practice'; // 'practice', 'test10', 'test20'
 let activeCanvases = []; // アクティブなCanvas要素
@@ -133,7 +135,9 @@ function loadKanjiFromParams() {
     const modeParam = params.get('mode');
     
     if (kanjiParam) {
-        kanjiList = JSON.parse(decodeURIComponent(kanjiParam));
+        originalKanjiParam = kanjiParam; // 🆕 元のパラメータを保存
+        allKanjiList = JSON.parse(decodeURIComponent(kanjiParam)); // 🆕 全リストを保存
+        kanjiList = [...allKanjiList]; // コピーを作成
         console.log(`📚 URLから読み込んだ漢字数: ${kanjiList.length}問`);
     }
     
@@ -167,6 +171,7 @@ function setupEventListeners() {
         window.location.href = 'index.html';
     });
     document.getElementById('restart-btn').addEventListener('click', restartPractice);
+    document.getElementById('regenerate-btn').addEventListener('click', regenerateProblems);
 
     // ペン設定イベント
     document.getElementById('pen-width').addEventListener('input', (e) => {
@@ -599,6 +604,43 @@ function restartPractice() {
         // 練習モードに戻る
         isPracticeMode = true;
         updateMode();
+    }
+}
+
+// ==========================================
+// 別の問題を生成（同じ条件でランダムに）
+// ==========================================
+function regenerateProblems() {
+    if (confirm('新しい問題を生成します。\n現在の描画内容はクリアされます。\nよろしいですか？')) {
+        console.log('🔄 別の問題を生成中...');
+        
+        // 全漢字リストをシャッフル
+        const shuffled = [...allKanjiList].sort(() => Math.random() - 0.5);
+        
+        // 必要な数だけ取得
+        let count = 10; // デフォルトは10問
+        if (testMode === 'test10' || testMode === 'practice') {
+            count = 10;
+        } else if (testMode === 'test20') {
+            count = 10; // test20は同じ漢字を2回なので10問取得
+        }
+        
+        // 問題数が足りない場合は全て使う
+        kanjiList = shuffled.slice(0, Math.min(count, shuffled.length));
+        
+        console.log(`✨ 新しい問題を生成: ${kanjiList.length}問`);
+        
+        // Canvas要素をクリア
+        activeCanvases = [];
+        
+        // 画面を再生成
+        generatePracticeScreen();
+        generateTestScreen();
+        
+        // 現在のモードを維持
+        updateMode();
+        
+        alert('✅ 新しい問題を生成しました！');
     }
 }
 
