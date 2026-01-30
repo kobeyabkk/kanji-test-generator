@@ -897,6 +897,9 @@ input[type="date"]:focus {
     background: #e0e0e0;
     min-height: 100vh;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 中央揃え */
 }
 
 .print-container {
@@ -1488,12 +1491,32 @@ input[type="date"]:focus {
     .print-container {
         transform: scale(0.8);
         transform-origin: top center;
+        margin-bottom: 20px;
     }
 }
 
 @media screen and (max-width: 900px) {
     .print-container {
         transform: scale(0.6);
+        transform-origin: top center;
+        margin-bottom: 20px;
+    }
+}
+
+/* iPhone対応 */
+@media screen and (max-width: 480px) {
+    #print-screen {
+        padding: 10px 5px;
+        overflow-x: hidden; /* 横スクロール防止 */
+    }
+    
+    .print-container {
+        transform: scale(0.35); /* さらに縮小 */
+        transform-origin: top center;
+        margin: 0 auto 10px;
+        /* 縮小後のサイズ調整 */
+        width: 297mm;
+        height: 210mm;
     }
 }
 
