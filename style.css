@@ -1471,35 +1471,48 @@ input[type="date"]:focus {
     }
 
     .print-container {
-        /* 🆕 実際のサイズを87%に変更（iPhone印刷対応） */
-        width: calc(297mm * 0.87); /* = 258.39mm */
-        height: calc(210mm * 0.87); /* = 182.7mm */
-        margin: 0;
-        padding: calc(4mm * 0.87) calc(6mm * 0.87); /* 3.48mm 5.22mm */
+        /* 🆕 印刷時は80%に縮小（iPhone対応） */
+        width: calc(297mm * 0.80); /* = 237.6mm */
+        height: auto !important; /* 高さは自動 */
+        min-height: unset !important;
+        margin: 0 auto; /* 中央配置 */
+        padding: calc(4mm * 0.80) calc(6mm * 0.80); /* 3.2mm 4.8mm */
         box-shadow: none;
         box-sizing: border-box;
-        page-break-after: always; /* 各ページで改ページ */
-        page-break-inside: avoid; /* 要素内での改ページを防ぐ */
+        
+        /* 改ページを防ぐ */
+        page-break-after: avoid !important;
+        page-break-before: avoid !important;
+        page-break-inside: avoid !important;
+        break-after: avoid !important;
+        break-before: avoid !important;
+        break-inside: avoid !important;
         
         /* transformは使わない（実サイズで縮小） */
         transform: none;
         
-        /* フォントサイズも87%に */
-        font-size: 87%;
+        /* フォントサイズも80%に */
+        font-size: 80%;
     }
     
-    /* 最後のprint-containerでは改ページなし */
+    /* すべての要素で改ページを防ぐ */
+    .print-container * {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    
+    /* 最後のprint-containerでも改ページなし */
     .print-container:last-of-type {
-        page-break-after: avoid;
+        page-break-after: avoid !important;
     }
 
-    .print-controls, .edit-buttons {
+    .print-controls, .edit-buttons, .answer-section {
         display: none !important;
     }
 
     @page {
-        size: A4 landscape;
-        margin: 0;
+        size: A4 landscape; /* 横向き */
+        margin: 5mm; /* 最小限の余白 */
     }
 }
 

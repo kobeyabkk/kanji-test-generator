@@ -170,7 +170,7 @@ async function loadKanjiData() {
 function setupEventListeners() {
     document.getElementById('generate-btn').addEventListener('click', generatePrint);
     document.getElementById('practice-btn').addEventListener('click', goToPractice);
-    document.getElementById('print-btn').addEventListener('click', () => window.print());
+    document.getElementById('print-btn').addEventListener('click', handlePrint);
     document.getElementById('back-btn').addEventListener('click', backToSettings);
     document.getElementById('regenerate-btn').addEventListener('click', generatePrint);
     
@@ -1128,6 +1128,38 @@ function backToSettings() {
     printScreen.classList.add('hidden');
     printScreen.classList.remove('active');  // 🆕 非表示状態を明示
     document.getElementById('settings-screen').classList.remove('hidden');
+}
+
+// ==================================
+// 🆕 印刷ハンドラー（カラーオフ・横向き自動設定）
+// ==================================
+function handlePrint() {
+    // 印刷前の準備
+    const style = document.createElement('style');
+    style.id = 'print-color-settings';
+    style.innerHTML = `
+        @media print {
+            * {
+                -webkit-print-color-adjust: economy !important;
+                print-color-adjust: economy !important;
+                color-adjust: economy !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // 印刷実行
+    setTimeout(() => {
+        window.print();
+        
+        // 印刷後のクリーンアップ
+        setTimeout(() => {
+            const styleEl = document.getElementById('print-color-settings');
+            if (styleEl) {
+                styleEl.remove();
+            }
+        }, 1000);
+    }, 100);
 }
 
 // ==================================
