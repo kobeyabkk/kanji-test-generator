@@ -303,37 +303,36 @@ h1 {
     gap: 20px;
     flex-wrap: wrap;
     justify-content: center; /* 中央揃え */
-    direction: rtl; /* 右から左へ */
 }
 
 /* ==========================================
-   テストカード（シンプル版・縦書き2分割）
+   テストカード（シンプル版・横並び）
    ========================================== */
 .test-item {
-    /* 縦書きモードにする */
-    writing-mode: vertical-rl;
-    direction: ltr; /* カード内部は通常の方向（rtlの影響を受けないように） */
-    
     background: white;
-    width: 200px;  /* カードの幅 */
-    height: 300px; /* カードの高さ */
+    width: 300px;  /* カードの幅を拡大 */
+    height: 200px; /* カードの高さを縮小 */
     border: 3px solid #c0392b; /* 赤い太枠 */
     border-radius: 8px; /* 少し角丸に */
     padding: 15px;
     margin-bottom: 30px;
     
-    /* 中身の配置（右の文章と、左の解答欄を並べる） */
+    /* 中身の配置（横並び：左に問題文、右に解答欄） */
     display: flex;
-    flex-direction: column; /* 縦書きモードではこれが「右→左」の並びになります */
+    flex-direction: row; /* 横並び */
     gap: 10px; /* 文章と解答欄のすきま */
+    align-items: flex-start; /* 上揃え */
 }
 
-/* ■ 右側：問題文エリア */
+/* ■ 左側：問題文エリア */
 .question-zone {
-    /* ここはFlexboxを使わず、ただのブロックにします */
-    /* そうすることで、文字がいっぱいになったら勝手に左へ改行されます */
+    /* 🆕 問題文エリアだけ縦書きモードにする */
+    writing-mode: vertical-rl;
+    direction: ltr;
+    
     flex-grow: 1; /* 余ったスペースを全部使う */
-    font-size: 26px;
+    height: 100%; /* 親要素の高さいっぱい */
+    font-size: 22px; /* 少し小さく */
     line-height: 1.6; /* 行間 */
     color: #333;
     font-weight: bold;
