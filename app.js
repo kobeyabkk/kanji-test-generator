@@ -349,7 +349,9 @@ function generatePrint() {
     
     // 画面切り替え
     document.getElementById('settings-screen').classList.add('hidden');
-    document.getElementById('print-screen').classList.remove('hidden');
+    const printScreen = document.getElementById('print-screen');
+    printScreen.classList.remove('hidden');
+    printScreen.classList.add('active');  // 🆕 表示中であることを明示
 }
 
 // ==================================
@@ -1122,7 +1124,9 @@ function backToSettings() {
         toggleBtn.textContent = '👁️ 解答を表示';
     }
     
-    document.getElementById('print-screen').classList.add('hidden');
+    const printScreen = document.getElementById('print-screen');
+    printScreen.classList.add('hidden');
+    printScreen.classList.remove('active');  // 🆕 非表示状態を明示
     document.getElementById('settings-screen').classList.remove('hidden');
 }
 

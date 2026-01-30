@@ -902,6 +902,18 @@ input[type="date"]:focus {
     align-items: center; /* 中央揃え */
 }
 
+/* 🆕 スマホでは完全に隠す */
+@media screen and (max-width: 480px) {
+    #print-screen:not(.active) {
+        display: none !important;
+    }
+}
+
+/* プリント画面が表示されている時だけ表示 */
+#print-screen.active {
+    display: flex !important;
+}
+
 .print-container {
     width: 297mm; /* A4横向き幅 */
     height: 210mm; /* A4横向き高さ */
@@ -1467,6 +1479,10 @@ input[type="date"]:focus {
         box-sizing: border-box;
         page-break-after: always; /* 各ページで改ページ */
         page-break-inside: avoid; /* 要素内での改ページを防ぐ */
+        
+        /* 🆕 iPhone印刷時に87%に縮小 */
+        transform: scale(0.87);
+        transform-origin: top left;
     }
     
     /* 最後のprint-containerでは改ページなし */
