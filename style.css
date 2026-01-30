@@ -1503,7 +1503,15 @@ input[type="date"]:focus {
     }
 }
 
-/* iPhone対応（より積極的な修正） */
+@media screen and (max-width: 600px) {
+    .print-container {
+        transform: scale(0.45);
+        transform-origin: top center;
+        margin-bottom: 20px;
+    }
+}
+
+/* スマホ対応（iPhone・Android） */
 @media screen and (max-width: 480px) {
     #print-screen {
         padding: 5px;
@@ -1512,55 +1520,33 @@ input[type="date"]:focus {
     }
     
     .print-container {
-        /* ビューポート幅に合わせる */
-        width: 100vw !important;
-        max-width: 100vw !important;
-        height: auto !important;
-        min-height: auto !important;
+        /* 縮小表示に変更（幅フィットではない） */
+        transform: scale(0.38) !important;
+        transform-origin: top center !important;
         
-        /* 縮小を解除して、幅フィット */
-        transform: none !important;
-        transform-origin: unset !important;
+        /* 元のサイズを維持 */
+        width: 297mm !important;
+        height: 210mm !important;
         
-        margin: 0 0 10px 0 !important;
-        padding: 10px !important;
+        margin: 0 auto 20px !important;
+        padding: 4mm 6mm !important;
         box-sizing: border-box !important;
         
-        /* 内容を縮小 */
-        font-size: 10px;
-    }
-    
-    /* プリント内のコンテンツも縮小 */
-    .print-container * {
-        font-size: inherit !important;
-    }
-    
-    .print-header {
-        position: relative !important;
-        top: unset !important;
-        right: unset !important;
-        margin-bottom: 10px !important;
-    }
-    
-    .print-title {
-        font-size: 14px !important;
+        /* overflow を visible に変更 */
+        overflow: visible !important;
     }
     
     .print-controls {
         padding: 10px 5px !important;
         gap: 5px !important;
+        flex-wrap: wrap !important;
     }
     
     .print-controls button {
-        font-size: 12px !important;
-        padding: 8px 12px !important;
+        font-size: 11px !important;
+        padding: 6px 10px !important;
     }
 }
-
-@media screen and (max-width: 600px) {
-    .print-container {
-        transform: scale(0.4);
-    }
 }
 
 /* ==================================
