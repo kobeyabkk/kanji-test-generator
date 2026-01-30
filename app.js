@@ -357,7 +357,6 @@ function generatePrint() {
 // ==================================
 function goToPractice() {
     console.log('🎯 手書き練習へ遷移');
-    console.log('⏳ goToPractice関数が呼び出されました');
     
     // 学年別問題数を取得
     const gradeCounts = {};
@@ -419,12 +418,7 @@ function goToPractice() {
     // URLパラメータとして渡す（テストモード情報も含める）
     const kanjiParam = encodeURIComponent(JSON.stringify(practiceKanjiList));
     const modeParam = currentTestMode.value; // 'practice', 'test10', 'test20'
-    const targetUrl = `practice.html?kanji=${kanjiParam}&mode=${modeParam}`;
-    
-    console.log('🔗 遷移先URL:', targetUrl);
-    console.log('📊 URLの長さ:', targetUrl.length);
-    
-    window.location.href = targetUrl;
+    window.location.href = `practice.html?kanji=${kanjiParam}&mode=${modeParam}`;
 }
 
 // ==================================

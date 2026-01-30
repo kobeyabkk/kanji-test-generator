@@ -351,38 +351,19 @@ h1 {
 
 /* ■ 左側：解答欄エリア */
 .answer-zone {
-    width: 80px; /* 🔧 幅を80pxに変更（Canvasサイズに合わせる） */
-    height: 200px; /* 高さも固定 */
-    /* 枠線(border)は絶対に書きません！ */
+    width: 80px;
+    height: 200px;
     
-    /* カッコとCanvasを絶対配置にするための基準 */
+    /* 🆕 シンプルな枠線デザイン */
+    border: 2px solid #c0392b; /* 赤い枠線 */
+    border-radius: 4px;
+    background: #fff;
+    
+    /* Canvasを配置するための基準 */
     position: relative;
-    
-    color: #c0392b; /* 赤色 */
-    font-size: 50px; /* カッコを特大サイズに */
-    line-height: 1; /* 行間のズレ防止 */
 }
 
-/* カッコの文字調整 */
-.bracket {
-    /* 縦書き時に文字が回転しないようにする指定 */
-    text-orientation: upright;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2; /* Canvasより上に表示 */
-    pointer-events: none; /* クリックを透過 */
-}
-
-.bracket:first-child {
-    top: 0;
-}
-
-.bracket:last-child {
-    bottom: 0;
-}
-
-/* テストモードの手書きCanvas（レガシー・未使用） */
+/* テストモードの手書きCanvas */
 .test-canvas {
     position: absolute !important;
     top: 0 !important;
@@ -397,34 +378,13 @@ h1 {
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
-}
-
-/* 🆕 テストモードの手書きSVG（iPad Safari対応版） */
-.test-svg {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 80px !important;
-    height: 200px !important;
-    min-width: 80px !important;
-    max-width: 80px !important;
-    min-height: 200px !important;
-    max-height: 200px !important;
-    cursor: crosshair;
-    touch-action: none; /* スクロール防止（重要） */
-    display: block;
-    z-index: 1;
-    box-sizing: border-box !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: visible; /* SVGの描画が見えるように */
-    background: transparent;
     
-    /* 
-     * SVGはCanvasと違い、DOMベースなのでiOS WebKitの
-     * writing-mode + position:absolute の描画バグの影響を受けない
-     */
+    /* 🆕 GPUレイヤーを強制（iPadのWebKit対応） */
+    will-change: contents;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 /* ==========================================
