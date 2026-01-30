@@ -1471,39 +1471,27 @@ input[type="date"]:focus {
     }
 
     .print-container {
-        /* 🆕 印刷時は80%に縮小（iPhone対応） */
-        width: calc(297mm * 0.80); /* = 237.6mm */
-        height: auto !important; /* 高さは自動 */
-        min-height: unset !important;
-        margin: 0 auto; /* 中央配置 */
-        padding: calc(4mm * 0.80) calc(6mm * 0.80); /* 3.2mm 4.8mm */
+        /* 元のサイズを維持 */
+        width: 297mm;
+        height: 210mm;
+        margin: 0;
+        padding: 4mm 6mm;
         box-shadow: none;
         box-sizing: border-box;
+        
+        /* 85%に縮小（transform使用） */
+        transform: scale(0.85);
+        transform-origin: top left;
         
         /* 改ページを防ぐ */
         page-break-after: avoid !important;
         page-break-before: avoid !important;
         page-break-inside: avoid !important;
-        break-after: avoid !important;
-        break-before: avoid !important;
-        break-inside: avoid !important;
-        
-        /* transformは使わない（実サイズで縮小） */
-        transform: none;
-        
-        /* フォントサイズも80%に */
-        font-size: 80%;
     }
     
     /* すべての要素で改ページを防ぐ */
     .print-container * {
         page-break-inside: avoid !important;
-        break-inside: avoid !important;
-    }
-    
-    /* 最後のprint-containerでも改ページなし */
-    .print-container:last-of-type {
-        page-break-after: avoid !important;
     }
 
     .print-controls, .edit-buttons, .answer-section {
@@ -1511,8 +1499,8 @@ input[type="date"]:focus {
     }
 
     @page {
-        size: A4 landscape; /* 横向き */
-        margin: 5mm; /* 最小限の余白 */
+        size: A4 landscape;
+        margin: 8mm;
     }
 }
 

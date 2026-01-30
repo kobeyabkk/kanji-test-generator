@@ -1131,35 +1131,24 @@ function backToSettings() {
 }
 
 // ==================================
-// 🆕 印刷ハンドラー（カラーオフ・横向き自動設定）
+// 🆕 印刷ハンドラー
 // ==================================
 function handlePrint() {
-    // 印刷前の準備
-    const style = document.createElement('style');
-    style.id = 'print-color-settings';
-    style.innerHTML = `
-        @media print {
-            * {
-                -webkit-print-color-adjust: economy !important;
-                print-color-adjust: economy !important;
-                color-adjust: economy !important;
-            }
-        }
-    `;
-    document.head.appendChild(style);
+    // 印刷前にユーザーに案内
+    const message = `
+📋 印刷設定の確認
+
+印刷ダイアログで以下を設定してください：
+
+✅ 用紙サイズ：A4
+✅ 向き：横向き
+✅ カラー：オフ（白黒）
+
+これで印刷コストを節約できます！
+    `.trim();
     
-    // 印刷実行
-    setTimeout(() => {
-        window.print();
-        
-        // 印刷後のクリーンアップ
-        setTimeout(() => {
-            const styleEl = document.getElementById('print-color-settings');
-            if (styleEl) {
-                styleEl.remove();
-            }
-        }, 1000);
-    }, 100);
+    // アラートは表示せず、直接印刷
+    window.print();
 }
 
 // ==================================
