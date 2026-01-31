@@ -16,7 +16,7 @@ html {
 }
 
 body {
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: "UD Digi Kyokasho N-R", "UDデジタル教科書体", "Yu Gothic", "Hiragino Sans", sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
