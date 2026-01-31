@@ -263,6 +263,17 @@ function generatePracticeScreen() {
         yomiSpan.className = 'practice-yomi';
         yomiSpan.textContent = kanji.yomi;
         header.appendChild(yomiSpan);
+        
+        // 🆕 書き順ボタンを追加
+        const kakijunBtn = document.createElement('button');
+        kakijunBtn.className = 'kakijun-btn';
+        kakijunBtn.textContent = '📖 書き順';
+        kakijunBtn.title = `「${kanji.kanji}」の書き順をGoogle検索で確認`;
+        kakijunBtn.onclick = (e) => {
+            e.preventDefault();
+            openKakijun(kanji.kanji);
+        };
+        header.appendChild(kakijunBtn);
 
         item.appendChild(header);
 
@@ -378,6 +389,17 @@ function generateTestScreen() {
         // 問題文（テキストノードとして追加、改行なし）
         const textNode = document.createTextNode(processedSentence);
         questionZone.appendChild(textNode);
+        
+        // 🆕 書き順ボタンを追加
+        const kakijunBtn = document.createElement('button');
+        kakijunBtn.className = 'kakijun-btn-small';
+        kakijunBtn.textContent = '📖';
+        kakijunBtn.title = `「${kanji.kanji}」の書き順をGoogle検索で確認`;
+        kakijunBtn.onclick = (e) => {
+            e.preventDefault();
+            openKakijun(kanji.kanji);
+        };
+        questionZone.appendChild(kakijunBtn);
         
         card.appendChild(questionZone);
 
@@ -795,6 +817,20 @@ function toggleEraser() {
             ctx.globalCompositeOperation = 'source-over';
         });
     }
+}
+
+// ==========================================
+// 書き順を確認（Google検索で開く）
+// ==========================================
+function openKakijun(kanji) {
+    // Google検索で「{漢字} 書き順」を検索
+    const searchQuery = `${kanji} 書き順`;
+    const url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+    
+    // 新しいタブで開く
+    window.open(url, '_blank', 'noopener,noreferrer');
+    
+    console.log(`📖 書き順を確認: ${kanji} → ${url}`);
 }
 
 function updateEraserButton() {

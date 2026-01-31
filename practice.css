@@ -251,6 +251,31 @@ h1 {
     color: #666;
 }
 
+/* 🆕 書き順ボタン（練習画面） */
+.kakijun-btn {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 5px 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.kakijun-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.kakijun-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .practice-boxes {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -370,6 +395,34 @@ h1 {
     text-combine-upright: all; /* 数字を縦中横にする（縦書き時に横向きにする） */
     -webkit-text-combine: horizontal; /* Safari対応 */
     -ms-text-combine-horizontal: all; /* IE対応 */
+}
+
+/* 🆕 書き順ボタン（テスト画面・小さいボタン） */
+.kakijun-btn-small {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 3px 6px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    writing-mode: horizontal-tb; /* ボタンは横書き */
+    text-combine-upright: none; /* 縦中横を解除 */
+    line-height: 1;
+}
+
+.kakijun-btn-small:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.kakijun-btn-small:active {
+    transform: scale(1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* ■ 左側：解答欄エリア（3列目） */
