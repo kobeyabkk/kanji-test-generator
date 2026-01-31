@@ -318,8 +318,10 @@ function generatePracticeScreen() {
             // 右上のマス（i === 1）のみガイドに漢字を描画
             if (i === 1) {
                 const guideCtx = guideCanvas.getContext('2d');
-                // 🔧 教科書体フォントに統一（PC版とiPad版で同じフォント）
-                guideCtx.font = 'bold 150px "UD Digi Kyokasho N-R", "UDデジタル教科書体", "Yu Gothic", "Hiragino Sans", sans-serif';
+                // 🔧 教科書体フォントに統一（払い・止めがわかるフォント）
+                // Canvasでは複数フォントを指定しても最初の1つしか使われないため、
+                // 環境に応じて確実に教科書体を使う
+                guideCtx.font = 'bold 150px "UDデジタル教科書体", "UD Digi Kyokasho N-R", "游教科書体", "Yu Kyokasho", "游明朝", "Yu Mincho", serif';
                 guideCtx.fillStyle = '#000000';
                 guideCtx.textAlign = 'center';
                 guideCtx.textBaseline = 'middle';
