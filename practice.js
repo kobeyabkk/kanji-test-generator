@@ -390,17 +390,6 @@ function generateTestScreen() {
         const textNode = document.createTextNode(processedSentence);
         questionZone.appendChild(textNode);
         
-        // 🆕 書き順ボタンを追加
-        const kakijunBtn = document.createElement('button');
-        kakijunBtn.className = 'kakijun-btn-small';
-        kakijunBtn.textContent = '📖';
-        kakijunBtn.title = `「${kanji.kanji}」の書き順をGoogle検索で確認`;
-        kakijunBtn.onclick = (e) => {
-            e.preventDefault();
-            openKakijun(kanji.kanji);
-        };
-        questionZone.appendChild(kakijunBtn);
-        
         card.appendChild(questionZone);
 
         // 左側：解答欄エリア
