@@ -1,0 +1,32 @@
+# GenSpark specific files
+.genspark/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Development files
+*.log
+*.tmp
+*.bak
+*.backup
+
+# Node modules
+node_modules/
+
+# Build outputs (for future Capacitor builds)
+ios/
+android/
+dist/
+build/
+
+# Environment files (if any)
+.env
+.env.local
