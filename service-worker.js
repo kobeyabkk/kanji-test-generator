@@ -1,10 +1,10 @@
 // ==========================================
 // Service Worker for 漢字テストジェネレーター
-// Version: 2.7.34
+// Version: 4.0.0
 // PWA対応・オフライン動作・自動更新通知
 // ==========================================
 
-const VERSION = '2.7.34';
+const VERSION = '4.0.0';
 const CACHE_NAME = `kanji-practice-v${VERSION}`;
 
 // キャッシュするファイルリスト
@@ -31,16 +31,11 @@ const DATA_CACHE_FILES = [
   '/data/grade6_kanji.json'
 ];
 
-// アイコンファイル
+// アイコンファイル（実際に存在するもののみ）
 const ICON_CACHE_FILES = [
-  '/icons/icon-72x72.png',
-  '/icons/icon-96x96.png',
-  '/icons/icon-128x128.png',
-  '/icons/icon-144x144.png',
-  '/icons/icon-152x152.png',
   '/icons/icon-192x192.png',
-  '/icons/icon-384x384.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-512x512.png',
+  '/icons/favicon.ico'
 ];
 
 // 全キャッシュファイル
@@ -60,7 +55,14 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[Service Worker] キャッシュを作成');
-        return cache.addAll(ALL_CACHE_FILES);
+        // 各ファイルを個別にキャッシュ（エラーを無視）
+        return Promise.all(
+          ALL_CACHE_FILES.map((url) => {
+            return cache.add(url).catch((error) => {
+              console.warn(`[Service Worker] キャッシュ失敗（無視）: ${url}`, error);
+            });
+          })
+        );
       })
       .then(() => {
         console.log('[Service Worker] インストール完了');
@@ -68,6 +70,8 @@ self.addEventListener('install', (event) => {
       })
       .catch((error) => {
         console.error('[Service Worker] インストールエラー:', error);
+        // エラーがあっても続行
+        return self.skipWaiting();
       })
   );
 });
@@ -151,11 +155,23 @@ self.addEventListener('fetch', (event) => {
             }
             return networkResponse;
           })
-          .catch(() => {
-            // オフライン時のフォールバック
-            if (request.mode === 'navigate') {
-              return caches.match('/index.html');
+          .catch((error) => {
+            console.error('[Service Worker] フェッチエラー:', request.url, error);
+            
+            // ナビゲーションリクエスト（ページ遷移）の場合
+            if (request.mode === 'navigate' || request.destination === 'document') {
+              // まず、リクエストされたページがキャッシュにあるか確認
+              return caches.match(request.url)
+                .then((response) => {
+                  if (response) {
+                    return response;
+                  }
+                  // なければ index.html にフォールバック
+                  return caches.match('/index.html');
+                });
             }
+            
+            // その他のリソースの場合
             return new Response('オフラインです', {
               status: 503,
               statusText: 'Service Unavailable',
@@ -164,6 +180,18 @@ self.addEventListener('fetch', (event) => {
               })
             });
           });
+      })
+      .catch((error) => {
+        console.error('[Service Worker] キャッシュマッチエラー:', error);
+        // 最終的なフォールバック
+        return fetch(request).catch(() => {
+          return new Response('サービスが利用できません', {
+            status: 503,
+            headers: new Headers({
+              'Content-Type': 'text/plain; charset=UTF-8'
+            })
+          });
+        });
       })
   );
 });
@@ -214,7 +242,7 @@ self.addEventListener('push', (event) => {
     const options = {
       body: data.body || '新しい通知があります',
       icon: '/icons/icon-192x192.png',
-      badge: '/icons/icon-72x72.png',
+      badge: '/icons/icon-192x192.png',
       vibrate: [200, 100, 200],
       data: {
         url: data.url || '/'
