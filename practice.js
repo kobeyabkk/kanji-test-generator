@@ -138,6 +138,11 @@ function loadKanjiFromParams() {
         const kanjiJSON = localStorage.getItem('practice_kanji');
         const modeValue = localStorage.getItem('practice_mode');
         
+        console.log('🔍 localStorage の内容:');
+        console.log('  practice_all_kanji:', allKanjiJSON ? `${JSON.parse(allKanjiJSON).length}個` : 'null');
+        console.log('  practice_kanji:', kanjiJSON ? `${JSON.parse(kanjiJSON).length}個` : 'null');
+        console.log('  practice_mode:', modeValue);
+        
         if (allKanjiJSON && kanjiJSON && modeValue) {
             console.log('💾 localStorageからデータを読み込みます');
             
@@ -150,6 +155,8 @@ function loadKanjiFromParams() {
             console.log(`📋 テストモード: ${testMode}`);
             
             return; // 成功したら終了
+        } else {
+            console.warn('⚠️ localStorageにデータがありません。URLパラメータから読み込みます。');
         }
     } catch (error) {
         console.error('❌ localStorageからの読み込みに失敗:', error);

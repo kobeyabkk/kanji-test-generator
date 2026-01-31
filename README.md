@@ -303,6 +303,23 @@
 
 ## 🔄 更新履歴
 
+### 2026-01-31 v2.7.30 🐛 localStorage デバッグログを追加！
+- ✅ **デバッグログを追加して原因を特定**
+  - 問題：手書き練習で「別の問題を生成」が効かない
+  - 原因：localStorageからの読み込みに失敗している可能性
+  - 対策：詳細なデバッグログを追加
+- ✅ **追加したログ**
+  ```javascript
+  🔍 localStorage の内容:
+    practice_all_kanji: 240個 / null
+    practice_kanji: 10個 / null
+    practice_mode: practice / null
+  ```
+- ✅ **確認すること**
+  - index.html で localStorage に保存されているか
+  - practice.html で localStorage から読み込めているか
+  - URLパラメータから読み込まれているか
+
 ### 2026-01-31 v2.7.29 🚀 URLが長すぎる問題を修正！
 - ✅ **localStorageを使ってデータを渡す**
   - 問題：URLパラメータが長すぎて `ERR_CONNECTION_CLOSED` エラー
