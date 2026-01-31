@@ -360,39 +360,31 @@ function generateTestScreen() {
         container.appendChild(card);
     });
     
-    // 🆕 すべてのDOM生成後に一括で幅を調整
-    // setTimeout で確実にレンダリング後に実行
-    setTimeout(() => {
-        const allCards = container.querySelectorAll('.test-item');
-        allCards.forEach(card => {
-            const questionZone = card.querySelector('.question-zone');
-            const answerZone = card.querySelector('.answer-zone');
-            if (questionZone && answerZone) {
-                adjustAnswerZoneWidth(questionZone, answerZone);
-            }
-        });
-        
-        // 🔧 幅調整後にCanvas DPR調整
-        const allCanvases = container.querySelectorAll('.test-canvas');
-        allCanvases.forEach(canvas => {
-            scheduleCanvasResize(canvas);
-        });
-    }, 100);
+    // 🔧 Canvas DPR調整（描画用）
+    const allCanvases = container.querySelectorAll('.test-canvas');
+    allCanvases.forEach(canvas => {
+        scheduleCanvasResize(canvas);
+    });
+    
+    // 🆕 幅調整は updateMode() で実行（表示後に実行）
+    console.log('📝 テスト画面を生成しました（幅調整は updateMode で実行）');
 }
 
 // 🆕 問題文の高さに応じて解答枠の幅を動的調整（10段階）
-function adjustAnswerZoneWidth(questionZone, answerZone) {
+function adjustAnswerZoneWidth(questionZone, answerZone, questionNumber = '?') {
     // まず現在の状態をログ
-    console.log('🔍 adjustAnswerZoneWidth 開始');
-    console.log('  questionZone:', questionZone);
-    console.log('  answerZone:', answerZone);
-    console.log('  answerZone.offsetWidth (調整前):', answerZone.offsetWidth);
+    console.log(`🔍 問題${questionNumber}: adjustAnswerZoneWidth 開始`);
     
     const questionHeight = questionZone.offsetHeight;
     const cardHeight = questionZone.parentElement.offsetHeight;
     
-    console.log('  questionHeight:', questionHeight);
-    console.log('  cardHeight:', cardHeight);
+    console.log(`  questionHeight: ${questionHeight}, cardHeight: ${cardHeight}`);
+    
+    // 高さが0の場合はエラー
+    if (questionHeight === 0 || cardHeight === 0) {
+        console.error(`❌ 問題${questionNumber}: 高さが0です！要素が非表示の可能性があります`);
+        return;
+    }
     
     // カード高さの使用率を計算
     const usageRatio = questionHeight / cardHeight;
@@ -411,7 +403,7 @@ function adjustAnswerZoneWidth(questionZone, answerZone) {
     // 最小・最大の範囲内に制限
     const finalWidth = Math.max(minWidth, Math.min(maxWidth, answerWidth));
     
-    console.log('  計算結果: finalWidth =', finalWidth);
+    console.log(`  計算結果: finalWidth = ${finalWidth}px`);
     
     // 解答枠の幅を設定（複数の方法で確実に適用）
     answerZone.style.width = `${finalWidth}px`;
@@ -421,11 +413,14 @@ function adjustAnswerZoneWidth(questionZone, answerZone) {
     
     // 適用後の確認
     setTimeout(() => {
-        console.log('  answerZone.offsetWidth (調整後):', answerZone.offsetWidth);
-        console.log('  answerZone.style.width:', answerZone.style.width);
+        const actualWidth = answerZone.offsetWidth;
+        console.log(`  ✅ 問題${questionNumber}: 調整後の幅 = ${actualWidth}px`);
+        if (actualWidth !== finalWidth) {
+            console.warn(`  ⚠️ 問題${questionNumber}: 期待値(${finalWidth}px)と実際の値(${actualWidth}px)が異なります`);
+        }
     }, 10);
     
-    console.log(`📏 問題文高さ: ${questionHeight}px, カード高さ: ${cardHeight}px, 使用率: ${(usageRatio * 100).toFixed(1)}%, 解答枠幅: ${finalWidth}px`);
+    console.log(`📏 問題${questionNumber}: 使用率 ${(usageRatio * 100).toFixed(1)}% → 解答枠幅 ${finalWidth}px`);
 }
 
 // ==========================================
@@ -649,9 +644,35 @@ function updateMode() {
         modeTitle.textContent = '📝 テストモード';
         modeSubtitle.textContent = '問題文を見て、漢字を書きましょう';
         modeSwitchBtn.textContent = 'テスト完了 → 練習に戻る';
+        
         // 🔧 テストモード表示時にCanvasを再調整
         requestAnimationFrame(refreshTestCanvases);
+        
+        // 🆕 テストモード表示時に解答枠の幅を調整
+        setTimeout(() => {
+            adjustAllAnswerZoneWidths();
+        }, 200); // 表示後に確実に実行
     }
+}
+
+// 🆕 すべての解答枠の幅を調整する関数
+function adjustAllAnswerZoneWidths() {
+    const container = document.getElementById('test-grid');
+    if (!container) {
+        console.warn('⚠️ test-grid が見つかりません');
+        return;
+    }
+    
+    const allCards = container.querySelectorAll('.test-item');
+    console.log(`🔧 解答枠の幅を調整します: ${allCards.length}個のカード`);
+    
+    allCards.forEach((card, index) => {
+        const questionZone = card.querySelector('.question-zone');
+        const answerZone = card.querySelector('.answer-zone');
+        if (questionZone && answerZone) {
+            adjustAnswerZoneWidth(questionZone, answerZone, index + 1);
+        }
+    });
 }
 
 // ==========================================
