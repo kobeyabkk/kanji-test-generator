@@ -694,8 +694,13 @@ function regenerateProblems() {
     if (confirm('新しい問題を生成します。\n現在の描画内容はクリアされます。\nよろしいですか？')) {
         console.log('🔄 別の問題を生成中...');
         
-        // 全漢字リストをシャッフル
-        const shuffled = [...allKanjiList].sort(() => Math.random() - 0.5);
+        // 🆕 現在表示されている漢字を除外
+        const currentKanjiSet = new Set(kanjiList.map(k => k.kanji));
+        console.log(`📝 現在の漢字: ${Array.from(currentKanjiSet).join(', ')}`);
+        
+        // 🆕 現在の漢字以外を抽出
+        const availableKanji = allKanjiList.filter(k => !currentKanjiSet.has(k.kanji));
+        console.log(`✨ 利用可能な漢字: ${availableKanji.length}個`);
         
         // 必要な数だけ取得
         let count = 10; // デフォルトは10問
@@ -705,10 +710,23 @@ function regenerateProblems() {
             count = 10; // test20は同じ漢字を2回なので10問取得
         }
         
-        // 問題数が足りない場合は全て使う
-        kanjiList = shuffled.slice(0, Math.min(count, shuffled.length));
+        // 🆕 除外した漢字だけで足りるか確認
+        let newKanjiList;
+        if (availableKanji.length >= count) {
+            // ✅ 除外した漢字だけで足りる
+            const shuffled = [...availableKanji].sort(() => Math.random() - 0.5);
+            newKanjiList = shuffled.slice(0, count);
+            console.log(`✅ 現在の漢字を除外して新しい問題を生成: ${newKanjiList.length}問`);
+        } else {
+            // ⚠️ 除外した漢字だけでは足りない → 全漢字からランダム
+            console.warn(`⚠️ 除外した漢字だけでは足りません（必要: ${count}問、利用可能: ${availableKanji.length}問）`);
+            console.log(`💡 全漢字からランダムに選択します`);
+            const shuffled = [...allKanjiList].sort(() => Math.random() - 0.5);
+            newKanjiList = shuffled.slice(0, Math.min(count, shuffled.length));
+        }
         
-        console.log(`✨ 新しい問題を生成: ${kanjiList.length}問`);
+        kanjiList = newKanjiList;
+        console.log(`📚 生成した問題: ${kanjiList.map(k => k.kanji).join(', ')}`);
         
         // Canvas要素をクリア
         activeCanvases = [];

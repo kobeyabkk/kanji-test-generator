@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 🆕 アコーディオンの状態を復元（デフォルトは閉じた状態）
     restoreAccordionState();
     
+    // 🆕 生徒名を読み込み
+    loadStudentName();
+    
     // 今日の日付をセット
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('print-date').value = today;
@@ -208,6 +211,13 @@ function setupEventListeners() {
     document.querySelectorAll('input[name="test-mode"]').forEach(radio => {
         radio.addEventListener('change', handleModeChange);
     });
+    
+    // 🆕 生徒名の入力時に自動保存
+    const studentNameInput = document.getElementById('student-name');
+    if (studentNameInput) {
+        studentNameInput.addEventListener('input', saveStudentName);
+        studentNameInput.addEventListener('change', saveStudentName);
+    }
     
     // 🆕 学年別問題数の変更検知
     GRADES.forEach(gradeInfo => {
@@ -1385,6 +1395,32 @@ function loadGradeCount() {
         } catch (e) {
             console.error('❌ 学年別問題数の読み込みエラー:', e);
         }
+    }
+}
+
+// ==================================
+// 🆕 生徒名の保存・読み込み
+// ==================================
+
+const STUDENT_NAME_KEY = 'kanji_student_name';
+
+// 生徒名を保存
+function saveStudentName() {
+    const studentNameInput = document.getElementById('student-name');
+    if (studentNameInput) {
+        const studentName = studentNameInput.value.trim();
+        localStorage.setItem(STUDENT_NAME_KEY, studentName);
+        console.log(`💾 生徒名を保存しました: "${studentName}"`);
+    }
+}
+
+// 生徒名を読み込み
+function loadStudentName() {
+    const saved = localStorage.getItem(STUDENT_NAME_KEY);
+    const studentNameInput = document.getElementById('student-name');
+    if (studentNameInput && saved !== null) {
+        studentNameInput.value = saved;
+        console.log(`📖 生徒名を読み込みました: "${saved}"`);
     }
 }
 
