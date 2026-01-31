@@ -358,20 +358,41 @@ function generateTestScreen() {
         card.appendChild(answerZone);
 
         container.appendChild(card);
+    });
+    
+    // 🆕 すべてのDOM生成後に一括で幅を調整
+    // setTimeout で確実にレンダリング後に実行
+    setTimeout(() => {
+        const allCards = container.querySelectorAll('.test-item');
+        allCards.forEach(card => {
+            const questionZone = card.querySelector('.question-zone');
+            const answerZone = card.querySelector('.answer-zone');
+            if (questionZone && answerZone) {
+                adjustAnswerZoneWidth(questionZone, answerZone);
+            }
+        });
         
-        // 🆕 DOM確定後に問題文の高さを測定して解答枠の幅を動的調整
-        requestAnimationFrame(() => {
-            adjustAnswerZoneWidth(questionZone, answerZone);
-            // 🔧 DOM確定後にDPR調整（iPadの描画遅延対策）
+        // 🔧 幅調整後にCanvas DPR調整
+        const allCanvases = container.querySelectorAll('.test-canvas');
+        allCanvases.forEach(canvas => {
             scheduleCanvasResize(canvas);
         });
-    });
+    }, 100);
 }
 
 // 🆕 問題文の高さに応じて解答枠の幅を動的調整（10段階）
 function adjustAnswerZoneWidth(questionZone, answerZone) {
+    // まず現在の状態をログ
+    console.log('🔍 adjustAnswerZoneWidth 開始');
+    console.log('  questionZone:', questionZone);
+    console.log('  answerZone:', answerZone);
+    console.log('  answerZone.offsetWidth (調整前):', answerZone.offsetWidth);
+    
     const questionHeight = questionZone.offsetHeight;
     const cardHeight = questionZone.parentElement.offsetHeight;
+    
+    console.log('  questionHeight:', questionHeight);
+    console.log('  cardHeight:', cardHeight);
     
     // カード高さの使用率を計算
     const usageRatio = questionHeight / cardHeight;
@@ -390,9 +411,19 @@ function adjustAnswerZoneWidth(questionZone, answerZone) {
     // 最小・最大の範囲内に制限
     const finalWidth = Math.max(minWidth, Math.min(maxWidth, answerWidth));
     
-    // 解答枠の幅を設定（!important で強制適用）
+    console.log('  計算結果: finalWidth =', finalWidth);
+    
+    // 解答枠の幅を設定（複数の方法で確実に適用）
     answerZone.style.width = `${finalWidth}px`;
+    answerZone.style.minWidth = `${finalWidth}px`;
+    answerZone.style.maxWidth = `${finalWidth}px`;
     answerZone.style.setProperty('width', `${finalWidth}px`, 'important');
+    
+    // 適用後の確認
+    setTimeout(() => {
+        console.log('  answerZone.offsetWidth (調整後):', answerZone.offsetWidth);
+        console.log('  answerZone.style.width:', answerZone.style.width);
+    }, 10);
     
     console.log(`📏 問題文高さ: ${questionHeight}px, カード高さ: ${cardHeight}px, 使用率: ${(usageRatio * 100).toFixed(1)}%, 解答枠幅: ${finalWidth}px`);
 }

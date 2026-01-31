@@ -9,8 +9,10 @@
 
 html {
     /* 🆕 iOS のバウンススクロールを防止 */
-    overflow: hidden;
     height: 100%;
+    overflow: auto;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -19,14 +21,8 @@ body {
     min-height: 100vh;
     padding: 20px;
     
-    /* 🆕 body内でスクロール可能に */
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100%;
-    
     /* 🆕 iOS のバウンススクロールを防止 */
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
 }
 
 .container {
@@ -36,9 +32,7 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 30px;
-    
-    /* 🆕 最小高さを確保してスクロール範囲を明確に */
-    min-height: calc(100vh - 40px);
+    padding-bottom: 120px; /* 🆕 下部に余白を追加（ボタンのスペース） */
 }
 
 .hidden {
@@ -429,15 +423,8 @@ h1 {
     justify-content: center;
     gap: 15px;
     flex-wrap: wrap;
-    
-    /* 🆕 画面下部に固定配置（スクロールしても常に表示） */
-    position: sticky;
-    bottom: 0;
-    background: white;
-    padding: 15px;
-    margin: -30px -30px -30px -30px; /* containerのpaddingを相殺 */
-    border-top: 2px solid #e0e0e0;
-    z-index: 100;
+    margin-top: 30px;
+    padding: 20px 0;
 }
 
 /* ==========================================
