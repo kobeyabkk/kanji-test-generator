@@ -395,42 +395,72 @@ function goToPractice() {
         6: grade6Kanji
     };
     
-    // 選択された漢字を収集
-    const practiceKanjiList = [];
+    // 🆕 選択された漢字を全て収集（問題数の制限なし）
+    const allSelectedKanji = [];
     
     for (const gradeInfo of GRADES) {
         const grade = gradeInfo.grade;
         const count = gradeCounts[grade];
         
+        console.log(`🔍 小${grade}: 必要数=${count}個`);
+        
         if (count > 0) {
             const gradeKanji = gradeDataMap[grade];
+            console.log(`📚 小${grade}の漢字データ: ${gradeKanji ? gradeKanji.length : 0}個`);
             
             // 選択された漢字をフィルタリング
             const gradeSelected = gradeKanji.filter(k => 
                 selectedKanji[grade] && selectedKanji[grade].includes(k.kanji)
             );
             
+            console.log(`✅ 小${grade}で選択された漢字: ${gradeSelected.length}個`);
+            
             if (gradeSelected.length < count) {
                 alert(`❌ 小${grade}の漢字が足りません。\n\n必要: ${count}個\n利用可能: ${gradeSelected.length}個\n\nもっと漢字を選択してください。`);
                 return;
             }
             
-            // ランダムに選択
-            const selected = getRandomItems(gradeSelected, count);
-            practiceKanjiList.push(...selected);
+            // 🆕 選択された漢字を全て追加（問題数の制限なし）
+            allSelectedKanji.push(...gradeSelected);
+            console.log(`📝 小${grade}の漢字を追加: 累計 ${allSelectedKanji.length}個`);
         }
     }
     
-    // シャッフル
-    practiceKanjiList.sort(() => Math.random() - 0.5);
+    // 🆕 エラーチェック: 選択された漢字が0個の場合
+    if (allSelectedKanji.length === 0) {
+        alert('❌ 選択された漢字が0個です。\n\n学年別問題数を設定して、漢字を選択してください。');
+        console.error('❌ 選択された漢字が0個です');
+        return;
+    }
     
-    console.log(`📚 練習する漢字: ${practiceKanjiList.length}個`);
+    // 🆕 最初に表示する漢字を選択
+    const practiceKanjiList = getRandomItems(allSelectedKanji, totalQuestions);
+    
+    console.log(`📚 選択された全ての漢字: ${allSelectedKanji.length}個`);
+    console.log(`📝 最初に表示する漢字: ${practiceKanjiList.length}個`);
     console.log(`🎯 テストモード: ${currentTestMode.name}`);
     
-    // URLパラメータとして渡す（テストモード情報も含める）
-    const kanjiParam = encodeURIComponent(JSON.stringify(practiceKanjiList));
-    const modeParam = currentTestMode.value; // 'practice', 'test10', 'test20'
-    window.location.href = `practice.html?kanji=${kanjiParam}&mode=${modeParam}`;
+    // 🆕 localStorageにデータを保存（URLが長すぎる問題を回避）
+    try {
+        localStorage.setItem('practice_all_kanji', JSON.stringify(allSelectedKanji));
+        localStorage.setItem('practice_kanji', JSON.stringify(practiceKanjiList));
+        localStorage.setItem('practice_mode', currentTestMode.value);
+        
+        console.log(`💾 localStorageにデータを保存しました`);
+        console.log(`   practice_all_kanji: ${allSelectedKanji.length}個`);
+        console.log(`   practice_kanji: ${practiceKanjiList.length}個`);
+        console.log(`   practice_mode: ${currentTestMode.value}`);
+        
+    } catch (error) {
+        console.error('❌ localStorageへの保存に失敗:', error);
+        alert('❌ データの保存に失敗しました。\n\nブラウザのストレージ容量を確認してください。');
+        return;
+    }
+    
+    console.log(`🚀 practice.html に遷移します`);
+    
+    // 🆕 URLパラメータなしで遷移（localStorageから読み込む）
+    window.location.href = `practice.html`;
 }
 
 // ==================================

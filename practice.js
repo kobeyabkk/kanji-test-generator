@@ -130,32 +130,64 @@ function handleResize() {
 // URLパラメータから漢字リストとテストモードを読み込み
 // ==========================================
 function loadKanjiFromParams() {
+    console.log('📚 漢字データを読み込み中...');
+    
+    // 🆕 まずlocalStorageから読み込みを試みる
+    try {
+        const allKanjiJSON = localStorage.getItem('practice_all_kanji');
+        const kanjiJSON = localStorage.getItem('practice_kanji');
+        const modeValue = localStorage.getItem('practice_mode');
+        
+        if (allKanjiJSON && kanjiJSON && modeValue) {
+            console.log('💾 localStorageからデータを読み込みます');
+            
+            allKanjiList = JSON.parse(allKanjiJSON);
+            kanjiList = JSON.parse(kanjiJSON);
+            testMode = modeValue;
+            
+            console.log(`📚 選択された全ての漢字: ${allKanjiList.length}個`);
+            console.log(`📝 最初に表示する漢字: ${kanjiList.length}個`);
+            console.log(`📋 テストモード: ${testMode}`);
+            
+            return; // 成功したら終了
+        }
+    } catch (error) {
+        console.error('❌ localStorageからの読み込みに失敗:', error);
+    }
+    
+    // 🆕 localStorageにデータがない場合はURLパラメータから読み込み（後方互換性）
+    console.log('🔄 URLパラメータからデータを読み込みます');
+    
     const params = new URLSearchParams(window.location.search);
+    const allKanjiParam = params.get('allKanji');
     const kanjiParam = params.get('kanji');
     const modeParam = params.get('mode');
     
+    // 全ての選択された漢字を読み込み
+    if (allKanjiParam) {
+        const fullList = JSON.parse(decodeURIComponent(allKanjiParam));
+        allKanjiList = [...fullList];
+        console.log(`📚 選択された全ての漢字: ${allKanjiList.length}個`);
+    }
+    
+    // 最初に表示する漢字を読み込み
     if (kanjiParam) {
-        originalKanjiParam = kanjiParam; // 🆕 元のパラメータを保存
-        allKanjiList = JSON.parse(decodeURIComponent(kanjiParam)); // 🆕 全リストを保存
-        kanjiList = [...allKanjiList]; // コピーを作成
-        console.log(`📚 URLから読み込んだ漢字数: ${kanjiList.length}問`);
+        originalKanjiParam = kanjiParam;
+        const displayList = JSON.parse(decodeURIComponent(kanjiParam));
+        kanjiList = [...displayList];
+        console.log(`📝 最初に表示する漢字: ${kanjiList.length}個`);
     }
     
     if (modeParam) {
-        testMode = modeParam; // 'practice', 'test10', 'test20'
+        testMode = modeParam;
         console.log(`📋 テストモード: ${testMode}`);
-        
-        // 🆕 テスト10問モードの場合、kanjiListを10問に制限
-        if (testMode === 'test10' && kanjiList.length > 10) {
-            kanjiList = kanjiList.slice(0, 10);
-            console.log(`✂️ テスト10問モード: 漢字を10問に制限しました`);
-        }
-        
-        // 🆕 練習＋テストモードの場合も10問に制限
-        if (testMode === 'practice' && kanjiList.length > 10) {
-            kanjiList = kanjiList.slice(0, 10);
-            console.log(`✂️ 練習＋テストモード: 漢字を10問に制限しました`);
-        }
+    }
+    
+    // 🆕 データが読み込めたかチェック
+    if (allKanjiList.length === 0 || kanjiList.length === 0) {
+        console.error('❌ 漢字データが読み込めませんでした');
+        alert('❌ 漢字データが読み込めませんでした。\n\nトップページに戻ります。');
+        window.location.href = 'index.html';
     }
 }
 
