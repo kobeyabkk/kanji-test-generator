@@ -359,9 +359,45 @@ function generateTestScreen() {
 
         container.appendChild(card);
         
-        // 🔧 DOM確定後にDPR調整（iPadの描画遅延対策）
-        scheduleCanvasResize(canvas);
+        // 🆕 DOM確定後に問題文の高さを測定して解答枠の幅を動的調整
+        requestAnimationFrame(() => {
+            adjustAnswerZoneWidth(questionZone, answerZone);
+            // 🔧 DOM確定後にDPR調整（iPadの描画遅延対策）
+            scheduleCanvasResize(canvas);
+        });
     });
+}
+
+// 🆕 問題文の高さに応じて解答枠の幅を動的調整
+function adjustAnswerZoneWidth(questionZone, answerZone) {
+    const questionHeight = questionZone.offsetHeight;
+    const cardHeight = questionZone.parentElement.offsetHeight;
+    
+    // カード高さの使用率を計算
+    const usageRatio = questionHeight / cardHeight;
+    
+    // 🎯 問題文が短い → 解答枠を広く
+    // 🎯 問題文が長い → 解答枠を狭く
+    let answerWidth;
+    
+    if (usageRatio < 0.5) {
+        // 問題文が短い（カードの50%未満）→ 解答枠を最大に
+        answerWidth = 100;
+    } else if (usageRatio < 0.7) {
+        // 問題文が中程度（カードの50-70%）→ 解答枠を標準に
+        answerWidth = 85;
+    } else if (usageRatio < 0.85) {
+        // 問題文が長い（カードの70-85%）→ 解答枠を狭く
+        answerWidth = 70;
+    } else {
+        // 問題文がとても長い（カードの85%以上）→ 解答枠を最小に
+        answerWidth = 65;
+    }
+    
+    // 解答枠の幅を設定
+    answerZone.style.width = `${answerWidth}px`;
+    
+    console.log(`📏 問題文高さ: ${questionHeight}px, カード高さ: ${cardHeight}px, 使用率: ${(usageRatio * 100).toFixed(1)}%, 解答枠幅: ${answerWidth}px`);
 }
 
 // ==========================================
