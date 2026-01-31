@@ -1,0 +1,29 @@
+{
+  "appId": "com.kobeya.kanjipractice",
+  "appName": "漢字テストジェネレーター",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://kanji-test-generator.pages.dev",
+    "cleartext": true
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "scheme": "KanjiPractice"
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "",
+      "keystoreAlias": ""
+    }
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#667eea",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    }
+  }
+}
