@@ -144,7 +144,7 @@ h1 {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: "UD Digi Kyokasho N-R", "UDデジタル教科書体", "Yu Gothic", "Hiragino Sans", sans-serif;
 }
 
 .btn-primary {

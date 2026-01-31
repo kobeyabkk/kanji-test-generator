@@ -318,7 +318,8 @@ function generatePracticeScreen() {
             // 右上のマス（i === 1）のみガイドに漢字を描画
             if (i === 1) {
                 const guideCtx = guideCanvas.getContext('2d');
-                guideCtx.font = 'bold 150px "Noto Sans JP"';
+                // 🔧 教科書体フォントに統一（PC版とiPad版で同じフォント）
+                guideCtx.font = 'bold 150px "UD Digi Kyokasho N-R", "UDデジタル教科書体", "Yu Gothic", "Hiragino Sans", sans-serif';
                 guideCtx.fillStyle = '#000000';
                 guideCtx.textAlign = 'center';
                 guideCtx.textBaseline = 'middle';
