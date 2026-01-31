@@ -7,11 +7,26 @@
     box-sizing: border-box;
 }
 
+html {
+    /* 🆕 iOS のバウンススクロールを防止 */
+    overflow: hidden;
+    height: 100%;
+}
+
 body {
     font-family: 'Noto Sans JP', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
+    
+    /* 🆕 body内でスクロール可能に */
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    
+    /* 🆕 iOS のバウンススクロールを防止 */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .container {
@@ -21,6 +36,9 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 30px;
+    
+    /* 🆕 最小高さを確保してスクロール範囲を明確に */
+    min-height: calc(100vh - 40px);
 }
 
 .hidden {
@@ -362,7 +380,10 @@ h1 {
 
 /* ■ 左側：解答欄エリア（3列目） */
 .answer-zone {
-    width: 65px; /* 70px → 65px */
+    /* 🆕 幅はJavaScriptで動的に設定（デフォルトは65px） */
+    width: 65px;
+    min-width: 60px;  /* 最小幅 */
+    max-width: 110px; /* 最大幅 */
     height: 100%;
     flex-shrink: 0;
     
@@ -408,6 +429,15 @@ h1 {
     justify-content: center;
     gap: 15px;
     flex-wrap: wrap;
+    
+    /* 🆕 画面下部に固定配置（スクロールしても常に表示） */
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 15px;
+    margin: -30px -30px -30px -30px; /* containerのpaddingを相殺 */
+    border-top: 2px solid #e0e0e0;
+    z-index: 100;
 }
 
 /* ==========================================

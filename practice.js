@@ -368,7 +368,7 @@ function generateTestScreen() {
     });
 }
 
-// 🆕 問題文の高さに応じて解答枠の幅を動的調整
+// 🆕 問題文の高さに応じて解答枠の幅を動的調整（10段階）
 function adjustAnswerZoneWidth(questionZone, answerZone) {
     const questionHeight = questionZone.offsetHeight;
     const cardHeight = questionZone.parentElement.offsetHeight;
@@ -376,28 +376,25 @@ function adjustAnswerZoneWidth(questionZone, answerZone) {
     // カード高さの使用率を計算
     const usageRatio = questionHeight / cardHeight;
     
-    // 🎯 問題文が短い → 解答枠を広く
-    // 🎯 問題文が長い → 解答枠を狭く
-    let answerWidth;
+    // 🎯 10段階で細かく調整（線形補間）
+    // 使用率 0% → 解答枠 110px（最大）
+    // 使用率 100% → 解答枠 60px（最小）
     
-    if (usageRatio < 0.5) {
-        // 問題文が短い（カードの50%未満）→ 解答枠を最大に
-        answerWidth = 100;
-    } else if (usageRatio < 0.7) {
-        // 問題文が中程度（カードの50-70%）→ 解答枠を標準に
-        answerWidth = 85;
-    } else if (usageRatio < 0.85) {
-        // 問題文が長い（カードの70-85%）→ 解答枠を狭く
-        answerWidth = 70;
-    } else {
-        // 問題文がとても長い（カードの85%以上）→ 解答枠を最小に
-        answerWidth = 65;
-    }
+    const maxWidth = 110; // 最大幅
+    const minWidth = 60;  // 最小幅
     
-    // 解答枠の幅を設定
-    answerZone.style.width = `${answerWidth}px`;
+    // 線形補間で幅を計算
+    // answerWidth = maxWidth - (maxWidth - minWidth) × usageRatio
+    const answerWidth = Math.round(maxWidth - (maxWidth - minWidth) * usageRatio);
     
-    console.log(`📏 問題文高さ: ${questionHeight}px, カード高さ: ${cardHeight}px, 使用率: ${(usageRatio * 100).toFixed(1)}%, 解答枠幅: ${answerWidth}px`);
+    // 最小・最大の範囲内に制限
+    const finalWidth = Math.max(minWidth, Math.min(maxWidth, answerWidth));
+    
+    // 解答枠の幅を設定（!important で強制適用）
+    answerZone.style.width = `${finalWidth}px`;
+    answerZone.style.setProperty('width', `${finalWidth}px`, 'important');
+    
+    console.log(`📏 問題文高さ: ${questionHeight}px, カード高さ: ${cardHeight}px, 使用率: ${(usageRatio * 100).toFixed(1)}%, 解答枠幅: ${finalWidth}px`);
 }
 
 // ==========================================
