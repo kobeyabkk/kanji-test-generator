@@ -80,38 +80,38 @@ const GRADES = [
 document.addEventListener('DOMContentLoaded', async () => {
     // JSONデータの読み込み
     await loadKanjiData();
-    
+
     // 🆕 漢字選択状態の読み込み
     loadKanjiSelection();
-    
+
     // 🆕 テストモードの読み込み
     loadTestMode();
-    
+
     // 🆕 最近出た漢字の履歴を読み込み
     loadRecentHistory();
-    
+
     // 🆕 除外設定を読み込み
     loadExcludeSetting();
-    
+
     // 🆕 学年別問題数を読み込み
     loadGradeCount();
-    
+
     // 🆕 漢字選択UIの構築
     buildKanjiSelectionUI();
-    
+
     // 🆕 アコーディオンの状態を復元（デフォルトは閉じた状態）
     restoreAccordionState();
-    
+
     // 🆕 生徒名を読み込み
     loadStudentName();
-    
+
     // 今日の日付をセット
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('print-date').value = today;
-    
+
     // イベントリスナーの設定
     setupEventListeners();
-    
+
     // 保存された編集を読み込み
     loadSavedEdits();
 });
@@ -129,14 +129,14 @@ async function loadKanjiData() {
             fetch('data/grade5_kanji.json'),
             fetch('data/grade6_kanji.json')
         ]);
-        
+
         grade1Kanji = await response1.json();
         grade2Kanji = await response2.json();
         grade3Kanji = await response3.json();
         grade4Kanji = await response4.json();
         grade5Kanji = await response5.json();
         grade6Kanji = await response6.json();
-        
+
         // 🆕 LocalStorageから編集データを読み込み（あれば上書き）
         const editedData = localStorage.getItem('kanji_edited_data');
         if (editedData) {
@@ -153,7 +153,7 @@ async function loadKanjiData() {
                 console.warn('編集データの読み込みに失敗:', error);
             }
         }
-        
+
         console.log(`小1漢字: ${grade1Kanji.length}字 読み込み完了`);
         console.log(`小2漢字: ${grade2Kanji.length}字 読み込み完了`);
         console.log(`小3漢字: ${grade3Kanji.length}字 読み込み完了`);
@@ -176,24 +176,24 @@ function setupEventListeners() {
     document.getElementById('print-btn').addEventListener('click', handlePrint);
     document.getElementById('back-btn').addEventListener('click', backToSettings);
     document.getElementById('regenerate-btn').addEventListener('click', generatePrint);
-    
+
     // 編集モード関連
     document.getElementById('edit-mode-btn').addEventListener('click', toggleEditMode);
     document.getElementById('save-edit-btn').addEventListener('click', saveAllEdits);
     document.getElementById('cancel-edit-btn').addEventListener('click', closeEditDialog);
     document.getElementById('save-question-btn').addEventListener('click', saveQuestionEdit);
-    
+
     // 🆕 解答表示切り替え
     document.getElementById('toggle-answer-btn').addEventListener('click', toggleAnswerSection);
-    
+
     // 🆕 漢字選択アコーディオン切り替え
     document.getElementById('kanji-selection-toggle').addEventListener('click', toggleAccordion);
-    
+
     // 🆕 漢字選択タブ切り替え
     document.querySelectorAll('.kanji-tab').forEach(tab => {
         tab.addEventListener('click', () => switchKanjiTab(tab.dataset.grade));
     });
-    
+
     // 🆕 全選択・全解除・反転ボタン（各学年）
     GRADES.forEach(gradeInfo => {
         const grade = gradeInfo.grade;
@@ -201,24 +201,24 @@ function setupEventListeners() {
         document.getElementById(`deselect-all-grade${grade}`).addEventListener('click', () => deselectAllKanji(grade));
         document.getElementById(`invert-grade${grade}`).addEventListener('click', () => invertKanjiSelection(grade));
     });
-    
+
     // 🆕 漢字検索機能
     document.getElementById('kanji-search-input').addEventListener('input', handleKanjiSearch);
     document.getElementById('kanji-search-input').addEventListener('keydown', handleSearchKeydown);
     document.getElementById('kanji-search-clear').addEventListener('click', clearKanjiSearch);
-    
+
     // 🆕 モード選択の変更検知
     document.querySelectorAll('input[name="test-mode"]').forEach(radio => {
         radio.addEventListener('change', handleModeChange);
     });
-    
+
     // 🆕 生徒名の入力時に自動保存
     const studentNameInput = document.getElementById('student-name');
     if (studentNameInput) {
         studentNameInput.addEventListener('input', saveStudentName);
         studentNameInput.addEventListener('change', saveStudentName);
     }
-    
+
     // 🆕 学年別問題数の変更検知
     GRADES.forEach(gradeInfo => {
         const grade = gradeInfo.grade;
@@ -227,10 +227,10 @@ function setupEventListeners() {
             saveGradeCount(); // 🆕 変更時に保存
         });
     });
-    
+
     // 🆕 除外設定の変更検知
     document.getElementById('exclude-recent').addEventListener('change', saveExcludeSetting);
-    
+
     // 初回表示時にステータスを更新
     updateQuestionCountStatus();
 }
@@ -241,19 +241,19 @@ function setupEventListeners() {
 function updateQuestionCountStatus() {
     // モードに応じた目標問題数を取得
     const targetTotal = currentTestMode.questionCount;
-    
+
     let currentTotal = 0;
-    
+
     GRADES.forEach(gradeInfo => {
         const grade = gradeInfo.grade;
         const count = parseInt(document.getElementById(`grade${grade}-count`).value) || 0;
         currentTotal += count;
     });
-    
+
     document.getElementById('mode-name').textContent = currentTestMode.name;
     document.getElementById('current-total').textContent = currentTotal;
     document.getElementById('target-total').textContent = targetTotal;
-    
+
     const validationSpan = document.getElementById('count-validation');
     if (currentTotal === targetTotal) {
         validationSpan.textContent = '✓';
@@ -269,11 +269,11 @@ function updateQuestionCountStatus() {
 // ==================================
 function generatePrint() {
     console.log('🎯 プリント生成開始');
-    
+
     // 🆕 モードによって自動的に問題数を決定
     const totalQuestions = currentTestMode.questionCount;
     console.log(`📝 必要問題数: ${totalQuestions}問 (${currentTestMode.name}モード)`);
-    
+
     // 学年別の問題数取得とデータマップ
     const gradeDataMap = {
         1: grade1Kanji,
@@ -283,80 +283,80 @@ function generatePrint() {
         5: grade5Kanji,
         6: grade6Kanji
     };
-    
+
     // 🆕 学年別の問題数を取得
     const gradeCounts = {};
     let actualTotal = 0;
-    
+
     GRADES.forEach(gradeInfo => {
         const grade = gradeInfo.grade;
         const count = parseInt(document.getElementById(`grade${grade}-count`).value) || 0;
         gradeCounts[grade] = count;
         actualTotal += count;
     });
-    
+
     // 🆕 問題数の合計チェック
     console.log(`📊 学年別問題数:`, gradeCounts);
     console.log(`📊 合計: ${actualTotal}問`);
-    
+
     if (actualTotal !== totalQuestions) {
         alert(`❌ 問題数の合計が一致していません。\n\n${currentTestMode.name}モード: ${totalQuestions}問\n現在の合計: ${actualTotal}問\n\n各学年の問題数を調整してください。`);
         return;
     }
-    
+
     // 🆕 除外する漢字リストを取得
     const excludedKanji = getExcludedKanji();
-    
+
     // 各学年の選択漢字チェックと問題生成
     selectedQuestions = [];
-    
+
     for (const gradeInfo of GRADES) {
         const grade = gradeInfo.grade;
         const count = gradeCounts[grade];
-        
+
         if (count === 0) continue;
-        
+
         console.log(`\n📚 小${grade}漢字の処理開始`);
         console.log(`  必要数: ${count}問`);
         console.log(`  選択済み漢字数: ${selectedKanji[grade].length}個`);
-        
+
         // 選択された漢字のみを使用
         let gradeSelected = gradeDataMap[grade].filter(k => selectedKanji[grade].includes(k.kanji));
         console.log(`  フィルター後: ${gradeSelected.length}個`);
-        
+
         // 🆕 最近出た漢字を除外
         if (excludedKanji.length > 0) {
             gradeSelected = gradeSelected.filter(k => !excludedKanji.includes(k.kanji));
             console.log(`  除外後: ${gradeSelected.length}個`);
         }
-        
+
         // 選択数チェック
         if (gradeSelected.length < count) {
             console.error(`❌ 小${grade}漢字が不足しています`);
             alert(`小${grade}漢字の選択が不足しています（除外後）。\n必要: ${count}問\n選択可能: ${gradeSelected.length}個\n\n除外設定を変更するか、もっと漢字を選択してください。`);
             return;
         }
-        
+
         console.log(`  ✅ 選択可能: ${gradeSelected.length}個 >= ${count}問`);
-        
+
         // ランダムに選択
         const selected = getRandomItems(gradeSelected, count);
         selectedQuestions.push(...selected);
     }
-    
+
     // シャッフル（順番をランダムに）
     shuffleArray(selectedQuestions);
-    
+
     // 例文を生成
     generateSentences();
-    
+
     // 🆕 出題した漢字を履歴に追加
     const usedKanji = selectedQuestions.map(q => q.kanji);
     addToHistory(usedKanji);
-    
+
     // プリント表示
     displayPrint();
-    
+
     // 画面切り替え
     document.getElementById('settings-screen').classList.add('hidden');
     const printScreen = document.getElementById('print-screen');
@@ -369,22 +369,22 @@ function generatePrint() {
 // ==================================
 function goToPractice() {
     console.log('🎯 手書き練習へ遷移');
-    
+
     // 学年別問題数を取得
     const gradeCounts = {};
     for (const gradeInfo of GRADES) {
         const count = parseInt(document.getElementById(`grade${gradeInfo.grade}-count`).value) || 0;
         gradeCounts[gradeInfo.grade] = count;
     }
-    
+
     // 合計問題数を確認
     const totalQuestions = Object.values(gradeCounts).reduce((sum, count) => sum + count, 0);
-    
+
     if (totalQuestions === 0) {
         alert('❌ 練習する漢字を選択してください。\n\n学年別問題数を1以上に設定してください。');
         return;
     }
-    
+
     // 学年別データマップ
     const gradeDataMap = {
         1: grade1Kanji,
@@ -394,73 +394,75 @@ function goToPractice() {
         5: grade5Kanji,
         6: grade6Kanji
     };
-    
+
     // 🆕 選択された漢字を全て収集（問題数の制限なし）
     const allSelectedKanji = [];
-    
+
     for (const gradeInfo of GRADES) {
         const grade = gradeInfo.grade;
         const count = gradeCounts[grade];
-        
+
         console.log(`🔍 小${grade}: 必要数=${count}個`);
-        
+
         if (count > 0) {
             const gradeKanji = gradeDataMap[grade];
             console.log(`📚 小${grade}の漢字データ: ${gradeKanji ? gradeKanji.length : 0}個`);
-            
+
             // 選択された漢字をフィルタリング
-            const gradeSelected = gradeKanji.filter(k => 
+            const gradeSelected = gradeKanji.filter(k =>
                 selectedKanji[grade] && selectedKanji[grade].includes(k.kanji)
             );
-            
+
             console.log(`✅ 小${grade}で選択された漢字: ${gradeSelected.length}個`);
-            
+
             if (gradeSelected.length < count) {
                 alert(`❌ 小${grade}の漢字が足りません。\n\n必要: ${count}個\n利用可能: ${gradeSelected.length}個\n\nもっと漢字を選択してください。`);
                 return;
             }
-            
+
             // 🆕 選択された漢字を全て追加（問題数の制限なし）
             allSelectedKanji.push(...gradeSelected);
             console.log(`📝 小${grade}の漢字を追加: 累計 ${allSelectedKanji.length}個`);
         }
     }
-    
+
     // 🆕 エラーチェック: 選択された漢字が0個の場合
     if (allSelectedKanji.length === 0) {
         alert('❌ 選択された漢字が0個です。\n\n学年別問題数を設定して、漢字を選択してください。');
         console.error('❌ 選択された漢字が0個です');
         return;
     }
-    
+
     // 🆕 最初に表示する漢字を選択
     const practiceKanjiList = getRandomItems(allSelectedKanji, totalQuestions);
-    
+
     console.log(`📚 選択された全ての漢字: ${allSelectedKanji.length}個`);
     console.log(`📝 最初に表示する漢字: ${practiceKanjiList.length}個`);
     console.log(`🎯 テストモード: ${currentTestMode.name}`);
-    
+
     // 🆕 localStorageにデータを保存（URLが長すぎる問題を回避）
     try {
         localStorage.setItem('practice_all_kanji', JSON.stringify(allSelectedKanji));
         localStorage.setItem('practice_kanji', JSON.stringify(practiceKanjiList));
         localStorage.setItem('practice_mode', currentTestMode.value);
-        
+
         console.log(`💾 localStorageにデータを保存しました`);
         console.log(`   practice_all_kanji: ${allSelectedKanji.length}個`);
         console.log(`   practice_kanji: ${practiceKanjiList.length}個`);
         console.log(`   practice_mode: ${currentTestMode.value}`);
-        
+
     } catch (error) {
         console.error('❌ localStorageへの保存に失敗:', error);
         alert('❌ データの保存に失敗しました。\n\nブラウザのストレージ容量を確認してください。');
         return;
     }
-    
+
     console.log(`🚀 practice.html に遷移します`);
-    
+
     // 🆕 URLパラメータなしで遷移（localStorageから読み込む）
-    window.location.href = `practice.html`;
+    // ⚠️ Service Workerの更新漏れや古いキャッシュによる ERR_FAILED を防ぐため、タイムスタンプを付与
+    const timestamp = new Date().getTime();
+    window.location.href = `practice.html?v=${timestamp}`;
 }
 
 // ==================================
@@ -494,18 +496,18 @@ function generateSentences() {
         ...selectedKanji[5],
         ...selectedKanji[6]
     ];
-    
+
     selectedQuestions.forEach(question => {
         const kanji = question.kanji;
         let processedSentence = '';
         let attempts = 0;
         const maxAttempts = 5;
-        
+
         // 🆕 編集済みデータがあればそれを使用
         const editedData = editedQuestions[kanji];
         if (editedData && editedData.sentence) {
             question.sentence = editedData.sentence;
-            
+
             // 読みも編集データを反映
             const yomiParts = [];
             if (editedData.onyomi) yomiParts.push(editedData.onyomi);
@@ -513,16 +515,16 @@ function generateSentences() {
             if (yomiParts.length > 0) {
                 question.yomi = yomiParts.join('、');
             }
-            
+
             // 処理済み文を生成
             question.processedSentence = processTextForTest(question.sentence, kanji, allowedKanjiList);
             console.log(`編集済みデータを適用 [${kanji}]: ${question.sentence}`);
             return; // 以降の処理をスキップ
         }
-        
+
         // 🚫 CSVの例文は品質が低いため使用しない
         // const testSentenceData = grade1TestSentences[kanji] || grade2TestSentences[kanji] || grade3TestSentences[kanji] || grade4TestSentences[kanji] || grade5TestSentences[kanji] || grade6TestSentences[kanji];
-        
+
         // if (testSentenceData) {
         //     // 音読み・訓読みからランダムに選択（両方ある場合）
         //     const sentences = [];
@@ -537,14 +539,14 @@ function generateSentences() {
         //         return; // 処理完了
         //     }
         // }
-        
+
         // 最大5回まで再試行（正しい文章が生成されるまで）
         while (attempts < maxAttempts) {
             // JSONに含まれる例文から文章形式を優先的に選択
             if (question.examples && question.examples.length > 0) {
                 const selectedExample = selectBestExample(question.examples, kanji);
                 question.sentence = selectedExample;
-                
+
                 // 🆕 JSONのreadingsを使ってカタカナ変換済みの文を取得
                 if (question.readings && question.readings[selectedExample]) {
                     question.processedSentence = question.readings[selectedExample];
@@ -555,14 +557,14 @@ function generateSentences() {
                 // 例文がない場合は簡単な文を生成
                 question.sentence = `${kanji}を見る。`;
             }
-            
+
             // readingsがない場合は自動処理
             // 文章を処理（問題漢字→カタカナ、範囲外漢字→ひらがな）
             processedSentence = processTextForTest(question.sentence, kanji, allowedKanjiList);
-            
+
             // 品質チェック
             const checkResult = validateSentence(processedSentence, question.sentence);
-            
+
             if (checkResult.isValid) {
                 // 問題なし、ループを抜ける
                 question.processedSentence = processedSentence;
@@ -570,19 +572,19 @@ function generateSentences() {
             } else {
                 // 問題あり：修正を試みる
                 console.warn(`問題検出 [${kanji}]: ${checkResult.issues.join(', ')}`);
-                
+
                 // 修正を試みる
                 const fixed = fixSentenceIssues(processedSentence, question.sentence, kanji, allowedKanjiList);
-                
+
                 if (fixed.isFixed) {
                     question.processedSentence = fixed.sentence;
                     console.log(`自動修正成功 [${kanji}]: ${fixed.sentence}`);
                     break;
                 }
-                
+
                 // 修正できない場合は別の例文を試す
                 attempts++;
-                
+
                 if (attempts >= maxAttempts) {
                     // 最終的に修正できない場合はデフォルト文を使用
                     console.error(`修正失敗 [${kanji}]: デフォルト文を使用`);
@@ -600,7 +602,7 @@ function generateSentences() {
 function processTextForTest(text, targetKanji, allowedKanji) {
     // ステップ1: 問題漢字をカタカナに変換（文脈考慮してパターンマッチ）
     let processed = replaceKanjiWithKatakana(text, targetKanji);
-    
+
     // ステップ2: 範囲外の漢字をひらがなに変換
     let result = '';
     for (let char of processed) {
@@ -615,7 +617,7 @@ function processTextForTest(text, targetKanji, allowedKanji) {
             result += char;
         }
     }
-    
+
     return result;
 }
 
@@ -625,7 +627,7 @@ function processTextForTest(text, targetKanji, allowedKanji) {
 function isKanji(char) {
     const code = char.charCodeAt(0);
     return (code >= 0x4E00 && code <= 0x9FFF) || // CJK統合漢字
-           (code >= 0x3400 && code <= 0x4DBF);   // CJK統合漢字拡張A
+        (code >= 0x3400 && code <= 0x4DBF);   // CJK統合漢字拡張A
 }
 
 // ==================================
@@ -634,7 +636,7 @@ function isKanji(char) {
 function kanjiToHiragana(kanji) {
     // JSONデータから読みを取得
     const kanjiData = [...grade1Kanji, ...grade2Kanji].find(k => k.kanji === kanji);
-    
+
     if (kanjiData && kanjiData.yomi) {
         // 訓読み（ひらがな）を優先的に返す
         const readings = kanjiData.yomi.split('、');
@@ -647,7 +649,7 @@ function kanjiToHiragana(kanji) {
         const yomi = readings[0];
         return katakanaToHiragana(yomi);
     }
-    
+
     // 見つからない場合はそのまま返す
     return kanji;
 }
@@ -658,11 +660,11 @@ function kanjiToHiragana(kanji) {
 function replaceKanjiWithKatakana(text, kanji) {
     // JSONデータから読みを取得
     const kanjiData = [...grade1Kanji, ...grade2Kanji].find(k => k.kanji === kanji);
-    
+
     if (kanjiData && kanjiData.readings) {
         // readingsフィールドから最長一致するパターンを探す（長い順にソート）
         const patterns = Object.keys(kanjiData.readings).sort((a, b) => b.length - a.length);
-        
+
         for (let pattern of patterns) {
             if (text.includes(pattern)) {
                 const reading = kanjiData.readings[pattern];
@@ -671,12 +673,12 @@ function replaceKanjiWithKatakana(text, kanji) {
             }
         }
     }
-    
+
     // readingsフィールドがない場合、漢字を結果だけ変換
     if (kanjiData && kanjiData.yomi) {
         const readings = kanjiData.yomi.split('、');
         let katakanaReading = '';
-        
+
         // 訓読みを優先
         for (let reading of readings) {
             if (isHiraganaOnly(reading)) {
@@ -684,16 +686,16 @@ function replaceKanjiWithKatakana(text, kanji) {
                 break;
             }
         }
-        
+
         // 訓読みがない場合は音読み
         if (!katakanaReading) {
             katakanaReading = readings[0];
         }
-        
+
         // 漢字だけを置換
         return text.replace(kanji, katakanaReading);
     }
-    
+
     // データがない場合はそのまま
     return text;
 }
@@ -729,13 +731,13 @@ function displayPracticePrint() {
     // ヘッダー情報
     const studentName = document.getElementById('student-name').value || '__________';
     const printDate = document.getElementById('print-date').value;
-    
+
     // 🆕 練習＋テストモードでは最初の10問だけを使う
     const questionsToDisplay = selectedQuestions.slice(0, 10);
     const totalQuestions = questionsToDisplay.length;
     const questionsPerPage = 10; // 1ページあたり10問
     const needsSecondPage = totalQuestions > questionsPerPage;
-    
+
     // 🆕 問題数が1以上の学年を取得してタイトルを更新
     const enabledGrades = [];
     questionsToDisplay.forEach(question => {
@@ -751,24 +753,24 @@ function displayPracticePrint() {
             }
         }
     });
-    
+
     const gradeTitle = enabledGrades.length > 0 ? enabledGrades.join('・') : '小学生';
-    
+
     // 🆕 2ページ目が必要な場合は、既存のprint-containerを複製
     const printScreen = document.getElementById('print-screen');
     const existingContainers = printScreen.querySelectorAll('.print-container');
-    
+
     // 既存の2ページ目以降を削除
     if (existingContainers.length > 1) {
         for (let i = 1; i < existingContainers.length; i++) {
             existingContainers[i].remove();
         }
     }
-    
+
     // 1ページ目のタイトルとヘッダー情報を更新
     document.querySelector('.print-title').textContent = `${gradeTitle}漢字練習プリント`;
     document.getElementById('display-name').textContent = studentName;
-    
+
     if (printDate) {
         const date = new Date(printDate);
         const year = date.getFullYear();
@@ -778,20 +780,20 @@ function displayPracticePrint() {
     } else {
         document.getElementById('display-date').textContent = '____年____月____日';
     }
-    
+
     // 🆕 2ページ目が必要な場合、2ページ目のコンテナを作成
     let page2Container = null;
     if (needsSecondPage) {
         page2Container = existingContainers[0].cloneNode(true);
         page2Container.classList.add('page-2');
-        
+
         // 2ページ目のID要素を更新
         page2Container.querySelector('#display-name').id = 'display-name-2';
         page2Container.querySelector('#display-date').id = 'display-date-2';
-        
+
         // 2ページ目のタイトルも更新
         page2Container.querySelector('.print-title').textContent = `${gradeTitle}漢字練習プリント（2ページ目）`;
-        
+
         // ヘッダー情報を設定
         page2Container.querySelector('#display-name-2').textContent = studentName;
         if (printDate) {
@@ -803,39 +805,39 @@ function displayPracticePrint() {
         } else {
             page2Container.querySelector('#display-date-2').textContent = '____年____月____日';
         }
-        
+
         // print-controlsの直前に挿入
         const printControls = printScreen.querySelector('.print-controls');
         printScreen.insertBefore(page2Container, printControls);
     }
-    
+
     // 🆕 練習欄の生成（4分割レイアウト）
     const printContainer = document.querySelector('.print-container');
-    
+
     // 🔧 既存の練習アイテムをすべて削除
     printContainer.querySelectorAll('.practice-item').forEach(el => el.remove());
-    
+
     // 2ページ目があればそちらも削除
     if (needsSecondPage && page2Container) {
         page2Container.querySelectorAll('.practice-item').forEach(el => el.remove());
     }
-    
+
     questionsToDisplay.forEach((question, index) => {
         const practiceItem = document.createElement('div');
         practiceItem.className = 'practice-item';
-        
+
         // 🆕 漢字をキーにして編集データを取得
         const editedData = editedQuestions[question.kanji];
         const isEdited = editedData && editedData.isEdited;
-        
+
         if (isEdited) {
             practiceItem.style.background = 'rgba(46, 204, 113, 0.1)';
         }
-        
+
         // 漢字と読み仮名のコンテナ
         const kanjiContainer = document.createElement('div');
         kanjiContainer.className = 'kanji-container';
-        
+
         // 音読みと訓読みを分離（編集データを優先）
         let readings;
         if (editedData) {
@@ -846,7 +848,7 @@ function displayPracticePrint() {
         } else {
             readings = separateReadings(question.yomi);
         }
-        
+
         // 音読み（右側）
         if (readings.onyomi) {
             const onyomiDiv = document.createElement('div');
@@ -854,13 +856,13 @@ function displayPracticePrint() {
             onyomiDiv.textContent = readings.onyomi;
             kanjiContainer.appendChild(onyomiDiv);
         }
-        
+
         // 漢字（中央）
         const kanjiDiv = document.createElement('div');
         kanjiDiv.className = 'practice-kanji';
         kanjiDiv.textContent = question.kanji;
         kanjiContainer.appendChild(kanjiDiv);
-        
+
         // 訓読み（左側）
         if (readings.kunyomi) {
             const kunyomiDiv = document.createElement('div');
@@ -868,15 +870,15 @@ function displayPracticePrint() {
             kunyomiDiv.textContent = readings.kunyomi;
             kanjiContainer.appendChild(kunyomiDiv);
         }
-        
+
         const boxesContainer = document.createElement('div');
         boxesContainer.className = 'practice-boxes';
-        
+
         // 4つの練習枠を作成
         for (let i = 0; i < 4; i++) {
             const box = document.createElement('div');
             box.className = 'practice-box';
-            
+
             // 🆕 1つ目のマスになぞり用の薄い漢字を表示
             if (i === 0) {
                 const traceKanji = document.createElement('div');
@@ -884,30 +886,30 @@ function displayPracticePrint() {
                 traceKanji.textContent = question.kanji;
                 box.appendChild(traceKanji);
             }
-            
+
             boxesContainer.appendChild(box);
         }
-        
+
         practiceItem.appendChild(kanjiContainer);
         practiceItem.appendChild(boxesContainer);
-        
+
         // 🆕 個別配置：各問題の座標を計算
         const pageIndex = Math.floor(index / questionsPerPage);
         const questionIndex = index % questionsPerPage;
         const isTopHalf = questionIndex < 5;
         const columnIndex = questionIndex % 5;
-        
+
         // 座標計算（右側、縦書きなので右から左へ）
         const rightBase = 2; // 右端からの開始位置(mm)
         const columnWidth = (143 - 4) / 5; // 右半分の幅を5等分
         const topBase = isTopHalf ? 14 : (105 + 4); // 上半分 or 下半分
-        
+
         practiceItem.style.position = 'absolute';
         practiceItem.style.right = `${rightBase + (columnIndex * columnWidth)}mm`;
         practiceItem.style.top = `${topBase}mm`;
         practiceItem.style.width = `${columnWidth - 2}mm`;
         practiceItem.style.height = isTopHalf ? 'calc(50% - 12mm)' : 'calc(50% - 12mm)';
-        
+
         // ページを判定
         if (pageIndex === 0) {
             printContainer.appendChild(practiceItem);
@@ -915,58 +917,58 @@ function displayPracticePrint() {
             page2Container.appendChild(practiceItem);
         }
     });
-    
+
     // 🆕 テスト欄の生成（4分割レイアウト）
     // 🔧 既存のテストアイテムをすべて削除
     printContainer.querySelectorAll('.test-item').forEach(el => el.remove());
-    
+
     // 2ページ目があればそちらも削除
     if (needsSecondPage && page2Container) {
         page2Container.querySelectorAll('.test-item').forEach(el => el.remove());
     }
-    
+
     questionsToDisplay.forEach((question, index) => {
         const testItem = document.createElement('div');
         testItem.className = 'test-item';
-        
+
         // 🆕 漢字をキーにして編集データを取得
         const editedData = editedQuestions[question.kanji];
         const isEdited = editedData && editedData.isEdited;
-        
+
         if (isEdited) {
             testItem.style.background = 'rgba(46, 204, 113, 0.1)';
         }
-        
+
         // 🆕 問題番号と問題文を1つのテキストに統合
         const questionText = document.createElement('div');
         questionText.className = 'test-question-text';
         questionText.textContent = `${index + 1} ${question.processedSentence}`;
-        
+
         // 解答欄
         const answerLine = document.createElement('div');
         answerLine.className = 'answer-line';
         answerLine.textContent = '（　　　　　　）';
-        
+
         testItem.appendChild(questionText);
         testItem.appendChild(answerLine);
-        
+
         // 🆕 個別配置：各問題の座標を計算
         const pageIndex = Math.floor(index / questionsPerPage);
         const questionIndex = index % questionsPerPage;
         const isTopHalf = questionIndex < 5;
         const columnIndex = questionIndex % 5;
-        
+
         // 座標計算（左側、縦書きなので右から左へ）
         const leftBase = 2; // 左端からの開始位置(mm)
         const columnWidth = (143 - 4) / 5; // 左半分の幅を5等分
         const topBase = isTopHalf ? 14 : (105 + 4); // 上半分 or 下半分
-        
+
         testItem.style.position = 'absolute';
         testItem.style.left = `${leftBase + ((4 - columnIndex) * columnWidth)}mm`; // 左側は逆順
         testItem.style.top = `${topBase}mm`;
         testItem.style.width = `${columnWidth - 2}mm`;
         testItem.style.height = isTopHalf ? 'calc(50% - 12mm)' : 'calc(50% - 12mm)';
-        
+
         // ページを判定
         if (pageIndex === 0) {
             printContainer.appendChild(testItem);
@@ -982,7 +984,7 @@ function displayPracticePrint() {
 function displayTest10Print() {
     const studentName = document.getElementById('student-name').value || '__________';
     const printDate = document.getElementById('print-date').value;
-    
+
     // 学年タイトルを取得
     const enabledGrades = [];
     selectedQuestions.forEach(question => {
@@ -997,13 +999,13 @@ function displayTest10Print() {
             }
         }
     });
-    
+
     const gradeTitle = enabledGrades.length > 0 ? enabledGrades.join('・') : '小学生';
-    
+
     // ヘッダー情報を更新
     document.querySelector('.print-title').textContent = `${gradeTitle}漢字テスト（10問）`;
     document.getElementById('display-name').textContent = studentName;
-    
+
     if (printDate) {
         const date = new Date(printDate);
         const year = date.getFullYear();
@@ -1013,46 +1015,46 @@ function displayTest10Print() {
     } else {
         document.getElementById('display-date').textContent = '____年____月____日';
     }
-    
+
     const printContainer = document.querySelector('.print-container');
-    
+
     // 既存のアイテムをすべて削除
     printContainer.querySelectorAll('.practice-item, .test-item').forEach(el => el.remove());
-    
+
     // 右側にテスト問題を配置
     selectedQuestions.forEach((question, index) => {
         const testItem = document.createElement('div');
         testItem.className = 'test-item';
-        
+
         const editedData = editedQuestions[question.kanji];
         if (editedData && editedData.isEdited) {
             testItem.style.background = 'rgba(46, 204, 113, 0.1)';
         }
-        
+
         const questionText = document.createElement('div');
         questionText.className = 'test-question-text';
         questionText.textContent = `${index + 1} ${question.processedSentence}`;
-        
+
         const answerLine = document.createElement('div');
         answerLine.className = 'answer-line';
         answerLine.textContent = '（　　　　　　）';
-        
+
         testItem.appendChild(questionText);
         testItem.appendChild(answerLine);
-        
+
         // 右側に配置（練習欄の位置）
         const isTopHalf = index < 5;
         const columnIndex = index % 5;
         const rightBase = 2;
         const columnWidth = (143 - 4) / 5;
         const topBase = isTopHalf ? 14 : (105 + 4);
-        
+
         testItem.style.position = 'absolute';
         testItem.style.right = `${rightBase + (columnIndex * columnWidth)}mm`;
         testItem.style.top = `${topBase}mm`;
         testItem.style.width = `${columnWidth - 2}mm`;
         testItem.style.height = isTopHalf ? 'calc(50% - 12mm)' : 'calc(50% - 12mm)';
-        
+
         printContainer.appendChild(testItem);
     });
 }
@@ -1063,7 +1065,7 @@ function displayTest10Print() {
 function displayTest20Print() {
     const studentName = document.getElementById('student-name').value || '__________';
     const printDate = document.getElementById('print-date').value;
-    
+
     // 学年タイトルを取得
     const enabledGrades = [];
     selectedQuestions.forEach(question => {
@@ -1078,13 +1080,13 @@ function displayTest20Print() {
             }
         }
     });
-    
+
     const gradeTitle = enabledGrades.length > 0 ? enabledGrades.join('・') : '小学生';
-    
+
     // ヘッダー情報を更新
     document.querySelector('.print-title').textContent = `${gradeTitle}漢字テスト（20問）`;
     document.getElementById('display-name').textContent = studentName;
-    
+
     if (printDate) {
         const date = new Date(printDate);
         const year = date.getFullYear();
@@ -1094,33 +1096,33 @@ function displayTest20Print() {
     } else {
         document.getElementById('display-date').textContent = '____年____月____日';
     }
-    
+
     const printContainer = document.querySelector('.print-container');
-    
+
     // 既存のアイテムをすべて削除
     printContainer.querySelectorAll('.practice-item, .test-item').forEach(el => el.remove());
-    
+
     // 左右両方にテスト問題を配置
     selectedQuestions.forEach((question, index) => {
         const testItem = document.createElement('div');
         testItem.className = 'test-item';
-        
+
         const editedData = editedQuestions[question.kanji];
         if (editedData && editedData.isEdited) {
             testItem.style.background = 'rgba(46, 204, 113, 0.1)';
         }
-        
+
         const questionText = document.createElement('div');
         questionText.className = 'test-question-text';
         questionText.textContent = `${index + 1} ${question.processedSentence}`;
-        
+
         const answerLine = document.createElement('div');
         answerLine.className = 'answer-line';
         answerLine.textContent = '（　　　　　　）';
-        
+
         testItem.appendChild(questionText);
         testItem.appendChild(answerLine);
-        
+
         // 座標計算
         const isRightHalf = index < 10;  // 1-10問は右側、11-20問は左側
         const questionIndex = index % 10;
@@ -1128,12 +1130,12 @@ function displayTest20Print() {
         const columnIndex = questionIndex % 5;
         const columnWidth = (143 - 4) / 5;
         const topBase = isTopHalf ? 14 : (105 + 4);
-        
+
         testItem.style.position = 'absolute';
         testItem.style.top = `${topBase}mm`;
         testItem.style.width = `${columnWidth - 2}mm`;
         testItem.style.height = isTopHalf ? 'calc(50% - 12mm)' : 'calc(50% - 12mm)';
-        
+
         if (isRightHalf) {
             // 右側（1-10問）
             const rightBase = 2;
@@ -1143,7 +1145,7 @@ function displayTest20Print() {
             const leftBase = 2;
             testItem.style.left = `${leftBase + ((4 - columnIndex) * columnWidth)}mm`;
         }
-        
+
         printContainer.appendChild(testItem);
     });
 }
@@ -1158,12 +1160,12 @@ function backToSettings() {
         answerSection.classList.add('hidden');
         answerSection.innerHTML = '';
     }
-    
+
     const toggleBtn = document.getElementById('toggle-answer-btn');
     if (toggleBtn) {
         toggleBtn.textContent = '👁️ 解答を表示';
     }
-    
+
     const printScreen = document.getElementById('print-screen');
     printScreen.classList.add('hidden');
     printScreen.classList.remove('active');  // 🆕 非表示状態を明示
@@ -1186,7 +1188,7 @@ function handlePrint() {
 
 これで印刷コストを節約できます！
     `.trim();
-    
+
     // アラートは表示せず、直接印刷
     window.print();
 }
@@ -1197,7 +1199,7 @@ function handlePrint() {
 function toggleAnswerSection() {
     const answerSection = document.getElementById('answer-section');
     const toggleBtn = document.getElementById('toggle-answer-btn');
-    
+
     if (answerSection.classList.contains('hidden')) {
         // 解答を表示
         generateAnswerSection();
@@ -1216,46 +1218,46 @@ function toggleAnswerSection() {
 function generateAnswerSection() {
     const answerSection = document.getElementById('answer-section');
     answerSection.innerHTML = '';
-    
+
     const title = document.createElement('h3');
     title.textContent = '📋 解答一覧';
     title.style.textAlign = 'center';
     title.style.marginBottom = '20px';
     title.style.color = '#2c3e50';
     answerSection.appendChild(title);
-    
+
     // 解答用のprint-containerを作成（問題ページと同じ構造）
     const answerContainer = document.createElement('div');
     answerContainer.className = 'print-container answer-container';
-    
+
     selectedQuestions.forEach((question, index) => {
         const answerItem = document.createElement('div');
         answerItem.className = 'answer-test-item';
-        
+
         // 編集データを優先
         const editedData = editedQuestions[question.kanji];
         let displaySentence = editedData?.sentence || question.sentence || '';
-        
+
         if (currentTestMode.value === 'reading') {
             // 🎯 読みテストモード：問題と同じ文章表示 + 解答（ひらがな読み）を青色で表示
             const restoredSentence = restoreKatakanaToKanji(displaySentence, question.kanji, question.readingType);
-            
+
             // 問題文（漢字に傍線）
             const questionText = document.createElement('div');
             questionText.className = 'test-question-text';
-            
+
             const sentenceWithUnderline = restoredSentence.replace(
                 new RegExp(question.kanji, 'g'),
                 `<span class="target-kanji-underline">${question.kanji}</span>`
             );
-            
+
             questionText.innerHTML = `${index + 1} ${sentenceWithUnderline}`;
             answerItem.appendChild(questionText);
-            
+
             // 🆕 解答欄（ひらがな読みを青色で表示）
             const answerLine = document.createElement('div');
             answerLine.className = 'answer-line answer-text';
-            
+
             let displayReading = '';
             if (editedData) {
                 if (question.readingType === 'onyomi' && editedData.onyomi) {
@@ -1264,58 +1266,58 @@ function generateAnswerSection() {
                     displayReading = editedData.kunyomi;
                 }
             }
-            
+
             if (!displayReading && question.reading) {
                 displayReading = question.reading;
             }
-            
+
             // カタカナをひらがなに変換
             displayReading = katakanaToHiragana(displayReading || '？');
-            
+
             answerLine.textContent = `（${displayReading}）`;
             answerItem.appendChild(answerLine);
-            
+
         } else {
             // 🎯 漢字練習モード：問題と同じカタカナ穴埋め文章 + 解答（漢字）を赤色で表示
             const questionText = document.createElement('div');
             questionText.className = 'test-question-text';
             questionText.textContent = `${index + 1} ${question.processedSentence || displaySentence}`;
             answerItem.appendChild(questionText);
-            
+
             // 🆕 解答欄（漢字を赤色で表示）
             const answerLine = document.createElement('div');
             answerLine.className = 'answer-line answer-kanji-text';
             answerLine.textContent = `（${question.kanji}）`;
             answerItem.appendChild(answerLine);
         }
-        
+
         // 🆕 絶対配置で位置を設定（問題ページと完全に同じロジック）
         const questionsPerHalf = 10;
         const isRightHalf = index < questionsPerHalf;
         const questionIndex = index % questionsPerHalf;
         const isTopHalf = questionIndex < 5;
         const columnIndex = questionIndex % 5;
-        
+
         const rightBase = 12;
         const leftBase = 2;
         const columnWidth = (143 - 4) / 5;
         const topBase = isTopHalf ? 14 : (105 + 4);
-        
+
         answerItem.style.position = 'absolute';
-        
+
         if (isRightHalf) {
             answerItem.style.right = `${rightBase + (columnIndex * columnWidth)}mm`;
         } else {
             answerItem.style.left = `${leftBase + ((4 - columnIndex) * columnWidth)}mm`;
         }
-        
+
         answerItem.style.top = `${topBase}mm`;
         answerItem.style.width = `${columnWidth - 2}mm`;
         answerItem.style.height = isTopHalf ? 'calc(50% - 12mm)' : 'calc(50% - 12mm)';
-        
+
         answerContainer.appendChild(answerItem);
     });
-    
+
     answerSection.appendChild(answerContainer);
 }
 
@@ -1343,7 +1345,7 @@ function saveRecentHistory() {
     if (recentKanjiHistory.length > MAX_HISTORY_SIZE) {
         recentKanjiHistory = recentKanjiHistory.slice(-MAX_HISTORY_SIZE);
     }
-    
+
     localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(recentKanjiHistory));
     console.log(`💾 漢字履歴を保存しました: ${recentKanjiHistory.length}件`);
 }
@@ -1363,15 +1365,15 @@ function addToHistory(kanjiList) {
 // 除外する漢字リストを取得
 function getExcludedKanji() {
     const excludeCount = parseInt(document.getElementById('exclude-recent').value) || 0;
-    
+
     if (excludeCount === 0) {
         return [];
     }
-    
+
     // 最新のN件を取得
     const recentItems = recentKanjiHistory.slice(-excludeCount);
     const excludedSet = new Set(recentItems.map(item => item.kanji));
-    
+
     console.log(`🚫 除外する漢字: ${excludedSet.size}個`);
     return Array.from(excludedSet);
 }
@@ -1468,7 +1470,7 @@ function clearHistory() {
 // モード変更ハンドラー
 function handleModeChange(e) {
     const selectedMode = e.target.value;
-    
+
     if (selectedMode === 'practice') {
         currentTestMode = TEST_MODES.PRACTICE;
     } else if (selectedMode === 'test10') {
@@ -1476,13 +1478,13 @@ function handleModeChange(e) {
     } else if (selectedMode === 'test20') {
         currentTestMode = TEST_MODES.TEST20;
     }
-    
+
     // LocalStorageに保存
     localStorage.setItem(MODE_STORAGE_KEY, selectedMode);
-    
+
     // 問題数ステータスを更新
     updateQuestionCountStatus();
-    
+
     console.log(`✅ モード切り替え: ${currentTestMode.name}`);
 }
 
@@ -1512,23 +1514,23 @@ function restoreKatakanaToKanji(sentence, targetKanji, readingType) {
      * 例: 「兄ダイがいる」+ 漢字「弟」+ 読み「ダイ」 → 「兄弟がいる」
      *     「オトウトと遊ぶ」+ 漢字「弟」+ 読み「オトウト」 → 「弟と遊ぶ」
      */
-    
+
     if (!sentence || !targetKanji) {
         return sentence;
     }
-    
+
     // カタカナ部分を検出（連続するカタカナ）
     const katakanaPattern = /[ァ-ヴー]+/g;
     const matches = sentence.match(katakanaPattern);
-    
+
     if (!matches || matches.length === 0) {
         return sentence; // カタカナがなければそのまま返す
     }
-    
+
     // 最も長いカタカナ部分を対象漢字に置換
     let longestMatch = matches.reduce((a, b) => a.length >= b.length ? a : b);
     const restoredSentence = sentence.replace(longestMatch, targetKanji);
-    
+
     return restoredSentence;
 }
 
@@ -1541,7 +1543,7 @@ function separateReadings(yomiString) {
     const readings = yomiString.split('、');
     let onyomi = [];
     let kunyomi = [];
-    
+
     readings.forEach(reading => {
         // カタカナまたは漢字音が含まれているか簡易判定
         // ひらがなのみ = 訓読み、それ以外 = 音読み
@@ -1551,7 +1553,7 @@ function separateReadings(yomiString) {
             onyomi.push(reading);
         }
     });
-    
+
     return {
         onyomi: onyomi.length > 0 ? onyomi[0] : null,  // 最初の音読みのみ
         kunyomi: kunyomi.length > 0 ? kunyomi[0] : null // 最初の訓読みのみ
@@ -1588,16 +1590,16 @@ function isSentenceFormat(text) {
     // 1. 動詞の終止形で終わる（〜る、〜す、〜く、〜つ、〜う、〜ぶ、〜む、〜ぬ等）
     // 2. 助詞（を、に、へ、が、の、で、から、と等）を含む
     // 3. 副詞（少し、早く等）で終わる場合は除外
-    
+
     const verbEndings = /[るすくつうぶむぬ]$/;
     const particles = /[をにへがのでからと]/;
-    
+
     // 「少し」「早く」などの副詞を除外
     const adverbs = ['少し', '早く', '多く', '大きく', '小さく'];
     if (adverbs.includes(text)) {
         return false;
     }
-    
+
     return verbEndings.test(text) || particles.test(text);
 }
 
@@ -1607,7 +1609,7 @@ function isSentenceFormat(text) {
 function convertToSentence(text, kanji) {
     // 熟語や単語を自然な文章に変換
     // 例: 「英語」→「英語を勉強する」、「外国」→「外国に行く」
-    
+
     // 基本的なパターンマッチング
     if (text.includes('語')) {
         return `${text}を勉強する`;
@@ -1639,36 +1641,36 @@ function convertToSentence(text, kanji) {
 // ==================================
 function validateSentence(processedText, originalText) {
     const issues = [];
-    
+
     // チェック1: 重複文字列の検出（をを、がが、つつ、るる等）
     const duplicatePatterns = [
         /(.)\1{2,}/g,           // 同じ文字が3回以上連続
         /[をにへがのでから]{2,}/g,  // 助詞の連続
         /[るすくつうぶむぬ]{2,}/g   // 動詞語尾の連続
     ];
-    
+
     for (let pattern of duplicatePatterns) {
         const matches = processedText.match(pattern);
         if (matches) {
             issues.push(`重複検出: ${matches.join(', ')}`);
         }
     }
-    
+
     // チェック2: 熟語のみになっていないか（助詞や動詞がない）
     const hasParticle = /[をにへがのでからと]/.test(processedText);
     const hasVerb = /[るすくつうぶむぬ]$/.test(processedText);
     const isShort = processedText.length <= 4;
-    
+
     if (!hasParticle && !hasVerb && isShort) {
         issues.push('熟語のみ（文章になっていない）');
     }
-    
+
     // チェック3: カタカナだけの文になっていないか
     const katakanaOnly = /^[ァ-ヴー]+$/.test(processedText);
     if (katakanaOnly) {
         issues.push('カタカナのみ');
     }
-    
+
     // チェック4: 不自然な文字の組み合わせ
     const strangePatterns = [
         /[ァ-ヴー]{5,}/,  // カタカナが5文字以上連続
@@ -1676,14 +1678,14 @@ function validateSentence(processedText, originalText) {
         /[が]{2,}/,        // 「が」の連続
         /[に]{3,}/         // 「に」が3回以上
     ];
-    
+
     for (let pattern of strangePatterns) {
         if (pattern.test(processedText)) {
             issues.push('不自然な文字パターン');
             break;
         }
     }
-    
+
     return {
         isValid: issues.length === 0,
         issues: issues
@@ -1696,15 +1698,15 @@ function validateSentence(processedText, originalText) {
 function fixSentenceIssues(processedText, originalText, kanji, allowedKanji) {
     let fixed = processedText;
     let isFixed = false;
-    
+
     // 修正1: 重複文字列の削除
     // 「をを」→「を」、「がが」→「が」、「つつ」→「つ」等
     fixed = fixed.replace(/(.)\1+/g, '$1');
-    
+
     // 修正2: 熟語のみの場合は文章に変換
     const hasParticle = /[をにへがのでからと]/.test(fixed);
     const hasVerb = /[るすくつうぶむぬ]$/.test(fixed);
-    
+
     if (!hasParticle && !hasVerb && fixed.length <= 4) {
         // 熟語を文章に変換
         fixed = convertToSentence(originalText, kanji);
@@ -1712,10 +1714,10 @@ function fixSentenceIssues(processedText, originalText, kanji, allowedKanji) {
         fixed = processTextForTest(fixed, kanji, allowedKanji);
         isFixed = true;
     }
-    
+
     // 修正後の検証
     const validation = validateSentence(fixed, originalText);
-    
+
     return {
         isFixed: validation.isValid || isFixed,
         sentence: fixed,
@@ -1730,19 +1732,19 @@ function fixSentenceIssues(processedText, originalText, kanji, allowedKanji) {
 // 編集モードのON/OFF切り替え
 function toggleEditMode() {
     isEditMode = !isEditMode;
-    
+
     const editBtn = document.getElementById('edit-mode-btn');
     const saveBtn = document.getElementById('save-edit-btn');
     const printBtn = document.getElementById('print-btn');
     const regenerateBtn = document.getElementById('regenerate-btn');
-    
+
     if (isEditMode) {
         editBtn.textContent = '✏️ 編集中...';
         editBtn.style.background = '#e67e22';
         saveBtn.classList.remove('hidden');
         printBtn.classList.add('hidden');
         regenerateBtn.classList.add('hidden');
-        
+
         // 編集ボタンを表示
         displayEditButtons();
     } else {
@@ -1751,7 +1753,7 @@ function toggleEditMode() {
         saveBtn.classList.add('hidden');
         printBtn.classList.remove('hidden');
         regenerateBtn.classList.remove('hidden');
-        
+
         // 編集ボタンを非表示
         removeEditButtons();
     }
@@ -1765,32 +1767,32 @@ function displayEditButtons() {
         if (!item.querySelector('.edit-buttons')) {
             const buttonsContainer = document.createElement('div');
             buttonsContainer.className = 'edit-buttons';
-            
+
             const editBtn = document.createElement('button');
             editBtn.className = 'edit-btn';
             editBtn.textContent = '✏️';
             editBtn.title = '編集';
             editBtn.onclick = () => openEditDialog(index);
-            
+
             const replaceBtn = document.createElement('button');
             replaceBtn.className = 'replace-btn';
             replaceBtn.textContent = '🔄';
             replaceBtn.title = '例文変更';
             replaceBtn.onclick = () => replaceExample(index);
-            
+
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.textContent = '🗑️';
             deleteBtn.title = '削除';
             deleteBtn.onclick = () => deleteQuestion(index);
-            
+
             buttonsContainer.appendChild(editBtn);
             buttonsContainer.appendChild(replaceBtn);
             buttonsContainer.appendChild(deleteBtn);
             item.appendChild(buttonsContainer);
         }
     });
-    
+
     // テスト欄にも視覚的な表示を追加
     const testItems = document.querySelectorAll('.test-item');
     testItems.forEach((item, index) => {
@@ -1798,7 +1800,7 @@ function displayEditButtons() {
         item.style.cursor = 'pointer';
         item.onclick = () => openEditDialog(index);
     });
-    
+
     // 🆕 読みテストアイテムにも編集機能を追加
     const readingTestItems = document.querySelectorAll('.reading-test-item');
     readingTestItems.forEach((item, index) => {
@@ -1828,19 +1830,19 @@ function removeEditButtons() {
 function openEditDialog(index) {
     currentEditIndex = index;
     const question = selectedQuestions[index];
-    
+
     // 🆕 漢字をキーにして編集済みデータを取得
     const editedData = editedQuestions[question.kanji] || {};
-    
+
     // フォームに現在の値をセット
     document.getElementById('edit-sentence').value = editedData.sentence || question.sentence;
     document.getElementById('edit-kanji').value = question.kanji;
-    
+
     // 読み仮名を取得
     const readings = separateReadings(question.yomi);
     document.getElementById('edit-onyomi').value = editedData.onyomi || readings.onyomi || '';
     document.getElementById('edit-kunyomi').value = editedData.kunyomi || readings.kunyomi || '';
-    
+
     // ダイアログを表示
     document.getElementById('edit-dialog').classList.remove('hidden');
 }
@@ -1854,14 +1856,14 @@ function closeEditDialog() {
 // 個別の質問の編集を保存
 function saveQuestionEdit() {
     if (currentEditIndex < 0) return;
-    
+
     const sentence = document.getElementById('edit-sentence').value;
     const onyomi = document.getElementById('edit-onyomi').value;
     const kunyomi = document.getElementById('edit-kunyomi').value;
-    
+
     // 質問データを更新
     const question = selectedQuestions[currentEditIndex];
-    
+
     // 🆕 漢字をキーにして編集データを保存
     editedQuestions[question.kanji] = {
         sentence: sentence,
@@ -1869,16 +1871,16 @@ function saveQuestionEdit() {
         kunyomi: kunyomi,
         isEdited: true
     };
-    
+
     // 質問データを更新
     question.sentence = sentence;
-    
+
     // 読みを結合して更新
     const yomiParts = [];
     if (onyomi) yomiParts.push(onyomi);
     if (kunyomi) yomiParts.push(kunyomi);
     question.yomi = yomiParts.join('、');
-    
+
     // 処理済み文を再生成（🆕 選択された漢字のみを使用）
     const allowedKanjiList = [
         ...selectedKanji[1],
@@ -1888,20 +1890,20 @@ function saveQuestionEdit() {
         ...selectedKanji[5],
         ...selectedKanji[6]
     ];
-    
+
     question.processedSentence = processTextForTest(sentence, question.kanji, allowedKanjiList);
-    
+
     // 表示を更新
     displayPrint();
-    
+
     // 編集モードの場合は編集ボタンを再表示
     if (isEditMode) {
         displayEditButtons();
     }
-    
+
     // ダイアログを閉じる
     closeEditDialog();
-    
+
     console.log(`質問${currentEditIndex + 1}を編集しました`);
 }
 
@@ -1909,19 +1911,19 @@ function saveQuestionEdit() {
 function replaceExample(index) {
     const question = selectedQuestions[index];
     const kanjiData = [...grade1Kanji, ...grade2Kanji].find(k => k.kanji === question.kanji);
-    
+
     if (!kanjiData || !kanjiData.examples || kanjiData.examples.length <= 1) {
         alert('この漢字には別の例文がありません。');
         return;
     }
-    
+
     // 現在の例文以外からランダムに選択
     const otherExamples = kanjiData.examples.filter(ex => ex !== question.sentence);
     const newExample = otherExamples[Math.floor(Math.random() * otherExamples.length)];
-    
+
     // 新しい例文で質問を更新
     question.sentence = newExample;
-    
+
     // 処理済み文を再生成（🆕 選択された漢字のみを使用）
     const allowedKanjiList = [
         ...selectedKanji[1],
@@ -1931,9 +1933,9 @@ function replaceExample(index) {
         ...selectedKanji[5],
         ...selectedKanji[6]
     ];
-    
+
     question.processedSentence = processTextForTest(newExample, question.kanji, allowedKanjiList);
-    
+
     // 🆕 漢字をキーにして編集済みとしてマーク
     editedQuestions[question.kanji] = {
         sentence: newExample,
@@ -1941,15 +1943,15 @@ function replaceExample(index) {
         kunyomi: separateReadings(question.yomi).kunyomi || '',
         isEdited: true
     };
-    
+
     // 表示を更新
     displayPrint();
-    
+
     // 編集モードの場合は編集ボタンを再表示
     if (isEditMode) {
         displayEditButtons();
     }
-    
+
     console.log(`質問${index + 1}の例文を変更しました: ${newExample}`);
 }
 
@@ -1958,30 +1960,30 @@ function deleteQuestion(index) {
     if (!confirm(`問題${index + 1}を削除して、別の漢字に変更しますか？`)) {
         return;
     }
-    
+
     const question = selectedQuestions[index];
-    
+
     // 🆕 選択された漢字から取得
     const grade1Selected = grade1Kanji.filter(k => selectedKanji[1].includes(k.kanji));
     const grade2Selected = grade2Kanji.filter(k => selectedKanji[2].includes(k.kanji));
-    
+
     const allKanji = [...grade1Selected, ...grade2Selected];
-    
+
     // 現在出題中の漢字を除外
     const usedKanji = selectedQuestions.map(q => q.kanji);
     const availableKanji = allKanji.filter(k => !usedKanji.includes(k.kanji));
-    
+
     if (availableKanji.length === 0) {
         alert('選択された漢字の中に他の漢字がありません。');
         return;
     }
-    
+
     // ランダムに新しい漢字を選択
     const newKanji = availableKanji[Math.floor(Math.random() * availableKanji.length)];
-    
+
     // 質問を置き換え
     selectedQuestions[index] = newKanji;
-    
+
     // 🆕 選択された漢字のみを使用
     const allowedKanjiList = [
         ...selectedKanji[1],
@@ -1991,27 +1993,27 @@ function deleteQuestion(index) {
         ...selectedKanji[5],
         ...selectedKanji[6]
     ];
-    
+
     if (newKanji.examples && newKanji.examples.length > 0) {
         const selectedExample = selectBestExample(newKanji.examples, newKanji.kanji);
         newKanji.sentence = selectedExample;
     } else {
         newKanji.sentence = `${newKanji.kanji}を見る。`;
     }
-    
+
     newKanji.processedSentence = processTextForTest(newKanji.sentence, newKanji.kanji, allowedKanjiList);
-    
+
     // 🆕 古い漢字の編集データは保持（次回出題時に使用）
     // 削除しないため、この行を削除: delete editedQuestions[index];
-    
+
     // 表示を更新
     displayPrint();
-    
+
     // 編集モードの場合は編集ボタンを再表示
     if (isEditMode) {
         displayEditButtons();
     }
-    
+
     console.log(`質問${index + 1}を削除し、「${newKanji.kanji}」に変更しました`);
 }
 
@@ -2023,7 +2025,7 @@ function saveAllEdits() {
             timestamp: new Date().toISOString(),
             editedKanji: editedQuestions  // {"海": {...}, "空": {...}}
         };
-        
+
         localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
         alert('編集内容を保存しました！\n次回このページを開いたときに編集内容が読み込まれます。\n\n保存された漢字: ' + Object.keys(editedQuestions).join('、'));
         console.log('編集内容を保存しました:', saveData);
@@ -2040,7 +2042,7 @@ function loadSavedEdits() {
         if (savedData) {
             const data = JSON.parse(savedData);
             console.log('保存された編集を読み込みました:', data);
-            
+
             // 🆕 漢字ごとの編集データを復元
             if (data.editedKanji) {
                 editedQuestions = data.editedKanji;
@@ -2067,48 +2069,48 @@ function buildKanjiSelectionUI() {
         5: grade5Kanji,
         6: grade6Kanji
     };
-    
+
     GRADES.forEach(gradeInfo => {
         const grade = gradeInfo.grade;
         const kanjiList = gradeDataMap[grade]; // 🔧 修正：正しい学年のデータを取得
         const gridElement = document.getElementById(`kanji-grid-grade${grade}`);
-        
+
         gridElement.innerHTML = '';
-        
+
         kanjiList.forEach((kanjiData, index) => {
             const kanji = kanjiData.kanji;
-            
+
             // 禁止漢字は表示しない
             if (EXCLUDED_KANJI.includes(kanji)) {
                 return;
             }
-            
+
             const isSelected = selectedKanji[grade].includes(kanji);
-            
+
             const kanjiItem = document.createElement('div');
             kanjiItem.className = `kanji-item ${isSelected ? 'selected' : ''}`;
             kanjiItem.dataset.kanji = kanji;
             kanjiItem.dataset.grade = grade;
-            
+
             kanjiItem.innerHTML = `
                 <span class="checkmark">✓</span>
                 <div class="kanji-char">${kanji}</div>
                 <div class="kanji-reading">${kanjiData.yomi.split('、')[0]}</div>
             `;
-            
+
             kanjiItem.addEventListener('click', () => toggleKanjiSelection(grade, kanji, kanjiItem));
-            
+
             gridElement.appendChild(kanjiItem);
         });
     });
-    
+
     updateSelectionCounts();
 }
 
 // 漢字選択状態のトグル
 function toggleKanjiSelection(grade, kanji, element) {
     const index = selectedKanji[grade].indexOf(kanji);
-    
+
     if (index > -1) {
         // 選択解除
         selectedKanji[grade].splice(index, 1);
@@ -2118,7 +2120,7 @@ function toggleKanjiSelection(grade, kanji, element) {
         selectedKanji[grade].push(kanji);
         element.classList.add('selected');
     }
-    
+
     updateSelectionCounts();
     saveKanjiSelection();
 }
@@ -2134,17 +2136,17 @@ function selectAllKanji(grade) {
         5: grade5Kanji,
         6: grade6Kanji
     };
-    
+
     const kanjiList = gradeDataMap[grade];
     selectedKanji[grade] = kanjiList
         .map(k => k.kanji)
         .filter(k => !EXCLUDED_KANJI.includes(k));
-    
+
     // UI更新
     document.querySelectorAll(`#kanji-grid-grade${grade} .kanji-item`).forEach(item => {
         item.classList.add('selected');
     });
-    
+
     updateSelectionCounts();
     saveKanjiSelection();
 }
@@ -2156,14 +2158,14 @@ function deselectAllKanji(grade) {
     if (!confirm(`${gradeLabel}の漢字をすべて解除しますか？\n\n解除すると、この学年から問題を出題できなくなります。`)) {
         return; // キャンセルされた場合は何もしない
     }
-    
+
     selectedKanji[grade] = [];
-    
+
     // UI更新
     document.querySelectorAll(`#kanji-grid-grade${grade} .kanji-item`).forEach(item => {
         item.classList.remove('selected');
     });
-    
+
     updateSelectionCounts();
     saveKanjiSelection();
 }
@@ -2179,15 +2181,15 @@ function invertKanjiSelection(grade) {
         5: grade5Kanji,
         6: grade6Kanji
     };
-    
+
     const kanjiList = gradeDataMap[grade];
     const allKanji = kanjiList
         .map(k => k.kanji)
         .filter(k => !EXCLUDED_KANJI.includes(k));
-    
+
     const newSelection = allKanji.filter(k => !selectedKanji[grade].includes(k));
     selectedKanji[grade] = newSelection;
-    
+
     // UI更新
     document.querySelectorAll(`#kanji-grid-grade${grade} .kanji-item`).forEach(item => {
         const kanji = item.dataset.kanji;
@@ -2197,7 +2199,7 @@ function invertKanjiSelection(grade) {
             item.classList.remove('selected');
         }
     });
-    
+
     updateSelectionCounts();
     saveKanjiSelection();
 }
@@ -2212,7 +2214,7 @@ function switchKanjiTab(grade) {
             tab.classList.remove('active');
         }
     });
-    
+
     // パネルの表示を更新
     document.querySelectorAll('.kanji-tab-panel').forEach(panel => {
         if (panel.dataset.grade === String(grade)) {
@@ -2243,7 +2245,7 @@ function saveKanjiSelection() {
                 console.warn(`警告: 小${grade}の選択が0個です。この状態で保存されます。`);
             }
         });
-        
+
         localStorage.setItem(KANJI_SELECTION_KEY, JSON.stringify(selectedKanji));
         console.log('漢字選択を保存しました', selectedKanji);
     } catch (error) {
@@ -2261,13 +2263,13 @@ function loadKanjiSelection() {
         5: grade5Kanji,
         6: grade6Kanji
     };
-    
+
     try {
         const saved = localStorage.getItem(KANJI_SELECTION_KEY);
         if (saved) {
             selectedKanji = JSON.parse(saved);
             console.log('✅ LocalStorageから漢字選択を読み込みました');
-            
+
             // 🆕 詳細デバッグ：各学年のデータ状態を確認
             console.log('📊 読み込んだデータの詳細:');
             GRADES.forEach(gradeInfo => {
@@ -2275,12 +2277,12 @@ function loadKanjiSelection() {
                 const count = selectedKanji[grade]?.length || 0;
                 console.log(`  小${grade}: ${count}個の漢字が選択されています`);
             });
-            
+
             // 🆕 データの整合性チェック：各学年のデータを検証
             let needsSave = false;
             GRADES.forEach(gradeInfo => {
                 const grade = gradeInfo.grade;
-                
+
                 // 学年データが存在しない、または空配列の場合
                 if (!selectedKanji[grade] || !Array.isArray(selectedKanji[grade]) || selectedKanji[grade].length === 0) {
                     const totalKanji = gradeDataMap[grade].length - EXCLUDED_KANJI.length;
@@ -2290,12 +2292,12 @@ function loadKanjiSelection() {
                     needsSave = true;
                 }
             });
-            
+
             // 修正があった場合はLocalStorageを更新
             if (needsSave) {
                 localStorage.setItem(KANJI_SELECTION_KEY, JSON.stringify(selectedKanji));
                 console.log('✅ 不完全なデータを修正して保存しました');
-                
+
                 // 🆕 修正後の状態を表示
                 console.log('📊 修正後のデータ:');
                 GRADES.forEach(gradeInfo => {
@@ -2334,9 +2336,9 @@ const ACCORDION_STATE_KEY = 'kanji_accordion_collapsed';
 function toggleAccordion() {
     const header = document.getElementById('kanji-selection-toggle');
     const content = document.getElementById('kanji-selection-content');
-    
+
     const isCollapsed = content.classList.contains('collapsed');
-    
+
     if (isCollapsed) {
         // 開く
         content.classList.remove('collapsed');
@@ -2355,7 +2357,7 @@ function restoreAccordionState() {
     const savedState = localStorage.getItem(ACCORDION_STATE_KEY);
     // デフォルトは閉じた状態（savedStateがnullの場合も閉じる）
     const isCollapsed = savedState === null || savedState === 'true';
-    
+
     if (isCollapsed) {
         const header = document.getElementById('kanji-selection-toggle');
         const content = document.getElementById('kanji-selection-content');
@@ -2368,7 +2370,7 @@ function restoreAccordionState() {
 function logQuestions() {
     console.log('=== 出題漢字一覧 ===');
     selectedQuestions.forEach((q, i) => {
-        console.log(`${i+1}. ${q.kanji} - ${q.sentence} → ${q.processedSentence}`);
+        console.log(`${i + 1}. ${q.kanji} - ${q.sentence} → ${q.processedSentence}`);
     });
 }
 
@@ -2380,28 +2382,28 @@ let currentHighlightedKanji = null; // 現在ハイライト中の漢字情報�
 
 function handleKanjiSearch(event) {
     const searchKanji = event.target.value.trim();
-    
+
     // 空の場合はクリア
     if (searchKanji === '') {
         clearSearchHighlight();
         return;
     }
-    
+
     // 漢字かどうか確認
     if (!isKanji(searchKanji)) {
         return;
     }
-    
+
     // 全学年から検索
     let foundGrade = null;
     let foundElement = null;
-    
+
     for (const gradeInfo of GRADES) {
         const grade = gradeInfo.grade;
         let kanjiList;
-        
+
         // 学年に応じた漢字リストを取得
-        switch(grade) {
+        switch (grade) {
             case 1: kanjiList = grade1Kanji; break;
             case 2: kanjiList = grade2Kanji; break;
             case 3: kanjiList = grade3Kanji; break;
@@ -2410,10 +2412,10 @@ function handleKanjiSearch(event) {
             case 6: kanjiList = grade6Kanji; break;
             default: continue;
         }
-        
+
         // 漢字が存在するか確認
         const kanjiData = kanjiList.find(k => k.kanji === searchKanji);
-        
+
         if (kanjiData) {
             foundGrade = grade;
             // DOM要素を取得
@@ -2421,27 +2423,27 @@ function handleKanjiSearch(event) {
             break;
         }
     }
-    
+
     if (foundGrade && foundElement) {
         // 該当学年のタブに切り替え
         switchKanjiTab(foundGrade);
-        
+
         // アコーディオンが閉じている場合は開く
         const content = document.getElementById('kanji-selection-content');
         if (content.classList.contains('collapsed')) {
             toggleAccordion();
         }
-        
+
         // スクロールとハイライト
         scrollToKanjiAndHighlight(foundElement);
-        
+
         // 現在ハイライト中の漢字情報を保存
         currentHighlightedKanji = {
             kanji: searchKanji,
             grade: foundGrade,
             element: foundElement
         };
-        
+
         console.log(`検索成功: ${searchKanji} (小${foundGrade})`);
     } else {
         console.log(`検索失敗: ${searchKanji} が見つかりませんでした`);
@@ -2453,22 +2455,22 @@ function handleKanjiSearch(event) {
 function scrollToKanjiAndHighlight(element) {
     // 既存のハイライトをクリア
     clearSearchHighlight();
-    
+
     // スムーズスクロール
     element.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
         inline: 'center'
     });
-    
+
     // ハイライトクラスを追加
     element.classList.add('search-highlight');
-    
+
     // 3秒後にハイライトを解除
     if (searchHighlightTimeout) {
         clearTimeout(searchHighlightTimeout);
     }
-    
+
     searchHighlightTimeout = setTimeout(() => {
         element.classList.remove('search-highlight');
         searchHighlightTimeout = null;
@@ -2480,7 +2482,7 @@ function clearSearchHighlight() {
     document.querySelectorAll('.kanji-item.search-highlight').forEach(item => {
         item.classList.remove('search-highlight');
     });
-    
+
     if (searchHighlightTimeout) {
         clearTimeout(searchHighlightTimeout);
         searchHighlightTimeout = null;
@@ -2499,32 +2501,32 @@ function clearKanjiSearch() {
 function handleSearchKeydown(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
-        
+
         // ハイライト中の漢字があれば選択/非選択をトグル
         if (currentHighlightedKanji) {
             const { kanji, grade, element } = currentHighlightedKanji;
-            
+
             // 現在の選択状態を確認
             const isCurrentlySelected = selectedKanji[grade].includes(kanji);
-            
+
             // トグル実行
             toggleKanjiSelection(grade, kanji, element);
-            
+
             // 状態に応じてメッセージ表示
             if (isCurrentlySelected) {
                 console.log(`✗ 非選択: ${kanji} (小${grade})`);
             } else {
                 console.log(`✓ 選択: ${kanji} (小${grade})`);
             }
-            
+
             // 検索ボックスをクリアして次の入力を受け付ける
             const searchInput = document.getElementById('kanji-search-input');
             searchInput.value = '';
-            
+
             // ハイライトを解除
             clearSearchHighlight();
             currentHighlightedKanji = null;
-            
+
             // フォーカスを検索ボックスに戻す
             searchInput.focus();
         }

@@ -1,10 +1,10 @@
 // ==========================================
 // Service Worker for 漢字テストジェネレーター
-// Version: 4.0.0
+// Version: 4.0.1
 // PWA対応・オフライン動作・自動更新通知
 // ==========================================
 
-const VERSION = '4.0.0';
+const VERSION = '4.0.1';
 const CACHE_NAME = `kanji-practice-v${VERSION}`;
 
 // キャッシュするファイルリスト
@@ -164,9 +164,11 @@ self.addEventListener('fetch', (event) => {
               return caches.match(request.url)
                 .then((response) => {
                   if (response) {
+                    console.log('[Service Worker] フォールバック成功（キャッシュ）:', request.url);
                     return response;
                   }
                   // なければ index.html にフォールバック
+                  console.log('[Service Worker] インデックスにフォールバック:', request.url);
                   return caches.match('/index.html');
                 });
             }
